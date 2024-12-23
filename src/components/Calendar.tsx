@@ -16,36 +16,47 @@ export function Calendar() {
   const monthEnd = endOfMonth(currentDate);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  // Fetch both tasks and marketing items for the current month
-  const { data: tasks } = useQuery({
+  // Fetch tasks with their related marketing items
+  const { data: tasks, isLoading: tasksLoading } = useQuery({
     queryKey: ['tasks', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
+      console.log("Fetching tasks for:", format(currentDate, 'yyyy-MM'));
       const { data, error } = await supabase
         .from('tasks')
         .select(`
           *,
-          marketing_items (
-            *
-          )
+          marketing_items (*)
         `)
         .gte('due_date', monthStart.toISOString())
-        .lte('due_date', monthEnd.toISOString());
+        .lte('due_date', monthEnd.toISOString())
+        .order('due_date');
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching tasks:", error);
+        throw error;
+      }
+      console.log("Fetched tasks:", data);
       return data || [];
     }
   });
 
-  const { data: marketingItems } = useQuery({
+  // Fetch marketing items that don't have associated tasks
+  const { data: standaloneMarketingItems, isLoading: marketingLoading } = useQuery({
     queryKey: ['marketing_items', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
+      console.log("Fetching marketing items for:", format(currentDate, 'yyyy-MM'));
       const { data, error } = await supabase
         .from('marketing_items')
         .select('*')
         .gte('created_at', monthStart.toISOString())
-        .lte('created_at', monthEnd.toISOString());
+        .lte('created_at', monthEnd.toISOString())
+        .order('created_at');
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching marketing items:", error);
+        throw error;
+      }
+      console.log("Fetched marketing items:", data);
       return data || [];
     }
   });
@@ -54,11 +65,13 @@ export function Calendar() {
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
   const getItemsForDay = (date: Date) => {
+    // Get tasks for this day
     const dayTasks = tasks?.filter(task => 
       format(new Date(task.due_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
     ) || [];
 
-    const dayMarketingItems = marketingItems?.filter(item => 
+    // Get standalone marketing items for this day
+    const dayMarketingItems = standaloneMarketingItems?.filter(item => 
       format(new Date(item.created_at), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
     ) || [];
 
@@ -73,6 +86,14 @@ export function Calendar() {
     setSelectedDay(date);
     setSelectedTasks(dayTasks);
   };
+
+  if (tasksLoading || marketingLoading) {
+    return (
+      <Card className="p-6 animate-pulse">
+        <div className="h-[800px] bg-muted rounded-lg" />
+      </Card>
+    );
+  }
 
   return (
     <Card className="p-6 animate-fade-in bg-card shadow-sm hover:shadow-md transition-shadow duration-300 w-full min-h-[800px]">
