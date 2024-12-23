@@ -110,57 +110,6 @@ export type Database = {
         }
         Relationships: []
       }
-      tasks: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          due_date: string | null
-          gym_id: string | null
-          id: string
-          marketing_item_id: string | null
-          status: string | null
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          due_date?: string | null
-          gym_id?: string | null
-          id?: string
-          marketing_item_id?: string | null
-          status?: string | null
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          due_date?: string | null
-          gym_id?: string | null
-          id?: string
-          marketing_item_id?: string | null
-          status?: string | null
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tasks_gym_id_fkey"
-            columns: ["gym_id"]
-            isOneToOne: false
-            referencedRelation: "gyms"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tasks_marketing_item_id_fkey"
-            columns: ["marketing_item_id"]
-            isOneToOne: false
-            referencedRelation: "marketing_items"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never

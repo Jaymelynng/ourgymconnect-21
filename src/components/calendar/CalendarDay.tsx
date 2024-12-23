@@ -2,8 +2,12 @@ import { Button } from "@/components/ui/button";
 import { format, isSameMonth, isToday } from "date-fns";
 import { cn } from "@/lib/utils";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
-import { CalendarIcon } from "lucide-react";
-import { TaskPreview } from "./TaskPreview";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface CalendarDayProps {
   day: Date;
@@ -11,13 +15,12 @@ interface CalendarDayProps {
   tasks: any[];
   marketingItems: any[];
   hasItems: boolean;
-  onDayClick: (date: Date, tasks: any[]) => void;
+  onDayClick: (date: Date) => void;
 }
 
 export function CalendarDay({ 
   day, 
   currentDate, 
-  tasks, 
   marketingItems, 
   hasItems, 
   onDayClick 
@@ -35,34 +38,6 @@ export function CalendarDay({
       </div>
       
       <div className="pt-8 px-2 pb-2">
-        {tasks.map((task) => (
-          <HoverCard key={task.id}>
-            <HoverCardTrigger asChild>
-              <Button
-                variant="ghost"
-                className={cn(
-                  "w-full justify-start text-left h-auto p-2 mb-1",
-                  "bg-primary/5 hover:bg-primary/10",
-                  "focus:ring-2 focus:ring-primary/20 focus:outline-none"
-                )}
-                onClick={() => onDayClick(day, [task])}
-              >
-                <div className="w-full">
-                  <div className="text-xs font-medium truncate">{task.title}</div>
-                  {task.description && (
-                    <div className="text-xs text-muted-foreground truncate mt-0.5">
-                      {task.description}
-                    </div>
-                  )}
-                </div>
-              </Button>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-80">
-              <TaskPreview task={task} />
-            </HoverCardContent>
-          </HoverCard>
-        ))}
-        
         {marketingItems.map((item) => (
           <HoverCard key={item.id}>
             <HoverCardTrigger asChild>
@@ -73,7 +48,7 @@ export function CalendarDay({
                   "bg-secondary/10 hover:bg-secondary/20",
                   "focus:ring-2 focus:ring-secondary/20 focus:outline-none"
                 )}
-                onClick={() => onDayClick(day, [])}
+                onClick={() => onDayClick(day)}
               >
                 <div className="w-full">
                   <div className="text-xs font-medium truncate">{item.title}</div>
@@ -86,9 +61,38 @@ export function CalendarDay({
               </Button>
             </HoverCardTrigger>
             <HoverCardContent className="w-80">
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <h4 className="font-medium">{item.title}</h4>
                 {item.caption && <p className="text-sm text-muted-foreground">{item.caption}</p>}
+                
+                <Accordion type="single" collapsible className="w-full">
+                  {item.visuals_notes && (
+                    <AccordionItem value="visuals" className="border-b">
+                      <AccordionTrigger className="text-sm">Visuals Notes</AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground">
+                        {item.visuals_notes}
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+                  
+                  {item.key_notes && (
+                    <AccordionItem value="keynotes" className="border-b">
+                      <AccordionTrigger className="text-sm">Key Notes</AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground">
+                        {item.key_notes}
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+                  
+                  {item.photo_examples && (
+                    <AccordionItem value="photos" className="border-b">
+                      <AccordionTrigger className="text-sm">Photo Examples</AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground">
+                        {item.photo_examples}
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+                </Accordion>
               </div>
             </HoverCardContent>
           </HoverCard>
