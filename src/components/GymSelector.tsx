@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -6,21 +8,30 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const gyms = [
-  { id: 1, name: "Downtown Gym" },
-  { id: 2, name: "Westside Location" },
-  { id: 3, name: "South Center" },
-];
-
 export function GymSelector() {
+  const { data: gyms, isLoading } = useQuery({
+    queryKey: ['gyms'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('gyms')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
+  if (isLoading) return <div className="animate-pulse h-10 bg-muted rounded-md" />;
+
   return (
     <Select>
-      <SelectTrigger className="w-full">
+      <SelectTrigger className="w-full bg-card border-secondary/20">
         <SelectValue placeholder="Select a gym" />
       </SelectTrigger>
       <SelectContent>
-        {gyms.map((gym) => (
-          <SelectItem key={gym.id} value={gym.id.toString()}>
+        {gyms?.map((gym) => (
+          <SelectItem key={gym.id} value={gym.id}>
             {gym.name}
           </SelectItem>
         ))}

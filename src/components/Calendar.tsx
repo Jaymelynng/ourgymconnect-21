@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -11,8 +13,28 @@ export function Calendar() {
   const monthEnd = endOfMonth(currentDate);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
+  const { data: tasks } = useQuery({
+    queryKey: ['tasks', format(currentDate, 'yyyy-MM')],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .gte('due_date', monthStart.toISOString())
+        .lte('due_date', monthEnd.toISOString());
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
+
+  const getTasksForDay = (date: Date) => {
+    return tasks?.filter(task => 
+      format(new Date(task.due_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+    );
+  };
 
   return (
     <Card className="p-6 animate-fade-in bg-card shadow-sm hover:shadow-md transition-shadow duration-300">
@@ -47,21 +69,27 @@ export function Calendar() {
         ))}
       </div>
       <div className="grid grid-cols-7 gap-2">
-        {days.map((day) => (
-          <Button
-            key={day.toString()}
-            variant="ghost"
-            className={cn(
-              "h-12 transition-all duration-200",
-              "hover:bg-primary/10 hover:scale-105 transform",
-              !isSameMonth(day, currentDate) && "text-muted-foreground opacity-50",
-              isToday(day) && "bg-primary/10 font-bold text-primary",
-              "focus:ring-2 focus:ring-primary/20 focus:outline-none"
-            )}
-          >
-            {format(day, "d")}
-          </Button>
-        ))}
+        {days.map((day) => {
+          const dayTasks = getTasksForDay(day);
+          return (
+            <Button
+              key={day.toString()}
+              variant="ghost"
+              className={cn(
+                "h-12 relative transition-all duration-200",
+                "hover:bg-primary/10 hover:scale-105 transform",
+                !isSameMonth(day, currentDate) && "text-muted-foreground opacity-50",
+                isToday(day) && "bg-primary/10 font-bold text-primary",
+                "focus:ring-2 focus:ring-primary/20 focus:outline-none"
+              )}
+            >
+              {format(day, "d")}
+              {dayTasks && dayTasks.length > 0 && (
+                <span className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
+              )}
+            </Button>
+          );
+        })}
       </div>
     </Card>
   );
