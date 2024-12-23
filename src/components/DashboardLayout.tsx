@@ -1,5 +1,5 @@
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupLabel, SidebarTrigger } from "@/components/ui/sidebar";
-import { Calendar, Grid, LayoutList, CalendarDays, Settings, Menu } from "lucide-react";
+import { Calendar, Grid, LayoutList, CalendarDays, Settings, Menu, Tool } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { GymSelector } from "./GymSelector";
@@ -40,13 +40,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <Sidebar>
           <SidebarHeader className="border-b border-border/10 p-4">
             <div className="flex items-center gap-2">
-              <Settings className="w-6 h-6 text-primary" />
-              <h2 className="font-semibold text-lg">Gym Toolkit</h2>
+              <Tool className="w-6 h-6 text-primary animate-pulse" />
+              <h2 className="font-semibold text-lg">Marketing Toolkit</h2>
             </div>
+            <p className="text-sm text-muted-foreground mt-1 pl-8">
+              Your all-in-one gym marketing solution
+            </p>
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+              <SidebarGroupLabel>Toolkit Views</SidebarGroupLabel>
               <SidebarMenu>
                 {menuItems.map((item) => (
                   <SidebarMenuItem key={item.path}>
@@ -73,7 +76,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </SidebarContent>
           <SidebarFooter className="border-t border-border/10 p-4">
             <div className="text-xs text-muted-foreground text-center">
-              Gym Marketing Toolkit v1.0
+              Marketing Toolkit v1.0
             </div>
           </SidebarFooter>
         </Sidebar>
