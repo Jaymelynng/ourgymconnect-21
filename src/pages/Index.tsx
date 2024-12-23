@@ -1,7 +1,11 @@
 import { Calendar } from "@/components/Calendar";
 import { GymSelector } from "@/components/GymSelector";
 import { Button } from "@/components/ui/button";
-import { Facebook, Instagram, FileText, List, Calendar as CalendarIcon, Grid, LayoutList } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ListView } from "@/components/views/ListView";
+import { WeeklyView } from "@/components/views/WeeklyView";
+import { GalleryView } from "@/components/views/GalleryView";
+import { Facebook, Instagram, FileText, List, Calendar as CalendarIcon, Grid, LayoutList, Menu } from "lucide-react";
 import { useState } from "react";
 
 type ViewType = "list" | "calendar" | "weekly" | "gallery";
@@ -48,66 +52,68 @@ const Index = () => {
               Gallery View
             </Button>
           </div>
+          
+          {/* Toolbox Sheet */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Menu className="h-4 w-4" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <div className="space-y-4 py-4">
+                <h2 className="text-lg font-bold mb-4 text-foreground">Gym Toolbox</h2>
+                <GymSelector />
+                <Button className="w-full bg-primary hover:bg-primary-hover text-primary-foreground">
+                  Go to Gym Dashboard
+                </Button>
+                <div className="pt-4 border-t border-secondary/20">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-3">Quick Links</h3>
+                  <div className="space-y-2">
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start gap-2 hover:bg-primary/10"
+                      asChild
+                    >
+                      <a href="#" target="_blank" rel="noopener noreferrer">
+                        <Facebook className="h-4 w-4 text-[#1877F2]" />
+                        Facebook Page
+                      </a>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start gap-2 hover:bg-primary/10"
+                      asChild
+                    >
+                      <a href="#" target="_blank" rel="noopener noreferrer">
+                        <Instagram className="h-4 w-4 text-[#E4405F]" />
+                        Instagram Profile
+                      </a>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start gap-2 hover:bg-primary/10"
+                      asChild
+                    >
+                      <a href="#" target="_blank" rel="noopener noreferrer">
+                        <FileText className="h-4 w-4 text-[#0078D4]" />
+                        SharePoint
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6 flex gap-6">
+      <div className="max-w-7xl mx-auto p-6">
         {/* Main Content */}
-        <div className="flex-1">
-          {currentView === "calendar" && <Calendar />}
-          {currentView === "list" && <div className="text-muted-foreground">List view coming soon...</div>}
-          {currentView === "weekly" && <div className="text-muted-foreground">Weekly view coming soon...</div>}
-          {currentView === "gallery" && <div className="text-muted-foreground">Gallery view coming soon...</div>}
-        </div>
-
-        {/* Right Sidebar - Toolbox */}
-        <div className="w-80 bg-card p-4 rounded-lg border border-secondary/20 shadow-sm">
-          <h2 className="text-lg font-bold mb-4 text-foreground">Gym Toolbox</h2>
-          
-          <div className="space-y-4">
-            <GymSelector />
-            
-            <Button className="w-full bg-primary hover:bg-primary-hover text-primary-foreground">
-              Go to Gym Dashboard
-            </Button>
-
-            <div className="pt-4 border-t border-secondary/20">
-              <h3 className="text-sm font-medium text-muted-foreground mb-3">Quick Links</h3>
-              <div className="space-y-2">
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start gap-2 hover:bg-primary/10"
-                  asChild
-                >
-                  <a href="#" target="_blank" rel="noopener noreferrer">
-                    <Facebook className="h-4 w-4 text-[#1877F2]" />
-                    Facebook Page
-                  </a>
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start gap-2 hover:bg-primary/10"
-                  asChild
-                >
-                  <a href="#" target="_blank" rel="noopener noreferrer">
-                    <Instagram className="h-4 w-4 text-[#E4405F]" />
-                    Instagram Profile
-                  </a>
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start gap-2 hover:bg-primary/10"
-                  asChild
-                >
-                  <a href="#" target="_blank" rel="noopener noreferrer">
-                    <FileText className="h-4 w-4 text-[#0078D4]" />
-                    SharePoint
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        {currentView === "calendar" && <Calendar />}
+        {currentView === "list" && <ListView />}
+        {currentView === "weekly" && <WeeklyView />}
+        {currentView === "gallery" && <GalleryView />}
       </div>
     </div>
   );

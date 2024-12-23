@@ -26,12 +26,12 @@ export function GymSelector() {
 
   return (
     <Select>
-      <SelectTrigger className="w-full bg-card border-secondary/20">
+      <SelectTrigger className="w-full bg-white border-secondary/20">
         <SelectValue placeholder="Select a gym" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-white max-h-[300px]">
         {gyms?.map((gym) => (
-          <SelectItem key={gym.id} value={gym.id}>
+          <SelectItem key={gym.id} value={gym.id} className="focus:bg-primary/10">
             {gym.name}
           </SelectItem>
         ))}
