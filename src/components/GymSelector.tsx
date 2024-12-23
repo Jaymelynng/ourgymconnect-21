@@ -7,25 +7,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "./ui/use-toast";
 
-export function GymSelector() {
+interface GymSelectorProps {
+  onGymChange?: (gymId: string) => void;
+}
+
+export function GymSelector({ onGymChange }: GymSelectorProps) {
+  const { toast } = useToast();
+  
   const { data: gyms, isLoading } = useQuery({
     queryKey: ['gyms'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('gyms')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
-      return data || [];
+      try {
+        const { data, error } = await supabase
+          .from('gyms')
+          .select('*')
+          .order('name');
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching gyms:', error);
+        toast({
+          title: "Error fetching gyms",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+        return [];
+      }
     }
   });
 
   if (isLoading) return <div className="animate-pulse h-10 bg-muted rounded-md" />;
 
   return (
-    <Select>
+    <Select onValueChange={onGymChange}>
       <SelectTrigger className="w-full bg-white border-secondary/20">
         <SelectValue placeholder="Select a gym" />
       </SelectTrigger>

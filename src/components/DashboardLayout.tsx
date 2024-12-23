@@ -1,8 +1,9 @@
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupLabel, SidebarTrigger } from "@/components/ui/sidebar";
 import { Facebook, Instagram, Share, Menu } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { GymSelector } from "./GymSelector";
+import { useState } from "react";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -10,6 +11,8 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [selectedGym, setSelectedGym] = useState<string | null>(null);
 
   const viewItems = [
     {
@@ -106,7 +109,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 Gym Settings
               </SidebarGroupLabel>
               <div className="p-4">
-                <GymSelector />
+                <GymSelector onGymChange={setSelectedGym} />
               </div>
             </SidebarGroup>
           </SidebarContent>
@@ -131,11 +134,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     key={item.path}
                     variant={location.pathname === item.path ? "default" : "ghost"}
                     className="transition-all duration-200"
-                    asChild
+                    onClick={() => navigate(item.path)}
                   >
-                    <a href={item.path}>
-                      {item.title}
-                    </a>
+                    {item.title}
                   </Button>
                 ))}
               </nav>
