@@ -16,6 +16,7 @@ export function Calendar() {
   const monthEnd = endOfMonth(currentDate);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
+  // Fetch both tasks and marketing items for the current month
   const { data: tasks } = useQuery({
     queryKey: ['tasks', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
@@ -35,13 +36,37 @@ export function Calendar() {
     }
   });
 
+  const { data: marketingItems } = useQuery({
+    queryKey: ['marketing_items', format(currentDate, 'yyyy-MM')],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('marketing_items')
+        .select('*')
+        .gte('created_at', monthStart.toISOString())
+        .lte('created_at', monthEnd.toISOString());
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
-  const getTasksForDay = (date: Date) => {
-    return tasks?.filter(task => 
+  const getItemsForDay = (date: Date) => {
+    const dayTasks = tasks?.filter(task => 
       format(new Date(task.due_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
-    );
+    ) || [];
+
+    const dayMarketingItems = marketingItems?.filter(item => 
+      format(new Date(item.created_at), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+    ) || [];
+
+    return {
+      tasks: dayTasks,
+      marketingItems: dayMarketingItems,
+      hasItems: dayTasks.length > 0 || dayMarketingItems.length > 0
+    };
   };
 
   const handleDayClick = (date: Date, dayTasks: any[]) => {
@@ -66,15 +91,20 @@ export function Calendar() {
       </div>
       
       <div className="grid grid-cols-7 gap-2">
-        {days.map((day) => (
-          <CalendarDay
-            key={day.toString()}
-            day={day}
-            currentDate={currentDate}
-            tasks={getTasksForDay(day) || []}
-            onDayClick={handleDayClick}
-          />
-        ))}
+        {days.map((day) => {
+          const { tasks: dayTasks, marketingItems: dayMarketingItems, hasItems } = getItemsForDay(day);
+          return (
+            <CalendarDay
+              key={day.toString()}
+              day={day}
+              currentDate={currentDate}
+              tasks={dayTasks}
+              marketingItems={dayMarketingItems}
+              hasItems={hasItems}
+              onDayClick={handleDayClick}
+            />
+          );
+        })}
       </div>
 
       <TaskDialog
