@@ -62,7 +62,7 @@ export function ListView() {
               <div className="flex items-start justify-between mb-4">
                 <h3 className="text-lg font-medium">{task.title}</h3>
                 {task.status && (
-                  <Badge variant={task.status === 'pending' ? 'secondary' : 'success'} className="ml-2">
+                  <Badge variant={task.status === 'pending' ? 'secondary' : 'default'} className="ml-2">
                     {task.status}
                   </Badge>
                 )}
