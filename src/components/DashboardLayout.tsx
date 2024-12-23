@@ -1,5 +1,5 @@
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupLabel, SidebarTrigger } from "@/components/ui/sidebar";
-import { Calendar, Grid, LayoutList, CalendarDays, Settings, Menu, Tool } from "lucide-react";
+import { Calendar, Grid, LayoutList, CalendarDays, Settings, Menu, Tools } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { GymSelector } from "./GymSelector";
@@ -40,7 +40,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <Sidebar>
           <SidebarHeader className="border-b border-border/10 p-4">
             <div className="flex items-center gap-2">
-              <Tool className="w-6 h-6 text-primary animate-pulse" />
+              <Tools className="w-6 h-6 text-primary animate-pulse" />
               <h2 className="font-semibold text-lg">Marketing Toolkit</h2>
             </div>
             <p className="text-sm text-muted-foreground mt-1 pl-8">
