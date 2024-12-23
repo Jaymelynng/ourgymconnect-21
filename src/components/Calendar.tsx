@@ -18,7 +18,7 @@ export function Calendar() {
   const calendarEnd = endOfWeek(monthEnd);
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
-  const { data: marketingItems, isLoading: marketingLoading, error: marketingError } = useQuery({
+  const { data: marketingItems, isLoading: marketingLoading, error: marketingError, refetch } = useQuery({
     queryKey: ['marketing_items', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
       try {
@@ -117,6 +117,7 @@ export function Calendar() {
               marketingItems={dayMarketingItems}
               hasItems={hasItems}
               onDayClick={() => setSelectedDay(day)}
+              refetchItems={refetch}
             />
           );
         })}

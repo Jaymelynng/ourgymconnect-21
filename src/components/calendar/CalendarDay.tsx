@@ -8,6 +8,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface CalendarDayProps {
   day: Date;
@@ -16,6 +19,7 @@ interface CalendarDayProps {
   marketingItems: any[];
   hasItems: boolean;
   onDayClick: (date: Date) => void;
+  refetchItems: () => void;
 }
 
 export function CalendarDay({ 
@@ -23,8 +27,36 @@ export function CalendarDay({
   currentDate, 
   marketingItems, 
   hasItems, 
-  onDayClick 
+  onDayClick,
+  refetchItems
 }: CalendarDayProps) {
+  const { toast } = useToast();
+
+  const handleDelete = async (itemId: string) => {
+    try {
+      const { error } = await supabase
+        .from('marketing_items')
+        .delete()
+        .eq('id', itemId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Post deleted successfully",
+        variant: "default",
+      });
+      
+      refetchItems();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast({
+        title: "Error deleting post",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-[120px] border-b border-r border-border bg-card hover:bg-secondary/5 transition-colors relative">
       <div 
@@ -62,13 +94,23 @@ export function CalendarDay({
             </HoverCardTrigger>
             <HoverCardContent className="w-80">
               <div className="space-y-4">
-                <h4 className="font-medium">{item.title}</h4>
+                <div className="flex items-start justify-between">
+                  <h4 className="font-medium">{item.title}</h4>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-destructive hover:text-destructive/90"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
                 {item.caption && <p className="text-sm text-muted-foreground">{item.caption}</p>}
                 
                 <Accordion type="single" collapsible className="w-full">
                   {item.visuals_notes && (
                     <AccordionItem value="visuals" className="border-b">
-                      <AccordionTrigger className="text-sm">Visuals Notes</AccordionTrigger>
+                      <AccordionTrigger className="text-sm">Visuals for Managers</AccordionTrigger>
                       <AccordionContent className="text-sm text-muted-foreground">
                         {item.visuals_notes}
                       </AccordionContent>
@@ -77,7 +119,7 @@ export function CalendarDay({
                   
                   {item.key_notes && (
                     <AccordionItem value="keynotes" className="border-b">
-                      <AccordionTrigger className="text-sm">Key Notes</AccordionTrigger>
+                      <AccordionTrigger className="text-sm">Key Notes About the Post</AccordionTrigger>
                       <AccordionContent className="text-sm text-muted-foreground">
                         {item.key_notes}
                       </AccordionContent>
