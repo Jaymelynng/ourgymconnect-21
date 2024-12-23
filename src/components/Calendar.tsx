@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek } from "date-fns";
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, parseISO } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CalendarHeader } from "./calendar/CalendarHeader";
@@ -31,8 +31,8 @@ export function Calendar() {
             *,
             marketing_items (*)
           `)
-          .gte('due_date', monthStart.toISOString())
-          .lte('due_date', monthEnd.toISOString())
+          .gte('due_date', calendarStart.toISOString())
+          .lte('due_date', calendarEnd.toISOString())
           .order('due_date');
         
         if (error) {
@@ -40,8 +40,14 @@ export function Calendar() {
           throw error;
         }
         
-        console.log("Fetched tasks:", data);
-        return data || [];
+        // Parse the dates properly
+        const parsedData = data?.map(task => ({
+          ...task,
+          due_date: task.due_date ? parseISO(task.due_date) : null
+        })) || [];
+        
+        console.log("Fetched and parsed tasks:", parsedData);
+        return parsedData;
       } catch (error) {
         console.error("Failed to fetch tasks:", error);
         toast({
@@ -56,7 +62,6 @@ export function Calendar() {
     retry: 2
   });
 
-  // Fetch marketing items that don't have associated tasks
   const { data: standaloneMarketingItems, isLoading: marketingLoading, error: marketingError } = useQuery({
     queryKey: ['marketing_items', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
@@ -65,8 +70,8 @@ export function Calendar() {
         const { data, error } = await supabase
           .from('marketing_items')
           .select('*')
-          .gte('created_at', monthStart.toISOString())
-          .lte('created_at', monthEnd.toISOString())
+          .gte('created_at', calendarStart.toISOString())
+          .lte('created_at', calendarEnd.toISOString())
           .order('created_at');
         
         if (error) {
@@ -74,8 +79,14 @@ export function Calendar() {
           throw error;
         }
         
-        console.log("Fetched marketing items:", data);
-        return data || [];
+        // Parse the dates properly
+        const parsedData = data?.map(item => ({
+          ...item,
+          created_at: item.created_at ? parseISO(item.created_at) : null
+        })) || [];
+        
+        console.log("Fetched and parsed marketing items:", parsedData);
+        return parsedData;
       } catch (error) {
         console.error("Failed to fetch marketing items:", error);
         toast({
@@ -94,14 +105,14 @@ export function Calendar() {
   const prevMonth = useCallback(() => setCurrentDate(subMonths(currentDate, 1)), [currentDate]);
 
   const getItemsForDay = useCallback((date: Date) => {
-    // Get tasks for this day
+    // Get tasks for this day by comparing the dates properly
     const dayTasks = tasks?.filter(task => 
-      format(new Date(task.due_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+      task.due_date && format(task.due_date, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
     ) || [];
 
     // Get standalone marketing items for this day
     const dayMarketingItems = standaloneMarketingItems?.filter(item => 
-      format(new Date(item.created_at), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+      item.created_at && format(item.created_at, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
     ) || [];
 
     return {
