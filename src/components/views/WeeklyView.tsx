@@ -2,7 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, startOfWeek, endOfWeek, eachDayOfInterval } from "date-fns";
 import { Card } from "@/components/ui/card";
-import { TaskPreview } from "@/components/calendar/TaskPreview";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 
 export function WeeklyView() {
   const today = new Date();
@@ -10,35 +16,32 @@ export function WeeklyView() {
   const weekEnd = endOfWeek(today);
   const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
-  const { data: tasks, isLoading } = useQuery({
-    queryKey: ['tasks', format(today, 'yyyy-w')],
+  const { data: marketingItems, isLoading } = useQuery({
+    queryKey: ['marketing_items', format(today, 'yyyy-w')],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('tasks')
-        .select(`
-          *,
-          marketing_items (
-            *
-          )
-        `)
-        .gte('due_date', weekStart.toISOString())
-        .lte('due_date', weekEnd.toISOString());
+        .from('marketing_items')
+        .select('*')
+        .gte('created_at', weekStart.toISOString())
+        .lte('created_at', weekEnd.toISOString());
       
       if (error) throw error;
       return data || [];
     }
   });
 
-  if (isLoading) return <div className="animate-pulse space-y-4">
-    {[1,2,3].map(i => (
-      <div key={i} className="h-32 bg-muted rounded-lg" />
-    ))}
-  </div>;
+  if (isLoading) return (
+    <div className="animate-pulse space-y-4">
+      {[1,2,3].map(i => (
+        <div key={i} className="h-32 bg-muted rounded-lg" />
+      ))}
+    </div>
+  );
 
-  const getTasksForDay = (date: Date) => {
-    return tasks?.filter(task => 
-      format(new Date(task.due_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
-    );
+  const getItemsForDay = (date: Date) => {
+    return marketingItems?.filter(item => 
+      format(new Date(item.created_at), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+    ) || [];
   };
 
   return (
@@ -49,9 +52,42 @@ export function WeeklyView() {
             {format(day, 'EEE do')}
           </h3>
           <div className="space-y-2">
-            {getTasksForDay(day).map((task) => (
-              <Card key={task.id} className="p-2">
-                <TaskPreview task={task} />
+            {getItemsForDay(day).map((item) => (
+              <Card key={item.id} className="p-4">
+                <div className="mb-2">
+                  <h4 className="font-medium text-sm">{item.title}</h4>
+                  {item.item_type && (
+                    <Badge variant="secondary" className="mt-1 text-xs">
+                      {item.item_type}
+                    </Badge>
+                  )}
+                </div>
+                
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="details">
+                    <AccordionTrigger className="text-xs">View Details</AccordionTrigger>
+                    <AccordionContent>
+                      {item.visuals_notes && (
+                        <div className="mb-2">
+                          <h5 className="text-xs font-medium">Visuals for Managers</h5>
+                          <p className="text-xs text-muted-foreground">{item.visuals_notes}</p>
+                        </div>
+                      )}
+                      {item.key_notes && (
+                        <div className="mb-2">
+                          <h5 className="text-xs font-medium">Key Notes About the Post</h5>
+                          <p className="text-xs text-muted-foreground">{item.key_notes}</p>
+                        </div>
+                      )}
+                      {item.photo_examples && (
+                        <div>
+                          <h5 className="text-xs font-medium">Photo Examples</h5>
+                          <p className="text-xs text-muted-foreground">{item.photo_examples}</p>
+                        </div>
+                      )}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </Card>
             ))}
           </div>
