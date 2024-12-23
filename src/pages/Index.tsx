@@ -4,21 +4,19 @@ import { ContentSeriesSection } from "@/components/dashboard/ContentSeriesSectio
 
 const Index = () => {
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Gym Marketing Dashboard
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your marketing efforts across all locations
-          </p>
-        </div>
-
-        <MetricsSection />
-        <ContentSeriesSection />
+    <div className="space-y-8 animate-fade-in">
+      <div className="bg-gradient-to-r from-primary/20 to-secondary/20 p-8 rounded-lg shadow-sm">
+        <h1 className="text-4xl font-bold text-foreground mb-3 animate-scale-in">
+          Gym Marketing Dashboard
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-2xl">
+          Welcome to your all-in-one marketing toolkit. Create, manage, and schedule your content across all locations.
+        </p>
       </div>
-    </DashboardLayout>
+
+      <MetricsSection />
+      <ContentSeriesSection />
+    </div>
   );
 };
 
