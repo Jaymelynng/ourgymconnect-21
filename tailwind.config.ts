@@ -22,37 +22,29 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: "#F4F5F7",
+        foreground: "#2F3A4A",
         primary: {
-          DEFAULT: "#b48f8f",
-          foreground: "#ffffff",
+          DEFAULT: "#B48F8F",
+          foreground: "#FFFFFF",
+          hover: "#D19F9F",
         },
         secondary: {
-          DEFAULT: "#cec4c1",
-          foreground: "#000000",
+          DEFAULT: "#CEC4C1",
+          foreground: "#2F3A4A",
         },
         accent: {
-          DEFAULT: "#8f93a0",
-          foreground: "#ffffff",
+          DEFAULT: "#8F93A0",
+          foreground: "#FFFFFF",
+        },
+        card: {
+          DEFAULT: "#FFFFFF",
+          foreground: "#2F3A4A",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {
@@ -71,12 +63,17 @@ export default {
           "0%": { transform: "scale(0.95)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
+        "hover-scale": {
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(1.05)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "scale-in": "scale-in 0.2s ease-out",
+        "hover-scale": "hover-scale 0.2s ease-out",
       },
     },
   },

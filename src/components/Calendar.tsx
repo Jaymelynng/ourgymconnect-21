@@ -15,14 +15,26 @@ export function Calendar() {
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
   return (
-    <Card className="p-6 animate-fade-in">
+    <Card className="p-6 animate-fade-in bg-card shadow-sm hover:shadow-md transition-shadow duration-300">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">{format(currentDate, "MMMM yyyy")}</h2>
+        <h2 className="text-2xl font-bold text-foreground">
+          {format(currentDate, "MMMM yyyy")}
+        </h2>
         <div className="flex space-x-2">
-          <Button variant="outline" size="icon" onClick={prevMonth}>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={prevMonth}
+            className="hover:bg-primary/10 hover:text-primary transition-colors"
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon" onClick={nextMonth}>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={nextMonth}
+            className="hover:bg-primary/10 hover:text-primary transition-colors"
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -40,9 +52,11 @@ export function Calendar() {
             key={day.toString()}
             variant="ghost"
             className={cn(
-              "h-12 hover:bg-accent/10 transition-colors",
-              !isSameMonth(day, currentDate) && "text-muted-foreground",
-              isToday(day) && "bg-primary/10 font-bold"
+              "h-12 transition-all duration-200",
+              "hover:bg-primary/10 hover:scale-105 transform",
+              !isSameMonth(day, currentDate) && "text-muted-foreground opacity-50",
+              isToday(day) && "bg-primary/10 font-bold text-primary",
+              "focus:ring-2 focus:ring-primary/20 focus:outline-none"
             )}
           >
             {format(day, "d")}
