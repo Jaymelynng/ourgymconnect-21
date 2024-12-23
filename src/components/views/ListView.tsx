@@ -9,9 +9,17 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Edit, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { EditMarketingDialog } from "../marketing/EditMarketingDialog";
+import { useToast } from "@/components/ui/use-toast";
 
 export function ListView() {
-  const { data: marketingItems, isLoading } = useQuery({
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const { toast } = useToast();
+
+  const { data: marketingItems, isLoading, refetch } = useQuery({
     queryKey: ['marketing_items'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -21,7 +29,6 @@ export function ListView() {
       
       if (error) throw error;
       
-      // Group items by date
       const groupedItems = (data || []).reduce((acc: Record<string, typeof data>, item) => {
         const date = item.created_at ? format(new Date(item.created_at), 'yyyy-MM-dd') : 'No Date';
         if (!acc[date]) {
@@ -34,6 +41,31 @@ export function ListView() {
       return groupedItems;
     }
   });
+
+  const handleDelete = async (itemId: string) => {
+    try {
+      const { error } = await supabase
+        .from('marketing_items')
+        .delete()
+        .eq('id', itemId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Post deleted successfully",
+        variant: "default",
+      });
+      
+      refetch();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast({
+        title: "Error deleting post",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) return (
     <div className="animate-pulse space-y-4">
@@ -56,11 +88,29 @@ export function ListView() {
             <Card key={item.id} className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <h3 className="text-lg font-medium">{item.title}</h3>
-                {item.item_type && (
-                  <Badge variant="secondary" className="ml-2">
-                    {item.item_type}
-                  </Badge>
-                )}
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setEditingItem(item)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-destructive hover:text-destructive/90"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                  {item.item_type && (
+                    <Badge variant="secondary" className="ml-2">
+                      {item.item_type}
+                    </Badge>
+                  )}
+                </div>
               </div>
 
               {item.caption && (
@@ -107,6 +157,18 @@ export function ListView() {
           ))}
         </div>
       ))}
+
+      {editingItem && (
+        <EditMarketingDialog
+          item={editingItem}
+          isOpen={true}
+          onClose={() => setEditingItem(null)}
+          onUpdate={() => {
+            refetch();
+            setEditingItem(null);
+          }}
+        />
+      )}
     </div>
   );
 }

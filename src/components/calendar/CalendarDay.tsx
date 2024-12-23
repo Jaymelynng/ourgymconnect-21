@@ -8,9 +8,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Trash2 } from "lucide-react";
+import { Trash2, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { EditMarketingDialog } from "../marketing/EditMarketingDialog";
 
 interface CalendarDayProps {
   day: Date;
@@ -31,6 +33,7 @@ export function CalendarDay({
   refetchItems
 }: CalendarDayProps) {
   const { toast } = useToast();
+  const [editingItem, setEditingItem] = useState<any>(null);
 
   const handleDelete = async (itemId: string) => {
     try {
@@ -96,14 +99,24 @@ export function CalendarDay({
               <div className="space-y-4">
                 <div className="flex items-start justify-between">
                   <h4 className="font-medium">{item.title}</h4>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-destructive hover:text-destructive/90"
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                      onClick={() => setEditingItem(item)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:text-destructive/90"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
                 {item.caption && <p className="text-sm text-muted-foreground">{item.caption}</p>}
                 
@@ -140,6 +153,15 @@ export function CalendarDay({
           </HoverCard>
         ))}
       </div>
+
+      {editingItem && (
+        <EditMarketingDialog
+          item={editingItem}
+          isOpen={true}
+          onClose={() => setEditingItem(null)}
+          onUpdate={refetchItems}
+        />
+      )}
     </div>
   );
 }
