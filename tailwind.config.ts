@@ -25,25 +25,25 @@ export default {
         background: "#F4F5F7",
         foreground: "#2F3A4A",
         primary: {
-          DEFAULT: "#B48F8F",
+          DEFAULT: "#b48f8f",
           foreground: "#FFFFFF",
-          hover: "#D19F9F",
+          hover: "#c9a6a6",
         },
         secondary: {
-          DEFAULT: "#CEC4C1",
+          DEFAULT: "#cec4c1",
           foreground: "#2F3A4A",
         },
         accent: {
-          DEFAULT: "#8F93A0",
+          DEFAULT: "#8f93a0",
           foreground: "#FFFFFF",
+        },
+        muted: {
+          DEFAULT: "#b4acb0",
+          foreground: "#2F3A4A",
         },
         card: {
           DEFAULT: "#FFFFFF",
           foreground: "#2F3A4A",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
         },
       },
       keyframes: {
