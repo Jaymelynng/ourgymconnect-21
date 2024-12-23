@@ -8,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 
 export function ListView() {
   const { data: tasks, isLoading } = useQuery({
@@ -51,35 +52,59 @@ export function ListView() {
     <div className="space-y-6 animate-fade-in">
       {Object.entries(tasks || {}).map(([date, dateTasks]) => (
         <div key={date} className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">
-            {date === 'No Date' ? date : format(new Date(date), 'MMMM d, yyyy')}
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">
+              {date === 'No Date' ? date : format(new Date(date), 'MMMM d, yyyy')}
+            </h2>
+          </div>
           {(dateTasks as any[]).map((task) => (
-            <Card key={task.id} className="p-4">
-              <h3 className="text-lg font-medium mb-2">{task.title}</h3>
+            <Card key={task.id} className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <h3 className="text-lg font-medium">{task.title}</h3>
+                {task.status && (
+                  <Badge variant={task.status === 'pending' ? 'secondary' : 'success'} className="ml-2">
+                    {task.status}
+                  </Badge>
+                )}
+              </div>
+
               {task.description && (
-                <p className="text-muted-foreground mb-4">{task.description}</p>
+                <div className="mb-6 text-muted-foreground">
+                  <p>{task.description}</p>
+                </div>
               )}
               
               {task.marketing_items && (
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="visuals">
-                    <AccordionTrigger>Visuals for Managers</AccordionTrigger>
-                    <AccordionContent>
+                <Accordion type="single" collapsible className="w-full space-y-2">
+                  <AccordionItem value="visuals" className="border rounded-lg px-4">
+                    <AccordionTrigger className="hover:no-underline py-3">
+                      <span className="flex items-center gap-2 text-sm font-medium">
+                        Visuals for Managers
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-3 text-muted-foreground">
                       {task.marketing_items.visuals_notes || 'No visuals notes available'}
                     </AccordionContent>
                   </AccordionItem>
 
-                  <AccordionItem value="keynotes">
-                    <AccordionTrigger>Key Notes</AccordionTrigger>
-                    <AccordionContent>
+                  <AccordionItem value="keynotes" className="border rounded-lg px-4">
+                    <AccordionTrigger className="hover:no-underline py-3">
+                      <span className="flex items-center gap-2 text-sm font-medium">
+                        Key Notes About the Post
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-3 text-muted-foreground">
                       {task.marketing_items.key_notes || 'No key notes available'}
                     </AccordionContent>
                   </AccordionItem>
 
-                  <AccordionItem value="photos">
-                    <AccordionTrigger>Photo Examples</AccordionTrigger>
-                    <AccordionContent>
+                  <AccordionItem value="photos" className="border rounded-lg px-4">
+                    <AccordionTrigger className="hover:no-underline py-3">
+                      <span className="flex items-center gap-2 text-sm font-medium">
+                        Photo Examples
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-3 text-muted-foreground">
                       {task.marketing_items.photo_examples || 'No photo examples available'}
                     </AccordionContent>
                   </AccordionItem>
