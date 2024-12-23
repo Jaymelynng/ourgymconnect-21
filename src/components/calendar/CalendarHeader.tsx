@@ -10,7 +10,7 @@ interface CalendarHeaderProps {
 
 export function CalendarHeader({ currentDate, onPrevMonth, onNextMonth }: CalendarHeaderProps) {
   return (
-    <div className="flex justify-between items-center mb-6">
+    <div className="flex justify-between items-center mb-4">
       <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
         <CalendarIcon className="h-6 w-6 text-primary" />
         {format(currentDate, "MMMM yyyy")}

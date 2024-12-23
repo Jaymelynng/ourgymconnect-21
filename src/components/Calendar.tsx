@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CalendarHeader } from "./calendar/CalendarHeader";
@@ -16,9 +16,10 @@ export function Calendar() {
   
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const calendarStart = startOfWeek(monthStart);
+  const calendarEnd = endOfWeek(monthEnd);
+  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
-  // Fetch tasks with their related marketing items
   const { data: tasks, isLoading: tasksLoading, error: tasksError } = useQuery({
     queryKey: ['tasks', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
@@ -134,22 +135,23 @@ export function Calendar() {
   }
 
   return (
-    <Card className="p-6 animate-fade-in bg-card shadow-sm hover:shadow-md transition-shadow duration-300 w-full min-h-[800px]">
+    <Card className="p-6 animate-fade-in bg-card shadow-sm hover:shadow-md transition-shadow duration-300 w-full">
       <CalendarHeader 
         currentDate={currentDate}
         onPrevMonth={prevMonth}
         onNextMonth={nextMonth}
       />
       
-      <div className="grid grid-cols-7 gap-2 mb-2">
+      <div className="grid grid-cols-7 border-t border-l border-border">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div key={day} className="text-center text-sm font-medium text-muted-foreground p-2">
+          <div 
+            key={day} 
+            className="text-sm font-medium text-muted-foreground p-2 text-center border-b border-r border-border"
+          >
             {day}
           </div>
         ))}
-      </div>
-      
-      <div className="grid grid-cols-7 gap-2">
+        
         {days.map((day) => {
           const { tasks: dayTasks, marketingItems: dayMarketingItems, hasItems } = getItemsForDay(day);
           return (
