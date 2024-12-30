@@ -9,11 +9,11 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     persistSession: true,
     detectSessionInUrl: true,
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    flowType: 'pkce',
   },
   global: {
     headers: {
       'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
     },
   },
 });
