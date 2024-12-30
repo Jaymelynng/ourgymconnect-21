@@ -1,5 +1,5 @@
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupLabel, SidebarTrigger } from "@/components/ui/sidebar";
-import { Facebook, Instagram, Share, Menu } from "lucide-react";
+import { Facebook, Instagram, Share, Menu, Home } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { GymSelector } from "./GymSelector";
@@ -16,25 +16,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const viewItems = [
     {
-      title: "List View",
-      path: "/list",
-      description: "View and manage your content in a list format"
-    },
-    {
-      title: "Calendar View",
-      path: "/calendar",
-      description: "Schedule and plan your content"
-    },
-    {
-      title: "Weekly View",
-      path: "/weekly",
-      description: "Weekly content overview and planning"
-    },
-    {
       title: "Gallery View",
       path: "/gallery",
       description: "Visual gallery of your content"
-    },
+    }
   ];
 
   const toolkitLinks = [
@@ -113,17 +98,22 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </div>
             </SidebarGroup>
           </SidebarContent>
-          <SidebarFooter className="border-t border-border/10 p-4 bg-card/50">
-            <div className="text-xs text-muted-foreground text-center">
-              Marketing Toolkit v1.0
-            </div>
-          </SidebarFooter>
         </Sidebar>
         <div className="flex-1 overflow-auto">
           <header className="sticky top-0 z-10 w-full bg-card/80 backdrop-blur-sm border-b border-border/10 shadow-sm">
             <div className="px-6 py-4">
               <div className="flex items-center justify-between mb-4">
-                <SidebarTrigger className="hover:bg-primary/10" />
+                <div className="flex items-center gap-2">
+                  <SidebarTrigger className="hover:bg-primary/10" />
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="hover:bg-primary/10"
+                    onClick={() => navigate('/')}
+                  >
+                    <Home className="h-5 w-5" />
+                  </Button>
+                </div>
                 <Button variant="ghost" size="icon" className="hover:bg-primary/10">
                   <Menu className="h-5 w-5" />
                 </Button>
