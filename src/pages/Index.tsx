@@ -16,7 +16,7 @@ const Index = () => {
   const [showContentCreator, setShowContentCreator] = useState(false);
 
   // Fetch dashboard sections for news and updates
-  const { data: dashboardSections, isLoading: isLoadingSections, error: sectionsError } = useQuery({
+  const { data: dashboardSections, isLoading: isLoadingSections } = useQuery({
     queryKey: ['dashboard_sections'],
     queryFn: async () => {
       console.log('Fetching dashboard sections...');
@@ -27,19 +27,22 @@ const Index = () => {
       
       if (error) {
         console.error('Error fetching dashboard sections:', error);
+        toast({
+          title: "Error loading dashboard sections",
+          description: "Please try refreshing the page",
+          variant: "destructive",
+        });
         throw error;
       }
       console.log('Dashboard sections:', data);
       return data || [];
     },
     retry: 3,
-    meta: {
-      errorMessage: "Failed to fetch dashboard sections. Please try again later."
-    }
+    retryDelay: 1000,
   });
 
   // Fetch marketing content for upcoming posts
-  const { data: upcomingContent, isLoading: isLoadingContent, error: contentError } = useQuery({
+  const { data: upcomingContent, isLoading: isLoadingContent } = useQuery({
     queryKey: ['upcoming_marketing_content'],
     queryFn: async () => {
       console.log('Fetching upcoming content...');
@@ -52,15 +55,18 @@ const Index = () => {
       
       if (error) {
         console.error('Error fetching upcoming content:', error);
+        toast({
+          title: "Error loading upcoming content",
+          description: "Please try refreshing the page",
+          variant: "destructive",
+        });
         throw error;
       }
       console.log('Upcoming content:', data);
       return data || [];
     },
     retry: 3,
-    meta: {
-      errorMessage: "Failed to fetch upcoming content. Please try again later."
-    }
+    retryDelay: 1000,
   });
 
   const renderSkeleton = () => (
@@ -106,8 +112,6 @@ const Index = () => {
               <div className="space-y-4">
                 {isLoadingSections ? (
                   renderSkeleton()
-                ) : sectionsError ? (
-                  <p className="text-destructive">Failed to load news and updates</p>
                 ) : !dashboardSections?.length ? (
                   <p className="text-muted-foreground">No news or updates available</p>
                 ) : (
@@ -135,8 +139,6 @@ const Index = () => {
               <div className="space-y-4">
                 {isLoadingContent ? (
                   renderSkeleton()
-                ) : contentError ? (
-                  <p className="text-destructive">Failed to load upcoming content</p>
                 ) : !upcomingContent?.length ? (
                   <p className="text-muted-foreground">No upcoming content available</p>
                 ) : (
