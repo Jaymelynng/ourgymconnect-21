@@ -8,7 +8,7 @@ export function GalleryView() {
     queryKey: ['marketing_items'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('marketing_items')
+        .from('marketing_content')
         .select('*')
         .order('created_at', { ascending: false });
       

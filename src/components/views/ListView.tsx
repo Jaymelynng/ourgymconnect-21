@@ -23,7 +23,7 @@ export function ListView() {
     queryKey: ['marketing_items'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('marketing_items')
+        .from('marketing_content')
         .select('*')
         .order('created_at');
       
@@ -45,7 +45,7 @@ export function ListView() {
   const handleDelete = async (itemId: string) => {
     try {
       const { error } = await supabase
-        .from('marketing_items')
+        .from('marketing_content')
         .delete()
         .eq('id', itemId);
 

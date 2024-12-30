@@ -10,9 +10,9 @@ export function ContentSeriesSection() {
     queryKey: ['marketing_series'],
     queryFn: async () => {
       const { data } = await supabase
-        .from('marketing_items')
+        .from('marketing_content')
         .select('*')
-        .eq('is_global', true)
+        .eq('series_type', 'global')
         .order('created_at', { ascending: false });
       return data || [];
     }
@@ -50,10 +50,10 @@ export function ContentSeriesSection() {
                 <td className="py-3 px-4">{item.title}</td>
                 <td className="py-3 px-4">
                   <span className="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary">
-                    {item.item_type || 'Standard'}
+                    {item.content_type || 'Standard'}
                   </span>
                 </td>
-                <td className="py-3 px-4">12</td>
+                <td className="py-3 px-4">{item.total_posts || 0}</td>
                 <td className="py-3 px-4">{format(new Date(item.created_at), 'EEE, MMM dd, yyyy')}</td>
                 <td className="py-3 px-4">
                   <div className="flex justify-end gap-2">

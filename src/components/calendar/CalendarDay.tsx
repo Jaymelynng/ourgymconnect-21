@@ -38,7 +38,7 @@ export function CalendarDay({
   const handleDelete = async (itemId: string) => {
     try {
       const { error } = await supabase
-        .from('marketing_items')
+        .from('marketing_content')
         .delete()
         .eq('id', itemId);
 

@@ -20,7 +20,7 @@ export function WeeklyView() {
     queryKey: ['marketing_items', format(today, 'yyyy-w')],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('marketing_items')
+        .from('marketing_content')
         .select('*')
         .gte('created_at', weekStart.toISOString())
         .lte('created_at', weekEnd.toISOString());
