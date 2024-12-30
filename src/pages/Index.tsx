@@ -18,24 +18,34 @@ const Index = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: 'demo@example.com',
-          password: 'demo123',
-        });
-        if (error) {
-          console.error('Auth error:', error);
-          toast({
-            title: "Authentication Error",
-            description: "Please check your credentials",
-            variant: "destructive",
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: 'demo@example.com',
+            password: 'demo123',
           });
+          
+          if (error) {
+            console.error('Auth error:', error);
+            toast({
+              title: "Authentication Error",
+              description: "Please try again later",
+              variant: "destructive",
+            });
+          } else if (data.session) {
+            setIsAuthenticated(true);
+          }
         } else {
           setIsAuthenticated(true);
         }
-      } else {
-        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Auth error:', error);
+        toast({
+          title: "Authentication Error",
+          description: "Please try again later",
+          variant: "destructive",
+        });
       }
     };
     
@@ -46,23 +56,28 @@ const Index = () => {
   const { data: dashboardSections, isLoading: isLoadingSections } = useQuery({
     queryKey: ['dashboard_sections'],
     queryFn: async () => {
-      console.log('Fetching dashboard sections...');
-      const { data, error } = await supabase
-        .from('dashboard_sections')
-        .select('*')
-        .order('priority', { ascending: true });
-      
-      if (error) {
-        console.error('Error fetching dashboard sections:', error);
-        toast({
-          title: "Error loading dashboard sections",
-          description: "Please try refreshing the page",
-          variant: "destructive",
-        });
-        throw error;
+      try {
+        console.log('Fetching dashboard sections...');
+        const { data, error } = await supabase
+          .from('dashboard_sections')
+          .select('*')
+          .order('priority', { ascending: true });
+        
+        if (error) {
+          console.error('Error fetching dashboard sections:', error);
+          toast({
+            title: "Error loading dashboard sections",
+            description: "Please try refreshing the page",
+            variant: "destructive",
+          });
+          return [];
+        }
+        console.log('Dashboard sections:', data);
+        return data || [];
+      } catch (error) {
+        console.error('Error:', error);
+        return [];
       }
-      console.log('Dashboard sections:', data);
-      return data || [];
     },
     enabled: isAuthenticated,
     retry: 3,
@@ -73,25 +88,30 @@ const Index = () => {
   const { data: upcomingContent, isLoading: isLoadingContent } = useQuery({
     queryKey: ['upcoming_marketing_content'],
     queryFn: async () => {
-      console.log('Fetching upcoming content...');
-      const { data, error } = await supabase
-        .from('marketing_content')
-        .select('*')
-        .gte('scheduled_date', new Date().toISOString())
-        .order('scheduled_date', { ascending: true })
-        .limit(5);
-      
-      if (error) {
-        console.error('Error fetching upcoming content:', error);
-        toast({
-          title: "Error loading upcoming content",
-          description: "Please try refreshing the page",
-          variant: "destructive",
-        });
-        throw error;
+      try {
+        console.log('Fetching upcoming content...');
+        const { data, error } = await supabase
+          .from('marketing_content')
+          .select('*')
+          .gte('scheduled_date', new Date().toISOString())
+          .order('scheduled_date', { ascending: true })
+          .limit(5);
+        
+        if (error) {
+          console.error('Error fetching upcoming content:', error);
+          toast({
+            title: "Error loading upcoming content",
+            description: "Please try refreshing the page",
+            variant: "destructive",
+          });
+          return [];
+        }
+        console.log('Upcoming content:', data);
+        return data || [];
+      } catch (error) {
+        console.error('Error:', error);
+        return [];
       }
-      console.log('Upcoming content:', data);
-      return data || [];
     },
     enabled: isAuthenticated,
     retry: 3,
