@@ -15,7 +15,7 @@ const Index = () => {
   const [showContentCreator, setShowContentCreator] = useState(false);
 
   // Fetch dashboard sections for news and updates
-  const { data: dashboardSections, isLoading: isLoadingSections } = useQuery({
+  const { data: dashboardSections, isLoading: isLoadingSections, error: sectionsError } = useQuery({
     queryKey: ['dashboard_sections'],
     queryFn: async () => {
       console.log('Fetching dashboard sections...');
@@ -26,20 +26,23 @@ const Index = () => {
       
       if (error) {
         console.error('Error fetching dashboard sections:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch dashboard sections",
-          variant: "destructive",
-        });
-        return [];
+        throw error;
       }
       console.log('Dashboard sections:', data);
       return data || [];
+    },
+    retry: 3,
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to fetch dashboard sections. Please try again later.",
+        variant: "destructive",
+      });
     }
   });
 
   // Fetch marketing content for upcoming posts
-  const { data: upcomingContent, isLoading: isLoadingContent } = useQuery({
+  const { data: upcomingContent, isLoading: isLoadingContent, error: contentError } = useQuery({
     queryKey: ['upcoming_marketing_content'],
     queryFn: async () => {
       console.log('Fetching upcoming content...');
@@ -52,15 +55,18 @@ const Index = () => {
       
       if (error) {
         console.error('Error fetching upcoming content:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch upcoming content",
-          variant: "destructive",
-        });
-        return [];
+        throw error;
       }
       console.log('Upcoming content:', data);
       return data || [];
+    },
+    retry: 3,
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to fetch upcoming content. Please try again later.",
+        variant: "destructive",
+      });
     }
   });
 
@@ -105,6 +111,8 @@ const Index = () => {
           <CardContent className="space-y-4">
             {isLoadingSections ? (
               renderSkeleton()
+            ) : sectionsError ? (
+              <p className="text-destructive">Failed to load news and updates</p>
             ) : !dashboardSections?.length ? (
               <p className="text-muted-foreground">No news or updates available</p>
             ) : (
@@ -128,6 +136,8 @@ const Index = () => {
           <CardContent className="space-y-4">
             {isLoadingContent ? (
               renderSkeleton()
+            ) : contentError ? (
+              <p className="text-destructive">Failed to load upcoming content</p>
             ) : !upcomingContent?.length ? (
               <p className="text-muted-foreground">No upcoming content available</p>
             ) : (
