@@ -11,10 +11,10 @@ export function MetricsSection() {
   const nextWeek = addDays(today, 7);
 
   const { data: totalPosts } = useQuery({
-    queryKey: ['marketing_items_count_month'],
+    queryKey: ['marketing_content_count_month'],
     queryFn: async () => {
       const { count } = await supabase
-        .from('marketing_items')
+        .from('marketing_content')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', startMonth.toISOString())
         .lte('created_at', endMonth.toISOString());
@@ -26,7 +26,7 @@ export function MetricsSection() {
     queryKey: ['active_gyms'],
     queryFn: async () => {
       const { count } = await supabase
-        .from('gyms')
+        .from('gym_details')
         .select('*', { count: 'exact', head: true });
       return count || 0;
     }
@@ -36,7 +36,7 @@ export function MetricsSection() {
     queryKey: ['upcoming_tasks'],
     queryFn: async () => {
       const { count } = await supabase
-        .from('marketing_items')
+        .from('marketing_content')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', today.toISOString())
         .lte('created_at', nextWeek.toISOString());

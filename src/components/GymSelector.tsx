@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface GymSelectorProps {
   onGymChange?: (gymId: string) => void;
@@ -21,9 +21,9 @@ export function GymSelector({ onGymChange }: GymSelectorProps) {
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from('gyms')
+          .from('gym_details')
           .select('*')
-          .order('name');
+          .order('gym_name');
         
         if (error) throw error;
         return data || [];
@@ -48,8 +48,8 @@ export function GymSelector({ onGymChange }: GymSelectorProps) {
       </SelectTrigger>
       <SelectContent className="bg-white max-h-[300px]">
         {gyms?.map((gym) => (
-          <SelectItem key={gym.id} value={gym.id} className="focus:bg-primary/10">
-            {gym.name}
+          <SelectItem key={gym.id.toString()} value={gym.id.toString()} className="focus:bg-primary/10">
+            {gym.gym_name}
           </SelectItem>
         ))}
       </SelectContent>

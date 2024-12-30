@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CalendarHeader } from "./calendar/CalendarHeader";
 import { CalendarDay } from "./calendar/CalendarDay";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -19,12 +19,12 @@ export function Calendar() {
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   const { data: marketingItems, isLoading: marketingLoading, error: marketingError, refetch } = useQuery({
-    queryKey: ['marketing_items', format(currentDate, 'yyyy-MM')],
+    queryKey: ['marketing_content', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
       try {
         console.log("Fetching marketing items for:", format(currentDate, 'yyyy-MM'));
         const { data, error } = await supabase
-          .from('marketing_items')
+          .from('marketing_content')
           .select('*')
           .gte('created_at', calendarStart.toISOString())
           .lte('created_at', calendarEnd.toISOString())
