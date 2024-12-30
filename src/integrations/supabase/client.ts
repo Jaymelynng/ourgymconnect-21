@@ -11,4 +11,9 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
     flowType: 'pkce',
   },
+  global: {
+    headers: {
+      'apikey': supabaseKey,
+    },
+  },
 });
