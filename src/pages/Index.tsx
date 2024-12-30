@@ -8,12 +8,39 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ContentCreator } from "@/components/content/ContentCreator";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Index = () => {
   const { toast } = useToast();
   const [showContentCreator, setShowContentCreator] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: 'demo@example.com',
+          password: 'demo123',
+        });
+        if (error) {
+          console.error('Auth error:', error);
+          toast({
+            title: "Authentication Error",
+            description: "Please check your credentials",
+            variant: "destructive",
+          });
+        } else {
+          setIsAuthenticated(true);
+        }
+      } else {
+        setIsAuthenticated(true);
+      }
+    };
+    
+    checkAuth();
+  }, [toast]);
 
   // Fetch dashboard sections for news and updates
   const { data: dashboardSections, isLoading: isLoadingSections } = useQuery({
@@ -37,6 +64,7 @@ const Index = () => {
       console.log('Dashboard sections:', data);
       return data || [];
     },
+    enabled: isAuthenticated,
     retry: 3,
     retryDelay: 1000,
   });
@@ -65,6 +93,7 @@ const Index = () => {
       console.log('Upcoming content:', data);
       return data || [];
     },
+    enabled: isAuthenticated,
     retry: 3,
     retryDelay: 1000,
   });
