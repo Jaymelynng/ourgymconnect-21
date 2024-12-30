@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Image } from "lucide-react";
-import { Toolkit } from "@/components/Toolkit";
+import Toolkit from "@/components/Toolkit";
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
