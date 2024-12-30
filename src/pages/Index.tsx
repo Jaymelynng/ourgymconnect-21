@@ -27,12 +27,8 @@ const Index = () => {
       console.log('Dashboard sections:', data);
       return data || [];
     },
-    onError: (error) => {
-      toast({
-        title: "Error fetching dashboard sections",
-        description: error.message,
-        variant: "destructive",
-      });
+    meta: {
+      errorMessage: "Failed to fetch dashboard sections"
     }
   });
 
@@ -55,14 +51,27 @@ const Index = () => {
       console.log('Upcoming content:', data);
       return data || [];
     },
-    onError: (error) => {
-      toast({
-        title: "Error fetching upcoming content",
-        description: error.message,
-        variant: "destructive",
-      });
+    meta: {
+      errorMessage: "Failed to fetch upcoming content"
     }
   });
+
+  // Show toast messages for errors
+  if (sectionsError) {
+    toast({
+      title: "Error",
+      description: "Failed to fetch dashboard sections",
+      variant: "destructive",
+    });
+  }
+
+  if (contentError) {
+    toast({
+      title: "Error",
+      description: "Failed to fetch upcoming content",
+      variant: "destructive",
+    });
+  }
 
   const renderSkeleton = () => (
     <div className="space-y-4">
