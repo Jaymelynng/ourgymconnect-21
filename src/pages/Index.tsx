@@ -32,12 +32,8 @@ const Index = () => {
       return data || [];
     },
     retry: 3,
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to fetch dashboard sections. Please try again later.",
-        variant: "destructive",
-      });
+    meta: {
+      errorMessage: "Failed to fetch dashboard sections. Please try again later."
     }
   });
 
@@ -61,12 +57,8 @@ const Index = () => {
       return data || [];
     },
     retry: 3,
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to fetch upcoming content. Please try again later.",
-        variant: "destructive",
-      });
+    meta: {
+      errorMessage: "Failed to fetch upcoming content. Please try again later."
     }
   });
 
