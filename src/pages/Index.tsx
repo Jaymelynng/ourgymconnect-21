@@ -50,7 +50,7 @@ const Index = () => {
         .from('marketing_content')
         .select('*')
         .gte('scheduled_date', new Date().toISOString())
-        .order('scheduled_date')
+        .order('scheduled_date', { ascending: true })
         .limit(5);
       
       if (error) {
@@ -71,9 +71,9 @@ const Index = () => {
 
   const renderSkeleton = () => (
     <div className="space-y-4">
-      <Skeleton className="h-24 w-full" />
-      <Skeleton className="h-24 w-full" />
-      <Skeleton className="h-24 w-full" />
+      {[1,2,3].map(i => (
+        <div key={i} className="h-32 bg-muted rounded-lg animate-pulse" />
+      ))}
     </div>
   );
 
