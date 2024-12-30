@@ -56,9 +56,9 @@ export function WeeklyView() {
               <Card key={item.id} className="p-4">
                 <div className="mb-2">
                   <h4 className="font-medium text-sm">{item.title}</h4>
-                  {item.item_type && (
+                  {item.content_type && (
                     <Badge variant="secondary" className="mt-1 text-xs">
-                      {item.item_type}
+                      {item.content_type}
                     </Badge>
                   )}
                 </div>
@@ -67,16 +67,16 @@ export function WeeklyView() {
                   <AccordionItem value="details">
                     <AccordionTrigger className="text-xs">View Details</AccordionTrigger>
                     <AccordionContent>
-                      {item.visuals_notes && (
+                      {item.description && (
                         <div className="mb-2">
-                          <h5 className="text-xs font-medium">Visuals for Managers</h5>
-                          <p className="text-xs text-muted-foreground">{item.visuals_notes}</p>
+                          <h5 className="text-xs font-medium">Description</h5>
+                          <p className="text-xs text-muted-foreground">{item.description}</p>
                         </div>
                       )}
-                      {item.key_notes && (
+                      {item.photo_key_points && (
                         <div className="mb-2">
-                          <h5 className="text-xs font-medium">Key Notes About the Post</h5>
-                          <p className="text-xs text-muted-foreground">{item.key_notes}</p>
+                          <h5 className="text-xs font-medium">Photo Key Points</h5>
+                          <p className="text-xs text-muted-foreground">{item.photo_key_points}</p>
                         </div>
                       )}
                       {item.photo_examples && (

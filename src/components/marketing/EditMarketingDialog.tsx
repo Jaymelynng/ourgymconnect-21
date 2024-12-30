@@ -16,9 +16,9 @@ interface EditMarketingDialogProps {
 export function EditMarketingDialog({ item, isOpen, onClose, onUpdate }: EditMarketingDialogProps) {
   const [title, setTitle] = useState(item.title || "");
   const [caption, setCaption] = useState(item.caption || "");
-  const [visualsNotes, setVisualsNotes] = useState(item.visuals_notes || "");
-  const [keyNotes, setKeyNotes] = useState(item.key_notes || "");
+  const [description, setDescription] = useState(item.description || "");
   const [photoExamples, setPhotoExamples] = useState(item.photo_examples || "");
+  const [photoKeyPoints, setPhotoKeyPoints] = useState(item.photo_key_points || "");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -28,13 +28,13 @@ export function EditMarketingDialog({ item, isOpen, onClose, onUpdate }: EditMar
 
     try {
       const { error } = await supabase
-        .from('marketing_items')
+        .from('marketing_content')
         .update({
           title,
           caption,
-          visuals_notes: visualsNotes,
-          key_notes: keyNotes,
+          description,
           photo_examples: photoExamples,
+          photo_key_points: photoKeyPoints,
           updated_at: new Date().toISOString(),
         })
         .eq('id', item.id);
@@ -88,21 +88,21 @@ export function EditMarketingDialog({ item, isOpen, onClose, onUpdate }: EditMar
           </div>
           
           <div>
-            <label htmlFor="visualsNotes" className="text-sm font-medium">Visuals Notes</label>
+            <label htmlFor="description" className="text-sm font-medium">Description</label>
             <Textarea
-              id="visualsNotes"
-              value={visualsNotes}
-              onChange={(e) => setVisualsNotes(e.target.value)}
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               rows={3}
             />
           </div>
           
           <div>
-            <label htmlFor="keyNotes" className="text-sm font-medium">Key Notes</label>
+            <label htmlFor="photoKeyPoints" className="text-sm font-medium">Photo Key Points</label>
             <Textarea
-              id="keyNotes"
-              value={keyNotes}
-              onChange={(e) => setKeyNotes(e.target.value)}
+              id="photoKeyPoints"
+              value={photoKeyPoints}
+              onChange={(e) => setPhotoKeyPoints(e.target.value)}
               rows={3}
             />
           </div>
