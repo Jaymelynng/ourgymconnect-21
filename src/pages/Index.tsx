@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ContentCreator } from "@/components/content/ContentCreator";
 import { useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Index = () => {
   const { toast } = useToast();
@@ -100,23 +101,27 @@ const Index = () => {
           <CardHeader>
             <CardTitle>News & Updates</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {isLoadingSections ? (
-              renderSkeleton()
-            ) : sectionsError ? (
-              <p className="text-destructive">Failed to load news and updates</p>
-            ) : !dashboardSections?.length ? (
-              <p className="text-muted-foreground">No news or updates available</p>
-            ) : (
-              dashboardSections?.filter(section => section.active).map((section) => (
-                <div key={section.id} className="bg-card rounded-lg p-4 shadow-sm">
-                  <h3 className="font-semibold mb-2 text-primary">{section.section_name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {section.content}
-                  </p>
-                </div>
-              ))
-            )}
+          <CardContent>
+            <ScrollArea className="h-[300px] pr-4">
+              <div className="space-y-4">
+                {isLoadingSections ? (
+                  renderSkeleton()
+                ) : sectionsError ? (
+                  <p className="text-destructive">Failed to load news and updates</p>
+                ) : !dashboardSections?.length ? (
+                  <p className="text-muted-foreground">No news or updates available</p>
+                ) : (
+                  dashboardSections?.filter(section => section.active).map((section) => (
+                    <div key={section.id} className="bg-card rounded-lg p-4 shadow-sm">
+                      <h3 className="font-semibold mb-2 text-primary">{section.section_name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {section.content}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
           </CardContent>
         </Card>
 
@@ -125,23 +130,27 @@ const Index = () => {
           <CardHeader>
             <CardTitle>Ideas & Inspiration for Your Gym</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {isLoadingContent ? (
-              renderSkeleton()
-            ) : contentError ? (
-              <p className="text-destructive">Failed to load upcoming content</p>
-            ) : !upcomingContent?.length ? (
-              <p className="text-muted-foreground">No upcoming content available</p>
-            ) : (
-              upcomingContent?.map((content) => (
-                <div key={content.id} className="bg-card rounded-lg p-4 shadow-sm">
-                  <h3 className="font-semibold mb-2 text-primary">{content.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {content.description}
-                  </p>
-                </div>
-              ))
-            )}
+          <CardContent>
+            <ScrollArea className="h-[300px] pr-4">
+              <div className="space-y-4">
+                {isLoadingContent ? (
+                  renderSkeleton()
+                ) : contentError ? (
+                  <p className="text-destructive">Failed to load upcoming content</p>
+                ) : !upcomingContent?.length ? (
+                  <p className="text-muted-foreground">No upcoming content available</p>
+                ) : (
+                  upcomingContent?.map((content) => (
+                    <div key={content.id} className="bg-card rounded-lg p-4 shadow-sm">
+                      <h3 className="font-semibold mb-2 text-primary">{content.title}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {content.description}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
           </CardContent>
         </Card>
       </div>
