@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CalendarHeaderProps {
   currentDate: Date;
@@ -10,25 +10,24 @@ interface CalendarHeaderProps {
 
 export function CalendarHeader({ currentDate, onPrevMonth, onNextMonth }: CalendarHeaderProps) {
   return (
-    <div className="flex justify-between items-center mb-4">
-      <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-        <CalendarIcon className="h-6 w-6 text-primary" />
-        {format(currentDate, "MMMM yyyy")}
+    <div className="flex items-center justify-between mb-6">
+      <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-fade-in">
+        {format(currentDate, 'MMMM yyyy')}
       </h2>
-      <div className="flex space-x-2">
-        <Button 
-          variant="outline" 
-          size="icon" 
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="icon"
           onClick={onPrevMonth}
-          className="hover:bg-primary/10 hover:text-primary transition-colors"
+          className="transition-all duration-300 hover:scale-110 hover:bg-primary/10"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <Button 
-          variant="outline" 
-          size="icon" 
+        <Button
+          variant="outline"
+          size="icon"
           onClick={onNextMonth}
-          className="hover:bg-primary/10 hover:text-primary transition-colors"
+          className="transition-all duration-300 hover:scale-110 hover:bg-primary/10"
         >
           <ChevronRight className="h-4 w-4" />
         </Button>

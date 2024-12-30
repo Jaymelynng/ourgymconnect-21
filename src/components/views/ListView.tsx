@@ -80,19 +80,21 @@ export function ListView() {
       {Object.entries(marketingItems || {}).map(([date, dateItems]) => (
         <div key={date} className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">
+            <h2 className="text-2xl font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent transform transition-all duration-300 hover:scale-105">
               {date === 'No Date' ? date : format(new Date(date), 'MMMM d, yyyy')}
             </h2>
           </div>
           {(dateItems as any[]).map((item) => (
-            <Card key={item.id} className="p-6">
+            <Card key={item.id} className="p-6 transition-all duration-300 hover:shadow-lg">
               <div className="flex items-start justify-between mb-4">
-                <h3 className="text-lg font-medium">{item.title}</h3>
+                <h3 className="text-lg font-medium text-foreground hover:text-primary transition-colors duration-300">
+                  {item.title}
+                </h3>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8"
+                    className="h-8 w-8 transition-all duration-300 hover:scale-110 hover:bg-primary/10"
                     onClick={() => setEditingItem(item)}
                   >
                     <Edit className="h-4 w-4" />
@@ -100,13 +102,16 @@ export function ListView() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-destructive hover:text-destructive/90"
+                    className="h-8 w-8 text-destructive hover:text-destructive/90 transition-all duration-300 hover:scale-110"
                     onClick={() => handleDelete(item.id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                   {item.item_type && (
-                    <Badge variant="secondary" className="ml-2">
+                    <Badge 
+                      variant="secondary" 
+                      className="ml-2 animate-fade-in hover:bg-primary/20 transition-colors duration-300"
+                    >
                       {item.item_type}
                     </Badge>
                   )}
@@ -114,15 +119,15 @@ export function ListView() {
               </div>
 
               {item.caption && (
-                <div className="mb-6 text-muted-foreground">
+                <div className="mb-6 text-muted-foreground hover:text-foreground transition-colors duration-300">
                   <p>{item.caption}</p>
                 </div>
               )}
               
               <Accordion type="single" collapsible className="w-full space-y-2">
-                <AccordionItem value="visuals" className="border rounded-lg px-4">
-                  <AccordionTrigger className="hover:no-underline py-3">
-                    <span className="flex items-center gap-2 text-sm font-medium">
+                <AccordionItem value="visuals" className="border rounded-lg px-4 transition-all duration-300 hover:border-primary">
+                  <AccordionTrigger className="hover:no-underline py-3 group">
+                    <span className="flex items-center gap-2 text-sm font-medium group-hover:text-primary transition-colors duration-300">
                       Visuals for Managers
                     </span>
                   </AccordionTrigger>
