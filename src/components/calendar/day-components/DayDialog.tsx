@@ -4,6 +4,7 @@ import { Calendar, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface DayDialogProps {
   isOpen: boolean;
@@ -15,6 +16,8 @@ interface DayDialogProps {
 }
 
 export function DayDialog({ isOpen, onOpenChange, day, items, onEdit, onDelete }: DayDialogProps) {
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className={cn(
@@ -35,10 +38,14 @@ export function DayDialog({ isOpen, onOpenChange, day, items, onEdit, onDelete }
               className={cn(
                 "bg-card rounded-lg border p-4 space-y-4",
                 "animate-fade-in",
-                "hover:shadow-md transition-shadow duration-200",
-                "transform transition-transform hover:scale-[1.01]"
+                "transition-all duration-300",
+                "hover:shadow-md",
+                "transform",
+                hoveredItem === item.id ? "scale-[1.02]" : "scale-100"
               )}
               style={{ animationDelay: `${index * 100}ms` }}
+              onMouseEnter={() => setHoveredItem(item.id)}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
@@ -59,14 +66,22 @@ export function DayDialog({ isOpen, onOpenChange, day, items, onEdit, onDelete }
                     variant="ghost"
                     size="icon"
                     onClick={() => onEdit(item)}
-                    className="h-8 w-8 hover:scale-110 transition-transform"
+                    className={cn(
+                      "h-8 w-8",
+                      "transition-all duration-300",
+                      hoveredItem === item.id ? "scale-110" : "scale-100"
+                    )}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-destructive hover:text-destructive/90 hover:scale-110 transition-transform"
+                    className={cn(
+                      "h-8 w-8 text-destructive",
+                      "transition-all duration-300",
+                      hoveredItem === item.id ? "scale-110" : "scale-100"
+                    )}
                     onClick={() => onDelete(item.id)}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -80,7 +95,11 @@ export function DayDialog({ isOpen, onOpenChange, day, items, onEdit, onDelete }
               
               <Accordion type="single" collapsible className="w-full space-y-2">
                 {item.visuals_notes && (
-                  <AccordionItem value="visuals" className="border rounded-lg px-4 hover:bg-accent/5 transition-colors">
+                  <AccordionItem value="visuals" className={cn(
+                    "border rounded-lg px-4",
+                    "transition-colors duration-300",
+                    "hover:bg-accent/5"
+                  )}>
                     <AccordionTrigger className="hover:no-underline py-3">
                       <span className="flex items-center gap-2 text-sm font-medium">
                         Visuals for Managers
@@ -93,7 +112,11 @@ export function DayDialog({ isOpen, onOpenChange, day, items, onEdit, onDelete }
                 )}
                 
                 {item.key_notes && (
-                  <AccordionItem value="keynotes" className="border rounded-lg px-4 hover:bg-accent/5 transition-colors">
+                  <AccordionItem value="keynotes" className={cn(
+                    "border rounded-lg px-4",
+                    "transition-colors duration-300",
+                    "hover:bg-accent/5"
+                  )}>
                     <AccordionTrigger className="hover:no-underline py-3">
                       <span className="flex items-center gap-2 text-sm font-medium">
                         Key Notes About the Post
@@ -106,7 +129,11 @@ export function DayDialog({ isOpen, onOpenChange, day, items, onEdit, onDelete }
                 )}
                 
                 {item.photo_examples && (
-                  <AccordionItem value="photos" className="border rounded-lg px-4 hover:bg-accent/5 transition-colors">
+                  <AccordionItem value="photos" className={cn(
+                    "border rounded-lg px-4",
+                    "transition-colors duration-300",
+                    "hover:bg-accent/5"
+                  )}>
                     <AccordionTrigger className="hover:no-underline py-3">
                       <span className="flex items-center gap-2 text-sm font-medium">
                         Photo Examples
@@ -116,7 +143,11 @@ export function DayDialog({ isOpen, onOpenChange, day, items, onEdit, onDelete }
                       <img 
                         src={item.photo_examples} 
                         alt="Example" 
-                        className="rounded-lg max-h-64 object-cover transform transition-transform hover:scale-105"
+                        className={cn(
+                          "rounded-lg max-h-64 object-cover",
+                          "transform transition-transform duration-300",
+                          "hover:scale-105"
+                        )}
                       />
                     </AccordionContent>
                   </AccordionItem>

@@ -28,6 +28,7 @@ export function CalendarDay({
   const { toast } = useToast();
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleDelete = async (itemId: string) => {
     try {
@@ -58,15 +59,24 @@ export function CalendarDay({
     <>
       <div 
         onClick={() => setIsDialogOpen(true)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className={cn(
-          "min-h-[120px] border-b border-r border-border bg-card transition-colors relative cursor-pointer",
+          "min-h-[120px] border-b border-r border-border bg-card",
+          "transition-all duration-300 ease-in-out transform",
+          isHovered && "scale-[1.02] shadow-lg",
           hasItems && "hover:bg-primary/10",
-          !hasItems && "hover:bg-secondary/5"
+          !hasItems && "hover:bg-secondary/5",
+          "animate-fade-in cursor-pointer"
         )}
       >
         <DayHeader day={day} currentDate={currentDate} />
         
-        <div className="pt-8 px-2 pb-2">
+        <div className={cn(
+          "pt-8 px-2 pb-2 space-y-2",
+          "transition-all duration-300",
+          isHovered && "transform translate-y-[-4px]"
+        )}>
           {marketingItems.map((item) => (
             <ContentPreview
               key={item.id}
