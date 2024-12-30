@@ -23,12 +23,14 @@ export function Calendar() {
     queryFn: async () => {
       try {
         console.log("Fetching marketing items for:", format(currentDate, 'yyyy-MM'));
+        console.log("Date range:", calendarStart.toISOString(), "to", calendarEnd.toISOString());
+        
         const { data, error } = await supabase
           .from('marketing_content')
           .select('*')
-          .gte('created_at', calendarStart.toISOString())
-          .lte('created_at', calendarEnd.toISOString())
-          .order('created_at');
+          .gte('scheduled_date', calendarStart.toISOString())
+          .lte('scheduled_date', calendarEnd.toISOString())
+          .order('scheduled_date');
         
         if (error) {
           console.error("Error fetching marketing items:", error);
@@ -37,7 +39,8 @@ export function Calendar() {
         
         const parsedData = data?.map(item => ({
           ...item,
-          created_at: item.created_at ? parseISO(item.created_at) : null
+          created_at: item.created_at ? parseISO(item.created_at) : null,
+          scheduled_date: item.scheduled_date ? parseISO(item.scheduled_date) : null
         })) || [];
         
         console.log("Fetched and parsed marketing items:", parsedData);
@@ -61,7 +64,7 @@ export function Calendar() {
 
   const getItemsForDay = useCallback((date: Date) => {
     const dayMarketingItems = marketingItems?.filter(item => 
-      item.created_at && format(item.created_at, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+      item.scheduled_date && format(item.scheduled_date, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
     ) || [];
 
     return {
