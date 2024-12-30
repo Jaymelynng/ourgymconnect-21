@@ -2,8 +2,40 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { MetricsGrid } from "@/components/dashboard/MetricsGrid";
 import { CalendarView } from "@/components/dashboard/CalendarView";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
+  // Fetch dashboard sections for news and updates
+  const { data: dashboardSections } = useQuery({
+    queryKey: ['dashboard_sections'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('dashboard_sections')
+        .select('*')
+        .order('priority', { ascending: true });
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
+  // Fetch marketing content for upcoming posts
+  const { data: upcomingContent } = useQuery({
+    queryKey: ['upcoming_marketing_content'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('marketing_content')
+        .select('*')
+        .gte('scheduled_date', new Date().toISOString())
+        .order('scheduled_date')
+        .limit(5);
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="bg-gradient-to-r from-primary/20 to-secondary/20 p-8 rounded-lg shadow-sm">
@@ -24,18 +56,14 @@ const Index = () => {
             <CardTitle>News & Updates</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-card rounded-lg p-4 shadow-sm">
-              <h3 className="font-semibold mb-2 text-primary">Email Updates - December 13, 2024</h3>
-              <p className="text-sm text-muted-foreground">
-                We're currently holding off on email assignments while monitoring camp numbers.
-              </p>
-            </div>
-            <div className="bg-card rounded-lg p-4 shadow-sm">
-              <h3 className="font-semibold mb-2 text-primary">New Feature Release</h3>
-              <p className="text-sm text-muted-foreground">
-                Content organization has been updated to use live dates instead of due dates.
-              </p>
-            </div>
+            {dashboardSections?.filter(section => section.active).map((section) => (
+              <div key={section.id} className="bg-card rounded-lg p-4 shadow-sm">
+                <h3 className="font-semibold mb-2 text-primary">{section.section_name}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {section.content}
+                </p>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
@@ -45,18 +73,14 @@ const Index = () => {
             <CardTitle>Ideas & Inspiration for Your Gym</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-card rounded-lg p-4 shadow-sm">
-              <h3 className="font-semibold mb-2 text-primary">Content Calendar</h3>
-              <p className="text-sm text-muted-foreground">
-                The content calendar for January is now available for planning.
-              </p>
-            </div>
-            <div className="bg-card rounded-lg p-4 shadow-sm">
-              <h3 className="font-semibold mb-2 text-primary">Template Updates</h3>
-              <p className="text-sm text-muted-foreground">
-                New winter-themed templates have been added to the library.
-              </p>
-            </div>
+            {upcomingContent?.map((content) => (
+              <div key={content.id} className="bg-card rounded-lg p-4 shadow-sm">
+                <h3 className="font-semibold mb-2 text-primary">{content.title}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {content.description}
+                </p>
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
