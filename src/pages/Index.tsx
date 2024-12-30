@@ -5,23 +5,23 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const { toast } = useToast();
 
   const { data: summerCampItems, isLoading } = useQuery({
-    queryKey: ['marketing-items', 'summer-camp'],
+    queryKey: ['marketing-content', 'summer-camp'],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from('marketing_items')
+          .from('marketing_content')
           .select('*')
           .or('title.ilike.%summer camp%,title.ilike.%half day%')
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        return data as Tables['marketing_items']['Row'][];
+        return data as Tables<'marketing_content'>[];
       } catch (error) {
         console.error('Error fetching summer camp items:', error);
         toast({
@@ -61,12 +61,12 @@ const Index = () => {
               {summerCampItems.map((item) => (
                 <Card key={item.id} className="p-4 hover:bg-muted/50 transition-colors">
                   <h3 className="font-semibold text-lg">{item.title}</h3>
-                  {item.caption && (
-                    <p className="text-muted-foreground mt-1">{item.caption}</p>
+                  {item.description && (
+                    <p className="text-muted-foreground mt-1">{item.description}</p>
                   )}
-                  {item.key_notes && (
+                  {item.content_type && (
                     <div className="mt-2 text-sm">
-                      <strong>Key Notes:</strong> {item.key_notes}
+                      <strong>Type:</strong> {item.content_type}
                     </div>
                   )}
                 </Card>
