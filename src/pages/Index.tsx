@@ -6,9 +6,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { ContentCreator } from "@/components/content/ContentCreator";
+import { useState } from "react";
 
 const Index = () => {
   const { toast } = useToast();
+  const [showContentCreator, setShowContentCreator] = useState(false);
 
   // Fetch dashboard sections for news and updates
   const { data: dashboardSections, isLoading: isLoadingSections } = useQuery({
@@ -71,12 +75,23 @@ const Index = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="bg-gradient-to-r from-primary/20 to-secondary/20 p-8 rounded-lg shadow-sm">
-        <h1 className="text-4xl font-bold text-foreground mb-3 animate-scale-in">
-          Gym Marketing Dashboard
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl">
-          Welcome to your all-in-one marketing toolkit. Create, manage, and schedule your content across all locations.
-        </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-3 animate-scale-in">
+              Gym Marketing Dashboard
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl">
+              Welcome to your all-in-one marketing toolkit. Create, manage, and schedule your content across all locations.
+            </p>
+          </div>
+          <Button
+            size="lg"
+            onClick={() => setShowContentCreator(true)}
+            className="animate-fade-in"
+          >
+            Create Content
+          </Button>
+        </div>
       </div>
 
       <MetricsGrid />
@@ -130,6 +145,10 @@ const Index = () => {
       </div>
 
       <CalendarView />
+      
+      {showContentCreator && (
+        <ContentCreator />
+      )}
     </div>
   );
 };
