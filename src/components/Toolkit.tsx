@@ -3,15 +3,15 @@ import { Grid, Instagram, Facebook, Share2, Palette } from 'lucide-react';
 
 const Toolkit = () => {
   return (
-    <div className="w-64 min-h-screen p-4 bg-primary rounded-lg">
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold flex items-center gap-2 text-white mb-4">
-          <Grid size={20} />
+    <div className="w-[280px] min-h-screen bg-primary rounded-t-3xl rounded-r-none p-6">
+      <div className="mb-8">
+        <h2 className="text-2xl font-semibold flex items-center gap-2 text-white mb-6">
+          <Grid size={24} />
           Toolkit
         </h2>
         
         <select 
-          className="w-full p-2 rounded-lg bg-secondary/20 text-white placeholder-white/70 border-none focus:ring-2 focus:ring-white/20"
+          className="w-full p-3 rounded-lg bg-white/20 text-white/90 placeholder-white/70 border-none focus:ring-2 focus:ring-white/20"
         >
           <option value="" className="text-foreground">Select a gym</option>
           <option value="gym1" className="text-foreground">Gym 1</option>
@@ -20,7 +20,7 @@ const Toolkit = () => {
       </div>
 
       {/* Tool Grid */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 mb-4">
         {[
           { name: 'Instagram', icon: Instagram },
           { name: 'Facebook', icon: Facebook },
@@ -31,27 +31,27 @@ const Toolkit = () => {
           return (
             <div
               key={tool.name}
-              className="bg-card rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-card/90 transition-colors shadow-sm"
+              className="bg-white rounded-xl p-4 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-white/90 transition-colors"
             >
-              <IconComponent className="mb-2 text-accent" size={24} />
-              <span className="text-sm text-accent">{tool.name}</span>
+              <IconComponent className="text-gray-400" size={24} />
+              <span className="text-sm text-gray-500">{tool.name}</span>
             </div>
           );
         })}
       </div>
 
       {/* Coming Soon Items */}
-      <div className="grid grid-cols-2 gap-4 mt-4">
+      <div className="grid grid-cols-2 gap-4">
         {[
-          { name: 'Tuition Estimator', label: 'Coming Soon' },
-          { name: 'Submit Tool Idea', label: 'Coming Soon' }
+          { title: 'Coming Soon', subtitle: 'Tuition Estimator' },
+          { title: 'Coming Soon', subtitle: 'Submit Tool Idea' }
         ].map((item) => (
           <div
-            key={item.name}
-            className="bg-secondary/20 rounded-lg p-4 flex flex-col items-center justify-center text-center"
+            key={item.subtitle}
+            className="bg-white/20 rounded-xl p-4 flex flex-col items-center justify-center text-center"
           >
-            <span className="text-white text-sm mb-1">{item.label}</span>
-            <span className="text-white text-xs">{item.name}</span>
+            <span className="text-white text-sm mb-1">{item.title}</span>
+            <span className="text-white/80 text-xs">{item.subtitle}</span>
           </div>
         ))}
       </div>
