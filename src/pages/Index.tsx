@@ -11,7 +11,7 @@ const Index = () => {
   const { toast } = useToast();
 
   // Fetch dashboard sections for news and updates
-  const { data: dashboardSections, isLoading: isLoadingSections, error: sectionsError } = useQuery({
+  const { data: dashboardSections, isLoading: isLoadingSections } = useQuery({
     queryKey: ['dashboard_sections'],
     queryFn: async () => {
       console.log('Fetching dashboard sections...');
@@ -22,18 +22,20 @@ const Index = () => {
       
       if (error) {
         console.error('Error fetching dashboard sections:', error);
-        throw error;
+        toast({
+          title: "Error",
+          description: "Failed to fetch dashboard sections",
+          variant: "destructive",
+        });
+        return [];
       }
       console.log('Dashboard sections:', data);
       return data || [];
-    },
-    meta: {
-      errorMessage: "Failed to fetch dashboard sections"
     }
   });
 
   // Fetch marketing content for upcoming posts
-  const { data: upcomingContent, isLoading: isLoadingContent, error: contentError } = useQuery({
+  const { data: upcomingContent, isLoading: isLoadingContent } = useQuery({
     queryKey: ['upcoming_marketing_content'],
     queryFn: async () => {
       console.log('Fetching upcoming content...');
@@ -46,32 +48,17 @@ const Index = () => {
       
       if (error) {
         console.error('Error fetching upcoming content:', error);
-        throw error;
+        toast({
+          title: "Error",
+          description: "Failed to fetch upcoming content",
+          variant: "destructive",
+        });
+        return [];
       }
       console.log('Upcoming content:', data);
       return data || [];
-    },
-    meta: {
-      errorMessage: "Failed to fetch upcoming content"
     }
   });
-
-  // Show toast messages for errors
-  if (sectionsError) {
-    toast({
-      title: "Error",
-      description: "Failed to fetch dashboard sections",
-      variant: "destructive",
-    });
-  }
-
-  if (contentError) {
-    toast({
-      title: "Error",
-      description: "Failed to fetch upcoming content",
-      variant: "destructive",
-    });
-  }
 
   const renderSkeleton = () => (
     <div className="space-y-4">
@@ -103,9 +90,7 @@ const Index = () => {
           <CardContent className="space-y-4">
             {isLoadingSections ? (
               renderSkeleton()
-            ) : sectionsError ? (
-              <p className="text-destructive">Error loading news and updates</p>
-            ) : dashboardSections?.length === 0 ? (
+            ) : !dashboardSections?.length ? (
               <p className="text-muted-foreground">No news or updates available</p>
             ) : (
               dashboardSections?.filter(section => section.active).map((section) => (
@@ -128,9 +113,7 @@ const Index = () => {
           <CardContent className="space-y-4">
             {isLoadingContent ? (
               renderSkeleton()
-            ) : contentError ? (
-              <p className="text-destructive">Error loading ideas and inspiration</p>
-            ) : upcomingContent?.length === 0 ? (
+            ) : !upcomingContent?.length ? (
               <p className="text-muted-foreground">No upcoming content available</p>
             ) : (
               upcomingContent?.map((content) => (
