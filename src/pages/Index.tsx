@@ -2,9 +2,6 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { MetricsGrid } from "@/components/dashboard/MetricsGrid";
 import { CalendarView } from "@/components/dashboard/CalendarView";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ListView } from "@/components/views/ListView";
-import { GalleryView } from "@/components/views/GalleryView";
-import { WeeklyView } from "@/components/views/WeeklyView";
 
 const Index = () => {
   return (
@@ -20,31 +17,46 @@ const Index = () => {
 
       <MetricsGrid />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* News and Updates Column */}
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>List View</CardTitle>
+            <CardTitle>News & Updates</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ListView />
+          <CardContent className="space-y-4">
+            <div className="bg-card rounded-lg p-4 shadow-sm">
+              <h3 className="font-semibold mb-2 text-primary">Email Updates - December 13, 2024</h3>
+              <p className="text-sm text-muted-foreground">
+                We're currently holding off on email assignments while monitoring camp numbers.
+              </p>
+            </div>
+            <div className="bg-card rounded-lg p-4 shadow-sm">
+              <h3 className="font-semibold mb-2 text-primary">New Feature Release</h3>
+              <p className="text-sm text-muted-foreground">
+                Content organization has been updated to use live dates instead of due dates.
+              </p>
+            </div>
           </CardContent>
         </Card>
 
+        {/* Ideas & Inspiration Column */}
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Gallery View</CardTitle>
+            <CardTitle>Ideas & Inspiration for Your Gym</CardTitle>
           </CardHeader>
-          <CardContent>
-            <GalleryView />
-          </CardContent>
-        </Card>
-
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Weekly View</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <WeeklyView />
+          <CardContent className="space-y-4">
+            <div className="bg-card rounded-lg p-4 shadow-sm">
+              <h3 className="font-semibold mb-2 text-primary">Content Calendar</h3>
+              <p className="text-sm text-muted-foreground">
+                The content calendar for January is now available for planning.
+              </p>
+            </div>
+            <div className="bg-card rounded-lg p-4 shadow-sm">
+              <h3 className="font-semibold mb-2 text-primary">Template Updates</h3>
+              <p className="text-sm text-muted-foreground">
+                New winter-themed templates have been added to the library.
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
