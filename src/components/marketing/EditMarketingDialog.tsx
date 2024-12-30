@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface EditMarketingDialogProps {
@@ -15,10 +15,8 @@ interface EditMarketingDialogProps {
 
 export function EditMarketingDialog({ item, isOpen, onClose, onUpdate }: EditMarketingDialogProps) {
   const [title, setTitle] = useState(item.title || "");
-  const [caption, setCaption] = useState(item.caption || "");
   const [description, setDescription] = useState(item.description || "");
-  const [photoExamples, setPhotoExamples] = useState(item.photo_examples || "");
-  const [photoKeyPoints, setPhotoKeyPoints] = useState(item.photo_key_points || "");
+  const [contentType, setContentType] = useState(item.content_type || "");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -31,10 +29,8 @@ export function EditMarketingDialog({ item, isOpen, onClose, onUpdate }: EditMar
         .from('marketing_content')
         .update({
           title,
-          caption,
           description,
-          photo_examples: photoExamples,
-          photo_key_points: photoKeyPoints,
+          content_type: contentType,
           updated_at: new Date().toISOString(),
         })
         .eq('id', item.id);
@@ -42,17 +38,16 @@ export function EditMarketingDialog({ item, isOpen, onClose, onUpdate }: EditMar
       if (error) throw error;
 
       toast({
-        title: "Marketing item updated",
-        description: "Your changes have been saved successfully.",
+        title: "Success",
+        description: "Marketing content updated successfully",
       });
-      
       onUpdate();
       onClose();
     } catch (error) {
-      console.error('Error updating marketing item:', error);
+      console.error('Error updating marketing content:', error);
       toast({
-        title: "Error updating marketing item",
-        description: "Please try again later.",
+        title: "Error",
+        description: "Failed to update marketing content",
         variant: "destructive",
       });
     } finally {
@@ -62,9 +57,9 @@ export function EditMarketingDialog({ item, isOpen, onClose, onUpdate }: EditMar
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Marketing Item</DialogTitle>
+          <DialogTitle>Edit Marketing Content</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -73,17 +68,17 @@ export function EditMarketingDialog({ item, isOpen, onClose, onUpdate }: EditMar
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
+              placeholder="Enter title"
             />
           </div>
           
           <div>
-            <label htmlFor="caption" className="text-sm font-medium">Caption</label>
-            <Textarea
-              id="caption"
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              rows={3}
+            <label htmlFor="contentType" className="text-sm font-medium">Content Type</label>
+            <Input
+              id="contentType"
+              value={contentType}
+              onChange={(e) => setContentType(e.target.value)}
+              placeholder="Enter content type"
             />
           </div>
           
@@ -94,28 +89,10 @@ export function EditMarketingDialog({ item, isOpen, onClose, onUpdate }: EditMar
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
+              placeholder="Enter description"
             />
           </div>
-          
-          <div>
-            <label htmlFor="photoKeyPoints" className="text-sm font-medium">Photo Key Points</label>
-            <Textarea
-              id="photoKeyPoints"
-              value={photoKeyPoints}
-              onChange={(e) => setPhotoKeyPoints(e.target.value)}
-              rows={3}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="photoExamples" className="text-sm font-medium">Photo Examples</label>
-            <Input
-              id="photoExamples"
-              value={photoExamples}
-              onChange={(e) => setPhotoExamples(e.target.value)}
-            />
-          </div>
-          
+
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
