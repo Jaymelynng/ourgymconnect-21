@@ -7,6 +7,9 @@ import { Tables } from "@/integrations/supabase/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { CalendarSection } from "@/components/dashboard/CalendarSection";
+import { ListView } from "@/components/views/ListView";
+import { GalleryView } from "@/components/views/GalleryView";
+import { WeeklyView } from "@/components/views/WeeklyView";
 
 const Index = () => {
   const { toast } = useToast();
@@ -44,6 +47,35 @@ const Index = () => {
         <p className="text-lg text-muted-foreground max-w-2xl">
           Welcome to your all-in-one marketing toolkit. Create, manage, and schedule your content across all locations.
         </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>List View</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ListView />
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Gallery View</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <GalleryView />
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Weekly View</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <WeeklyView />
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
