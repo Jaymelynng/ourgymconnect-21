@@ -9,6 +9,90 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      calendar_events: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          email_content_id: number | null
+          end_date: string | null
+          event_type: Database["public"]["Enums"]["calendar_event_type"]
+          gym_id: number | null
+          id: number
+          in_gym_content_id: number | null
+          marketing_content_id: number | null
+          social_media_content_id: number | null
+          start_date: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          email_content_id?: number | null
+          end_date?: string | null
+          event_type: Database["public"]["Enums"]["calendar_event_type"]
+          gym_id?: number | null
+          id?: never
+          in_gym_content_id?: number | null
+          marketing_content_id?: number | null
+          social_media_content_id?: number | null
+          start_date: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          email_content_id?: number | null
+          end_date?: string | null
+          event_type?: Database["public"]["Enums"]["calendar_event_type"]
+          gym_id?: number | null
+          id?: never
+          in_gym_content_id?: number | null
+          marketing_content_id?: number | null
+          social_media_content_id?: number | null
+          start_date?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_email_content_id_fkey"
+            columns: ["email_content_id"]
+            isOneToOne: false
+            referencedRelation: "email_content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_details"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_in_gym_content_id_fkey"
+            columns: ["in_gym_content_id"]
+            isOneToOne: false
+            referencedRelation: "in_gym_content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_marketing_content_id_fkey"
+            columns: ["marketing_content_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_social_media_content_id_fkey"
+            columns: ["social_media_content_id"]
+            isOneToOne: false
+            referencedRelation: "social_media_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_sections: {
         Row: {
           active: boolean | null
@@ -541,6 +625,7 @@ export type Database = {
       }
     }
     Enums: {
+      calendar_event_type: "marketing" | "email" | "social" | "in_gym"
       lead_status: "hot" | "warm" | "cold"
       news_type: "news" | "focus" | "inspiration"
       task_priority: "high" | "medium" | "low"

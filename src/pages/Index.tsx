@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { CalendarSection } from "@/components/dashboard/CalendarSection";
 
 const Index = () => {
   const { toast } = useToast();
@@ -82,6 +83,7 @@ const Index = () => {
 
       <MetricsSection />
       <ContentSeriesSection />
+      <CalendarSection />
     </div>
   );
 };
