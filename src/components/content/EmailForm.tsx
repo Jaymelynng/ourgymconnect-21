@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 
 interface EmailFormProps {
   onCancel: () => void;
+  initialData?: any;
+  onDataChange?: (data: any) => void;
 }
 
-export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
+export const EmailForm: React.FC<EmailFormProps> = ({ onCancel, initialData, onDataChange }) => {
   return (
     <Dialog open={true} onOpenChange={() => onCancel()}>
       <DialogContent>
