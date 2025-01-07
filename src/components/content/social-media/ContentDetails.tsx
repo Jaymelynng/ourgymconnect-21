@@ -2,6 +2,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface ContentDetailsProps {
   focus: string;
@@ -9,7 +10,7 @@ interface ContentDetailsProps {
   type: string[];
   onFocusChange: (value: string) => void;
   onGoalChange: (value: string) => void;
-  onTypeChange: (types: string[]) => void;
+  onTypeChange: (value: string[]) => void;
 }
 
 export const ContentDetails: React.FC<ContentDetailsProps> = ({
@@ -20,45 +21,54 @@ export const ContentDetails: React.FC<ContentDetailsProps> = ({
   onGoalChange,
   onTypeChange,
 }) => {
+  const contentTypes = ['Post', 'Story', 'Reel'];
+
+  const toggleType = (selectedType: string) => {
+    if (type.includes(selectedType)) {
+      onTypeChange(type.filter(t => t !== selectedType));
+    } else {
+      onTypeChange([...type, selectedType]);
+    }
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label>Focus (1-2 words)</Label>
-          <Input
-            value={focus}
-            onChange={(e) => onFocusChange(e.target.value)}
-            className="bg-white"
-          />
-        </div>
-        <div>
-          <Label>Goal</Label>
-          <Input
-            value={goal}
-            onChange={(e) => onGoalChange(e.target.value)}
-            className="bg-white"
-          />
-        </div>
+      <div>
+        <Label className="text-gray-700">Focus (1-2 words)</Label>
+        <Input
+          value={focus}
+          onChange={(e) => onFocusChange(e.target.value)}
+          className="bg-white border-gray-300 focus:ring-2 focus:ring-primary"
+          placeholder="e.g., Brand Awareness"
+        />
       </div>
 
       <div>
-        <Label>Type</Label>
-        <div className="flex gap-3">
-          {['post', 'story'].map((t) => (
+        <Label className="text-gray-700">Goal</Label>
+        <Input
+          value={goal}
+          onChange={(e) => onGoalChange(e.target.value)}
+          className="bg-white border-gray-300 focus:ring-2 focus:ring-primary"
+          placeholder="e.g., Increase engagement"
+        />
+      </div>
+
+      <div>
+        <Label className="text-gray-700">Type</Label>
+        <div className="flex flex-wrap gap-2">
+          {contentTypes.map((contentType) => (
             <Button
-              key={t}
+              key={contentType}
               type="button"
-              variant={type.includes(t) ? 'default' : 'outline'}
-              onClick={() => {
-                onTypeChange(
-                  type.includes(t)
-                    ? type.filter(item => item !== t)
-                    : [...type, t]
-                );
-              }}
-              className={type.includes(t) ? 'bg-primary hover:bg-primary-hover flex-1' : 'flex-1'}
+              variant={type.includes(contentType) ? 'default' : 'outline'}
+              onClick={() => toggleType(contentType)}
+              className={cn(
+                type.includes(contentType)
+                  ? "bg-primary hover:bg-primary-hover text-white"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+              )}
             >
-              {t.charAt(0).toUpperCase() + t.slice(1)}
+              {contentType}
             </Button>
           ))}
         </div>

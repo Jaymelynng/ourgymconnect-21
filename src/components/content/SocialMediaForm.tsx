@@ -8,6 +8,7 @@ import { Link2 } from 'lucide-react';
 import { FormHeader } from './social-media/FormHeader';
 import { ContentDetails } from './social-media/ContentDetails';
 import { VisualTasks } from './social-media/VisualTasks';
+import { cn } from '@/lib/utils';
 
 interface SocialMediaFormProps {
   onCancel: () => void;
@@ -58,13 +59,13 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
           />
 
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <Label>Key Notes</Label>
+            <Label className="text-gray-700">Key Notes</Label>
             <Textarea
               rows={4}
               value={formData.keyNotes}
               onChange={(e) => setFormData(prev => ({ ...prev, keyNotes: e.target.value }))}
               placeholder="Overall notes about the content..."
-              className="bg-white"
+              className="bg-white border-gray-300 focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -97,18 +98,18 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
           />
 
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <Label>SharePoint Upload Folder</Label>
+            <Label className="text-gray-700">SharePoint Upload Folder</Label>
             <div className="relative">
-              <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               <Input
                 type="url"
-                className="pl-10 bg-white"
+                className="pl-10 bg-white border-gray-300 focus:ring-2 focus:ring-primary"
                 placeholder="Paste SharePoint folder link for photo uploads..."
                 value={formData.sharePointLink}
                 onChange={(e) => setFormData(prev => ({ ...prev, sharePointLink: e.target.value }))}
               />
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-gray-600">
               Share this link with contributors to upload their photos
             </p>
           </div>
@@ -118,12 +119,13 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
               type="button"
               variant="outline"
               onClick={onCancel}
+              className="border-gray-300 text-gray-700 hover:bg-gray-100"
             >
               Cancel
             </Button>
             <Button 
               type="submit"
-              className="bg-primary hover:bg-primary-hover"
+              className="bg-primary hover:bg-primary-hover text-white"
             >
               Create Content
             </Button>
