@@ -164,6 +164,41 @@ export type Database = {
         }
         Relationships: []
       }
+      edit_requests: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string | null
+          status: string | null
+          submission_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          status?: string | null
+          submission_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          status?: string | null
+          submission_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edit_requests_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_content: {
         Row: {
           body_content: string | null
@@ -296,6 +331,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      gyms: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       in_gym_content: {
         Row: {
@@ -607,6 +663,50 @@ export type Database = {
             columns: ["gym_id"]
             isOneToOne: false
             referencedRelation: "gym_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submissions: {
+        Row: {
+          additional_promotions: string | null
+          created_at: string
+          gym_id: string | null
+          id: string
+          leotard_discount: string | null
+          status: string | null
+          summer_discount: string | null
+          updated_at: string
+          winter_discount: string | null
+        }
+        Insert: {
+          additional_promotions?: string | null
+          created_at?: string
+          gym_id?: string | null
+          id?: string
+          leotard_discount?: string | null
+          status?: string | null
+          summer_discount?: string | null
+          updated_at?: string
+          winter_discount?: string | null
+        }
+        Update: {
+          additional_promotions?: string | null
+          created_at?: string
+          gym_id?: string | null
+          id?: string
+          leotard_discount?: string | null
+          status?: string | null
+          summer_discount?: string | null
+          updated_at?: string
+          winter_discount?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
             referencedColumns: ["id"]
           },
         ]
