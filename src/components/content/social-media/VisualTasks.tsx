@@ -25,7 +25,7 @@ export const VisualTasks: React.FC<VisualTasksProps> = ({
   onTaskToggle,
 }) => {
   return (
-    <div className="bg-rose-50/80 p-4 rounded-lg space-y-6">
+    <div className="bg-gray-100 p-4 rounded-lg space-y-6">
       <div>
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-medium text-primary">Visual Tasks</h3>

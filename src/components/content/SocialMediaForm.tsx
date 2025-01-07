@@ -57,7 +57,7 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
             onTypeChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
           />
 
-          <div>
+          <div className="bg-gray-100 p-4 rounded-lg">
             <Label>Key Notes</Label>
             <Textarea
               rows={4}
@@ -95,7 +95,7 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
             }}
           />
 
-          <div className="bg-rose-50/80 p-4 rounded-lg">
+          <div className="bg-gray-100 p-4 rounded-lg">
             <Label>SharePoint Upload Folder</Label>
             <div className="relative">
               <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />

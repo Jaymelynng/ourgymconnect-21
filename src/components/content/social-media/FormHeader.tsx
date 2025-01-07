@@ -25,7 +25,7 @@ export const FormHeader: React.FC<FormHeaderProps> = ({
   onTaskDueDateChange,
 }) => {
   return (
-    <div className="bg-rose-50/80 p-4 rounded-lg space-y-4">
+    <div className="bg-gray-100 p-4 rounded-lg space-y-4">
       <div>
         <Label>Title</Label>
         <Input
