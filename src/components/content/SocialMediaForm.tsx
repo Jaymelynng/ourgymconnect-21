@@ -35,7 +35,7 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
 
   return (
     <Dialog open={true} onOpenChange={() => onCancel()}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-200">
         <form onSubmit={handleSubmit} className="space-y-6">
           <FormHeader
             title={formData.title}
@@ -57,13 +57,14 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
             onTypeChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
           />
 
-          <div className="bg-gray-100 p-4 rounded-lg">
+          <div className="bg-white p-4 rounded-lg shadow-sm">
             <Label>Key Notes</Label>
             <Textarea
               rows={4}
               value={formData.keyNotes}
               onChange={(e) => setFormData(prev => ({ ...prev, keyNotes: e.target.value }))}
               placeholder="Overall notes about the content..."
+              className="bg-white"
             />
           </div>
 
@@ -95,13 +96,13 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
             }}
           />
 
-          <div className="bg-gray-100 p-4 rounded-lg">
+          <div className="bg-white p-4 rounded-lg shadow-sm">
             <Label>SharePoint Upload Folder</Label>
             <div className="relative">
               <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="url"
-                className="pl-10"
+                className="pl-10 bg-white"
                 placeholder="Paste SharePoint folder link for photo uploads..."
                 value={formData.sharePointLink}
                 onChange={(e) => setFormData(prev => ({ ...prev, sharePointLink: e.target.value }))}

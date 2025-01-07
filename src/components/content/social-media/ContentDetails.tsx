@@ -21,13 +21,14 @@ export const ContentDetails: React.FC<ContentDetailsProps> = ({
   onTypeChange,
 }) => {
   return (
-    <>
+    <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label>Focus (1-2 words)</Label>
           <Input
             value={focus}
             onChange={(e) => onFocusChange(e.target.value)}
+            className="bg-white"
           />
         </div>
         <div>
@@ -35,6 +36,7 @@ export const ContentDetails: React.FC<ContentDetailsProps> = ({
           <Input
             value={goal}
             onChange={(e) => onGoalChange(e.target.value)}
+            className="bg-white"
           />
         </div>
       </div>
@@ -54,13 +56,13 @@ export const ContentDetails: React.FC<ContentDetailsProps> = ({
                     : [...type, t]
                 );
               }}
-              className="bg-primary hover:bg-primary-hover"
+              className={type.includes(t) ? 'bg-primary hover:bg-primary-hover flex-1' : 'flex-1'}
             >
               {t.charAt(0).toUpperCase() + t.slice(1)}
             </Button>
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };

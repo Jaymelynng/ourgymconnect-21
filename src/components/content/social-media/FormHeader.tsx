@@ -25,12 +25,13 @@ export const FormHeader: React.FC<FormHeaderProps> = ({
   onTaskDueDateChange,
 }) => {
   return (
-    <div className="bg-gray-100 p-4 rounded-lg space-y-4">
+    <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
       <div>
         <Label>Title</Label>
         <Input
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
+          className="bg-white"
         />
       </div>
 
@@ -41,7 +42,7 @@ export const FormHeader: React.FC<FormHeaderProps> = ({
             type="button"
             variant={series === 'single' ? 'default' : 'outline'}
             onClick={() => onSeriesChange('single')}
-            className="flex-1 bg-primary hover:bg-primary-hover"
+            className={series === 'single' ? 'bg-primary hover:bg-primary-hover flex-1' : 'flex-1'}
           >
             Single Post
           </Button>
@@ -49,7 +50,7 @@ export const FormHeader: React.FC<FormHeaderProps> = ({
             type="button"
             variant={series === 'series' ? 'default' : 'outline'}
             onClick={() => onSeriesChange('series')}
-            className="flex-1 bg-primary hover:bg-primary-hover"
+            className={series === 'series' ? 'bg-primary hover:bg-primary-hover flex-1' : 'flex-1'}
           >
             Series
           </Button>
@@ -63,6 +64,7 @@ export const FormHeader: React.FC<FormHeaderProps> = ({
             type="date"
             value={contentDate}
             onChange={(e) => onContentDateChange(e.target.value)}
+            className="bg-white"
           />
         </div>
         <div>
@@ -71,6 +73,7 @@ export const FormHeader: React.FC<FormHeaderProps> = ({
             type="date"
             value={taskDueDate}
             onChange={(e) => onTaskDueDateChange(e.target.value)}
+            className="bg-white"
           />
         </div>
       </div>
