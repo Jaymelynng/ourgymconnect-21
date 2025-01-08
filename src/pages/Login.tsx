@@ -6,10 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { AuthChangeEvent } from "@supabase/supabase-js";
+import { AuthError } from "@supabase/supabase-js";
+import { Loader2 } from "lucide-react";
 
 export default function Login() {
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCacheClearing, setIsCacheClearing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,21 +34,40 @@ export default function Login() {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session);
-      if (event === 'SIGNED_IN') {
-        console.log('User signed in, redirecting to /');
-        navigate("/");
-        toast.success("Successfully signed in!");
-      }
-      if (event === 'SIGNED_OUT') {
-        toast.info("You have been signed out.");
-      }
-      if (event === 'USER_UPDATED') {
-        toast.success("Account created successfully!");
-      }
-      if (event === 'PASSWORD_RECOVERY') {
-        toast.info("Check your email for password reset instructions.");
+      
+      setIsLoading(true);
+      try {
+        switch (event) {
+          case 'SIGNED_IN':
+            console.log('User signed in, redirecting to /');
+            navigate("/");
+            toast.success("Successfully signed in!");
+            break;
+          case 'SIGNED_OUT':
+            toast.info("You have been signed out.");
+            break;
+          case 'USER_UPDATED':
+            toast.success("Account created successfully!");
+            break;
+          case 'PASSWORD_RECOVERY':
+            toast.info("Check your email for password reset instructions.");
+            break;
+          case 'USER_DELETED':
+            toast.error("Account deleted.");
+            break;
+          default:
+            console.log('Unhandled auth event:', event);
+        }
+      } catch (error) {
+        console.error('Error handling auth state change:', error);
+        if (error instanceof AuthError) {
+          setError(error.message);
+          toast.error(error.message);
+        }
+      } finally {
+        setIsLoading(false);
       }
     });
 
@@ -53,6 +75,7 @@ export default function Login() {
   }, [navigate]);
 
   const clearCache = async () => {
+    setIsCacheClearing(true);
     try {
       // Clear all local storage
       localStorage.clear();
@@ -66,6 +89,8 @@ export default function Login() {
     } catch (error) {
       console.error('Error clearing cache:', error);
       toast.error("Failed to clear cache");
+    } finally {
+      setIsCacheClearing(false);
     }
   };
 
@@ -83,7 +108,13 @@ export default function Login() {
           </Alert>
         )}
 
-        <div className="bg-card p-6 rounded-lg shadow-sm border">
+        <div className="bg-card p-6 rounded-lg shadow-sm border relative">
+          {isLoading && (
+            <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-lg z-50">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          )}
+          
           <Auth
             supabaseClient={supabase}
             appearance={{ 
@@ -107,9 +138,17 @@ export default function Login() {
           <Button 
             variant="outline" 
             onClick={clearCache}
+            disabled={isCacheClearing}
             className="text-sm"
           >
-            Clear Cache & Reload
+            {isCacheClearing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Clearing...
+              </>
+            ) : (
+              'Clear Cache & Reload'
+            )}
           </Button>
         </div>
 
