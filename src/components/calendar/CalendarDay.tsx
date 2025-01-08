@@ -30,7 +30,7 @@ export function CalendarDay({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleDelete = async (itemId: string) => {
+  const handleDelete = async (itemId: string | number) => {
     try {
       const { error } = await supabase
         .from('marketing_content')
