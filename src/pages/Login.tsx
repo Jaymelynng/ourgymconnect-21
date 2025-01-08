@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { AuthChangeEvent } from "@supabase/supabase-js";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -30,15 +31,18 @@ export default function Login() {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
       console.log('Auth state changed:', event, session);
       if (event === 'SIGNED_IN') {
         console.log('User signed in, redirecting to /');
         navigate("/");
         toast.success("Successfully signed in!");
       }
-      if (event === 'SIGNED_UP') {
-        toast.success("Account created successfully! Please check your email for verification.");
+      if (event === 'SIGNED_OUT') {
+        toast.info("You have been signed out.");
+      }
+      if (event === 'USER_UPDATED') {
+        toast.success("Account created successfully!");
       }
       if (event === 'PASSWORD_RECOVERY') {
         toast.info("Check your email for password reset instructions.");
