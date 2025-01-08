@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -21,13 +22,22 @@ export default function Login() {
   }, [navigate]);
 
   const handleQuickLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email: 'test@example.com',
-      password: 'password123'
-    });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: 'test@example.com',
+        password: 'password123'
+      });
 
-    if (error) {
-      setError(error.message);
+      if (error) {
+        setError(error.message);
+        toast.error("Login failed: " + error.message);
+      } else {
+        toast.success("Login successful!");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An unexpected error occurred");
+      toast.error("An unexpected error occurred");
     }
   };
 
