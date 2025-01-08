@@ -32,7 +32,7 @@ export function WeekView() {
 
   return (
     <div className="grid grid-cols-6 gap-2">
-      {weekDays.map(({ name, date }) => (
+      {weekDays.map(({ name }) => (
         <div key={name} className="text-center text-base font-semibold p-2 text-primary bg-primary/5 rounded-md">
           {name}
         </div>
@@ -42,10 +42,9 @@ export function WeekView() {
         
         const itemDate = parseISO(item.scheduled_date);
         const dayOfWeek = parseInt(format(itemDate, 'i'));
-        const dayIndex = dayOfWeek - 1; // Get day index (1-7, where 1 is Monday)
         
-        // Only show items for Monday-Saturday (indexes 0-5)
-        if (dayIndex > 5) return null;
+        // Only show items for Monday-Saturday (indexes 1-6)
+        if (dayOfWeek > 6 || dayOfWeek < 1) return null;
 
         return (
           <HoverCard key={item.id}>
