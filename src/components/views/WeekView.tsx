@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { format, parseISO, startOfWeek, addDays } from "date-fns";
+import { format, parseISO, startOfWeek, addDays, endOfWeek, isWithinInterval } from "date-fns";
 import { Image, Calendar, Type, CheckSquare } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -28,9 +28,19 @@ export function WeekView() {
   const { data: marketingItems = [] } = useQuery({
     queryKey: ['marketing_content'],
     queryFn: async () => {
+      const startDate = startOfWeek(new Date(), { weekStartsOn: 1 });
+      const endDate = endOfWeek(startDate, { weekStartsOn: 1 });
+      
+      console.log('Fetching marketing items for week:', {
+        start: startDate.toISOString(),
+        end: endDate.toISOString()
+      });
+
       const { data, error } = await supabase
         .from('marketing_content')
         .select('*')
+        .gte('scheduled_date', startDate.toISOString())
+        .lte('scheduled_date', endDate.toISOString())
         .order('scheduled_date');
       
       if (error) throw error;
