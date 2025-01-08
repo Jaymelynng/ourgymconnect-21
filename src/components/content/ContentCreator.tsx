@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { SocialMediaForm } from './SocialMediaForm';
 import { EmailForm } from './EmailForm';
 import { InGymForm } from './InGymForm';
@@ -6,43 +6,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-
-interface FormData {
-  social: any;
-  email: any;
-  inGym: any;
-}
 
 export const ContentCreator = () => {
   const [showTypeModal, setShowTypeModal] = useState(true);
   const [contentType, setContentType] = useState<'social' | 'email' | 'in-gym' | null>(null);
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
-  const [formData, setFormData] = useState<FormData>({
-    social: {},
-    email: {},
-    inGym: {}
-  });
-  const { toast } = useToast();
-
-  // Check authentication status
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: "Access Denied",
-          description: "You must be logged in to create content.",
-          variant: "destructive",
-        });
-        handleClose();
-      }
-    };
-    checkAuth();
-  }, []);
 
   const handleTypeChange = (type: 'social' | 'email' | 'in-gym') => {
+    console.log('Selected type:', type);
     setContentType(type);
     setShowTypeModal(false);
   };
@@ -52,39 +23,14 @@ export const ContentCreator = () => {
     setShowTypeModal(false);
   };
 
-  const updateFormData = (type: keyof FormData, data: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [type]: data
-    }));
-  };
-
   const renderForm = () => {
     switch (contentType) {
       case 'social':
-        return (
-          <SocialMediaForm 
-            onCancel={handleClose} 
-            initialData={formData.social}
-            onDataChange={(data) => updateFormData('social', data)}
-          />
-        );
+        return <SocialMediaForm onCancel={handleClose} />;
       case 'email':
-        return (
-          <EmailForm 
-            onCancel={handleClose}
-            initialData={formData.email}
-            onDataChange={(data) => updateFormData('email', data)}
-          />
-        );
+        return <EmailForm onCancel={handleClose} />;
       case 'in-gym':
-        return (
-          <InGymForm 
-            onCancel={handleClose}
-            initialData={formData.inGym}
-            onDataChange={(data) => updateFormData('inGym', data)}
-          />
-        );
+        return <InGymForm onCancel={handleClose} />;
       default:
         return null;
     }
@@ -106,10 +52,9 @@ export const ContentCreator = () => {
       onOpenChange={() => handleClose()}
     >
       <DialogContent className={cn(
-        "sm:max-w-2xl transition-all duration-300 ease-in-out bg-gray-200",
+        "sm:max-w-2xl transition-all duration-300 ease-in-out",
         "animate-in fade-in-0 zoom-in-95",
-        "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
-        !showTypeModal && "sm:max-w-3xl"
+        "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
       )}>
         <DialogHeader className="flex flex-row justify-between items-center">
           <DialogTitle className="text-2xl font-normal text-primary animate-fade-in">
@@ -124,24 +69,6 @@ export const ContentCreator = () => {
             <X className="h-4 w-4" />
           </Button>
         </DialogHeader>
-
-        {!showTypeModal && (
-          <div className="flex gap-4 mb-6">
-            {contentTypes.map((type) => (
-              <Button
-                key={type.id}
-                variant={contentType === type.id ? 'default' : 'outline'}
-                onClick={() => handleTypeChange(type.id as 'social' | 'email' | 'in-gym')}
-                className={cn(
-                  "flex-1",
-                  contentType === type.id ? "bg-primary text-white" : "bg-white text-gray-700"
-                )}
-              >
-                {type.label}
-              </Button>
-            ))}
-          </div>
-        )}
 
         {showTypeModal ? (
           <div className="p-6 animate-fade-in">

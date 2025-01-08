@@ -4,11 +4,9 @@ import { Button } from '@/components/ui/button';
 
 interface InGymFormProps {
   onCancel: () => void;
-  initialData?: any;
-  onDataChange?: (data: any) => void;
 }
 
-export const InGymForm: React.FC<InGymFormProps> = ({ onCancel, initialData, onDataChange }) => {
+export const InGymForm: React.FC<InGymFormProps> = ({ onCancel }) => {
   return (
     <Dialog open={true} onOpenChange={() => onCancel()}>
       <DialogContent>

@@ -1,6 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from './types';
 
-const supabaseUrl = 'https://pyyofjmqlosaejfuabcb.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5eW9mam1xbG9zYWVqZnVhYmNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk2NzI0ODAsImV4cCI6MjAyNTI0ODQ4MH0.ZpDVgNQvd0kXeJQvFEUFhXkI4wQgz72ZeUWOY0-kR0Q';
+const SUPABASE_URL = "https://pyyofjmqlosaejfuabcb.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5eW9mam1xbG9zYWVqZnVhYmNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ3NjM3MjIsImV4cCI6MjA1MDMzOTcyMn0.yUHeb2z_IvGNgcOxdf9q4vqEi3LTjeRzLzqC0B2uN9I";
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
