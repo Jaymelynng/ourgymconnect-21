@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -19,6 +20,17 @@ export default function Login() {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const handleQuickLogin = async () => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: 'test@example.com',
+      password: 'password123'
+    });
+
+    if (error) {
+      setError(error.message);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md space-y-4">
@@ -33,7 +45,24 @@ export default function Login() {
           </Alert>
         )}
 
-        <div className="bg-card p-6 rounded-lg shadow-sm border">
+        <div className="bg-card p-6 rounded-lg shadow-sm border space-y-4">
+          <Button 
+            onClick={handleQuickLogin}
+            className="w-full"
+            variant="outline"
+          >
+            Quick Login (test@example.com)
+          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+
           <Auth
             supabaseClient={supabase}
             appearance={{ theme: ThemeSupa }}
