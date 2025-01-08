@@ -100,7 +100,7 @@ export function WeekView() {
                   <div className="h-full flex flex-col">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-primary/70" />
+                        <Calendar className="w-4 h-4 text-primary" />
                         <span className="text-primary text-lg font-medium">
                           {format(day.date, 'd')}
                         </span>
@@ -109,8 +109,8 @@ export function WeekView() {
                         <img 
                           src={day.tasks[0].photo_examples} 
                           alt="" 
-                          className="w-8 h-8 rounded-full ring-2 ring-white/20 transition-all duration-300 
-                                   group-hover:ring-white/40 shadow-sm"
+                          className="w-8 h-8 rounded-full ring-2 ring-primary/20 transition-all duration-300 
+                                   group-hover:ring-primary/40 shadow-sm"
                         />
                       )}
                     </div>
@@ -120,7 +120,7 @@ export function WeekView() {
                     </h3>
                     
                     <div className="flex items-center gap-2 mb-2">
-                      <Type className="w-4 h-4 text-primary/70" />
+                      <Type className="w-4 h-4 text-primary" />
                       <span className="text-sm font-medium text-muted-foreground">
                         {day.tasks.length > 0 ? 'Tasks Available' : 'No Tasks'}
                       </span>
