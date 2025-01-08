@@ -74,7 +74,7 @@ export default function Login() {
             }}
             theme="light"
             providers={[]}
-            redirectTo={window.location.origin}
+            redirectTo={`${window.location.origin}/`}
           />
         </div>
 
