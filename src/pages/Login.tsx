@@ -12,6 +12,7 @@ export default function Login() {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session);
       if (event === 'SIGNED_IN') {
         navigate("/");
         toast.success("Successfully signed in!");
@@ -20,6 +21,7 @@ export default function Login() {
       } else if (event === 'USER_UPDATED') {
         const { error: sessionError } = await supabase.auth.getSession();
         if (sessionError) {
+          console.error('Session error:', sessionError);
           setError(sessionError.message);
           toast.error(sessionError.message);
         }
@@ -28,10 +30,12 @@ export default function Login() {
 
     // Check if we're already signed in
     supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log('Initial session check:', session, error);
       if (session) {
         navigate("/");
       }
       if (error) {
+        console.error('Initial session error:', error);
         setError(error.message);
         toast.error(error.message);
       }
@@ -70,6 +74,7 @@ export default function Login() {
             }}
             theme="light"
             providers={[]}
+            redirectTo={window.location.origin}
           />
         </div>
 
