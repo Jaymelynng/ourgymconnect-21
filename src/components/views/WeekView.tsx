@@ -1,10 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
-import { format, parseISO, startOfWeek, addDays, isToday } from "date-fns";
-import { Image, Calendar, Type } from "lucide-react";
+import { format, parseISO, startOfWeek, addDays } from "date-fns";
+import { Image, Calendar, Type, CheckSquare } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+
+interface MarketingItem {
+  id: number;
+  title: string;
+  content_type: string;
+  description?: string;
+  scheduled_date: string;
+  photo_examples?: string;
+  photo_key_points?: string;
+}
+
+interface DayTask {
+  name: string;
+  date: Date;
+  tasks: MarketingItem[];
+}
 
 export function WeekView() {
+  const [selectedDay, setSelectedDay] = useState<DayTask | null>(null);
+
   const { data: marketingItems = [] } = useQuery({
     queryKey: ['marketing_content'],
     queryFn: async () => {
@@ -24,106 +44,143 @@ export function WeekView() {
   // Create an array of the 6 days (Mon-Sat)
   const weekDays = Array.from({ length: 6 }, (_, index) => {
     const date = addDays(startOfCurrentWeek, index);
+    const dayTasks = marketingItems.filter(item => 
+      item.scheduled_date && 
+      format(parseISO(item.scheduled_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+    );
+
     return {
-      name: format(date, 'EEE'),
+      name: format(date, 'EEEE'),
       date: date,
+      tasks: dayTasks
     };
   });
 
   return (
-    <div className="grid grid-cols-6 gap-2">
-      {weekDays.map(({ name }) => (
-        <div key={name} className="text-center text-base font-semibold p-2 text-primary bg-primary/5 rounded-md">
-          {name}
-        </div>
-      ))}
-      {marketingItems.map((item) => {
-        if (!item.scheduled_date) return null;
-        
-        const itemDate = parseISO(item.scheduled_date);
-        const dayOfWeek = parseInt(format(itemDate, 'i'));
-        
-        // Only show items for Monday-Saturday (indexes 1-6)
-        if (dayOfWeek > 6 || dayOfWeek < 1) return null;
-
-        return (
-          <HoverCard key={item.id}>
-            <HoverCardTrigger asChild>
-              <div
-                className="aspect-square rounded-lg transition-all duration-300 cursor-pointer 
-                         hover:shadow-lg bg-primary/80 group hover:bg-primary transform 
-                         hover:scale-105 relative"
-              >
-                <div className="h-full p-4 flex flex-col">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-primary-foreground/70" />
-                      <span className={`
-                        text-primary-foreground text-lg font-medium px-3 py-1 rounded-full 
-                        shadow-sm backdrop-blur-sm transition-all duration-300
-                        ${isToday(itemDate) 
-                          ? 'bg-accent ring-2 ring-accent-foreground/50 scale-110' 
-                          : 'bg-primary/90'
-                        }
-                      `}>
-                        {format(itemDate, 'd')}
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold text-foreground">Weekly Content Schedule</h2>
+      <div className="grid grid-cols-6 gap-4">
+        {weekDays.map((day) => (
+          <div key={day.name}>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <div
+                  onClick={() => setSelectedDay(day)}
+                  className="aspect-square rounded-lg transition-all duration-300 cursor-pointer 
+                           bg-primary/5 hover:bg-primary/20 group transform hover:scale-105 
+                           shadow-sm hover:shadow-md p-4"
+                >
+                  <div className="h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-primary/70" />
+                        <span className="text-primary text-lg font-medium">
+                          {format(day.date, 'd')}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-base font-semibold text-foreground mb-2">
+                      {day.name}
+                    </h3>
+                    
+                    <div className="flex items-center gap-2 mb-2">
+                      <Type className="w-4 h-4 text-primary/70" />
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {day.tasks.length > 0 ? 'Tasks Available' : 'No Tasks'}
                       </span>
                     </div>
-                    {item.photo_examples ? (
-                      <img 
-                        src={item.photo_examples} 
-                        alt="" 
-                        className="w-8 h-8 rounded-full ring-2 ring-white/20 transition-all duration-300 group-hover:ring-white/40 shadow-sm"
-                      />
-                    ) : (
-                      <Image className="w-6 h-6 text-primary-foreground/70" />
+                    
+                    {day.tasks.length > 0 && (
+                      <div className="mt-auto flex items-center gap-2 text-primary">
+                        <CheckSquare className="w-4 h-4" />
+                        <span className="text-sm">
+                          {day.tasks.length} {day.tasks.length === 1 ? 'task' : 'tasks'}
+                        </span>
+                      </div>
                     )}
                   </div>
-                  
-                  <div className="flex items-center gap-2 mb-2">
-                    <Type className="w-4 h-4 text-primary-foreground/70" />
-                    <span className="text-sm font-medium text-primary-foreground bg-primary-foreground/10 px-2 py-0.5 rounded-full">
-                      {item.content_type || 'Content'}
+                </div>
+              </HoverCardTrigger>
+              <HoverCardContent 
+                className="w-80 p-4 bg-card shadow-lg border-primary/10 animate-in fade-in-0 zoom-in-95"
+                align="center"
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-primary" />
+                    <h4 className="font-semibold text-lg">{day.name}</h4>
+                  </div>
+                  {day.tasks.length > 0 ? (
+                    <div className="space-y-2">
+                      {day.tasks.map((task) => (
+                        <div 
+                          key={task.id}
+                          className="p-3 bg-primary/5 rounded-lg space-y-1"
+                        >
+                          <p className="font-medium text-foreground">{task.title}</p>
+                          <p className="text-sm text-muted-foreground">{task.content_type}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No tasks scheduled for this day.</p>
+                  )}
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        ))}
+      </div>
+
+      <Dialog open={!!selectedDay} onOpenChange={() => setSelectedDay(null)}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedDay?.name} - {selectedDay?.date ? format(selectedDay.date, 'MMMM d, yyyy') : ''}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            {selectedDay?.tasks.length ? (
+              selectedDay.tasks.map((task) => (
+                <div 
+                  key={task.id}
+                  className="p-4 bg-primary/5 rounded-lg space-y-3 hover:bg-primary/10 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg text-foreground">{task.title}</h3>
+                    {task.photo_examples && (
+                      <img 
+                        src={task.photo_examples} 
+                        alt="" 
+                        className="w-12 h-12 rounded-full ring-2 ring-primary/20"
+                      />
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Type className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {task.content_type}
                     </span>
                   </div>
-                  
-                  <div className="text-base font-medium text-primary-foreground mb-2 line-clamp-2 group-hover:line-clamp-none transition-all duration-300">
-                    {item.title}
-                  </div>
+                  {task.description && (
+                    <p className="text-sm text-muted-foreground">{task.description}</p>
+                  )}
+                  {task.photo_key_points && (
+                    <div className="text-sm text-muted-foreground">
+                      <strong>Key Points:</strong> {task.photo_key_points}
+                    </div>
+                  )}
                 </div>
-              </div>
-            </HoverCardTrigger>
-            <HoverCardContent 
-              className="w-80 p-4 bg-card shadow-lg border-primary/10 animate-in fade-in-0 zoom-in-95"
-              align="center"
-            >
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold text-lg mb-1">{item.title}</h4>
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
-                </div>
-                {item.caption && (
-                  <div>
-                    <h5 className="font-medium text-sm mb-1">Caption</h5>
-                    <p className="text-sm text-muted-foreground">{item.caption}</p>
-                  </div>
-                )}
-                {item.photo_key_points && (
-                  <div>
-                    <h5 className="font-medium text-sm mb-1">Key Points</h5>
-                    <p className="text-sm text-muted-foreground">{item.photo_key_points}</p>
-                  </div>
-                )}
-                <div className="pt-2 border-t">
-                  <p className="text-sm text-primary">
-                    Scheduled for {format(itemDate, 'PPP')} at {format(itemDate, 'h:mm a')}
-                  </p>
-                </div>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        );
-      })}
+              ))
+            ) : (
+              <p className="text-center text-muted-foreground">
+                No tasks scheduled for this day.
+              </p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
