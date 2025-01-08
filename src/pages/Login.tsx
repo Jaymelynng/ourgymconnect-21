@@ -11,14 +11,20 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('Login component mounted');
+    console.log('Current origin:', window.location.origin);
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session);
       if (event === 'SIGNED_IN') {
+        console.log('User signed in, redirecting to /');
         navigate("/");
         toast.success("Successfully signed in!");
       } else if (event === 'SIGNED_OUT') {
+        console.log('User signed out');
         setError("");
       } else if (event === 'USER_UPDATED') {
+        console.log('User updated, checking session');
         const { error: sessionError } = await supabase.auth.getSession();
         if (sessionError) {
           console.error('Session error:', sessionError);
@@ -32,6 +38,7 @@ export default function Login() {
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       console.log('Initial session check:', session, error);
       if (session) {
+        console.log('Session found, redirecting to /');
         navigate("/");
       }
       if (error) {
