@@ -43,10 +43,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md space-y-4">
+      <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">Welcome Back</h1>
-          <p className="text-muted-foreground">Sign in to access your dashboard</p>
+          <h1 className="text-2xl font-bold">Welcome</h1>
+          <p className="text-muted-foreground">Create an account or sign in to continue</p>
         </div>
         
         {error && (
@@ -55,30 +55,41 @@ export default function Login() {
           </Alert>
         )}
 
-        <div className="bg-card p-6 rounded-lg shadow-sm border space-y-4">
-          <Button 
-            onClick={handleQuickLogin}
-            className="w-full"
-            variant="outline"
-          >
-            Quick Login (test@example.com)
-          </Button>
+        <div className="bg-card p-6 rounded-lg shadow-sm border space-y-6">
+          <Auth
+            supabaseClient={supabase}
+            appearance={{ 
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: 'rgb(var(--primary))',
+                    brandAccent: 'rgb(var(--primary))',
+                  },
+                },
+              },
+            }}
+            theme="light"
+            providers={[]}
+          />
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-card px-2 text-muted-foreground">Or use test account</span>
             </div>
           </div>
 
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
-            theme="light"
-            providers={[]}
-          />
+          <Button 
+            onClick={handleQuickLogin}
+            className="w-full"
+            variant="outline"
+            size="sm"
+          >
+            Quick Login (test@example.com)
+          </Button>
         </div>
       </div>
     </div>
