@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { format, parseISO, startOfWeek, addDays, isToday } from "date-fns";
-import { Image, Calendar, Type, CheckSquare } from "lucide-react";
+import { Image, Calendar, Type } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
+import { supabase } from "@/integrations/supabase/client";
 
 export function WeekView() {
   const { data: marketingItems = [] } = useQuery({
@@ -109,10 +109,10 @@ export function WeekView() {
                     <p className="text-sm text-muted-foreground">{item.caption}</p>
                   </div>
                 )}
-                {item.key_notes && (
+                {item.photo_key_points && (
                   <div>
-                    <h5 className="font-medium text-sm mb-1">Key Notes</h5>
-                    <p className="text-sm text-muted-foreground">{item.key_notes}</p>
+                    <h5 className="font-medium text-sm mb-1">Key Points</h5>
+                    <p className="text-sm text-muted-foreground">{item.photo_key_points}</p>
                   </div>
                 )}
                 <div className="pt-2 border-t">
