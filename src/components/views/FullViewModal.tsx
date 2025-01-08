@@ -1,7 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { WeekView } from "./WeekView";
-import { MonthView } from "./MonthView";
-import { ListView } from "./ListView";
+import { WeekView } from "../dashboard/WeekView";
+import { MonthView } from "../dashboard/MonthView";
+import { ListView } from "../dashboard/ListView";
 
 interface FullViewModalProps {
   isOpen: boolean;
