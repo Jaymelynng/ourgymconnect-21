@@ -37,6 +37,12 @@ export default function Login() {
         navigate("/");
         toast.success("Successfully signed in!");
       }
+      if (event === 'SIGNED_UP') {
+        toast.success("Account created successfully! Please check your email for verification.");
+      }
+      if (event === 'PASSWORD_RECOVERY') {
+        toast.info("Check your email for password reset instructions.");
+      }
     });
 
     return () => subscription.unsubscribe();
