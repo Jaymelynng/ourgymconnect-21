@@ -33,7 +33,15 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">Welcome Back</h1>
+        <h1 className="text-2xl font-bold text-center mb-2">Welcome</h1>
+        <p className="text-gray-600 text-center mb-6">
+          Please create an account or sign in to continue
+        </p>
+        <Alert className="mb-6">
+          <AlertDescription>
+            New users: Click "Sign Up" to create an account with your email and password.
+          </AlertDescription>
+        </Alert>
         <Auth
           supabaseClient={supabase}
           appearance={{
