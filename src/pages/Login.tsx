@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -41,6 +42,23 @@ export default function Login() {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const clearCache = async () => {
+    try {
+      // Clear all local storage
+      localStorage.clear();
+      // Clear all session storage
+      sessionStorage.clear();
+      // Clear Supabase session
+      await supabase.auth.signOut();
+      // Reload the page
+      window.location.reload();
+      toast.success("Cache cleared successfully!");
+    } catch (error) {
+      console.error('Error clearing cache:', error);
+      toast.error("Failed to clear cache");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
@@ -73,6 +91,16 @@ export default function Login() {
             providers={[]}
             redirectTo={`${window.location.origin}/`}
           />
+        </div>
+
+        <div className="mt-4 text-center">
+          <Button 
+            variant="outline" 
+            onClick={clearCache}
+            className="text-sm"
+          >
+            Clear Cache & Reload
+          </Button>
         </div>
 
         <div className="mt-4 text-center text-sm text-muted-foreground">
