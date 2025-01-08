@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { WeekView } from "./WeekView";
 import { MonthView } from "./MonthView";
-import { EventList } from "./EventList";
+import { ListView } from "./ListView";
 import { Button } from "@/components/ui/button";
+import { FullViewModal } from "../views/FullViewModal";
 
 export function CalendarView() {
-  const [viewType, setViewType] = useState('week');
+  const [viewType, setViewType] = useState<'week' | 'month' | 'list'>('week');
+  const [isFullView, setIsFullView] = useState(false);
+
+  const handleViewClick = () => {
+    setIsFullView(true);
+  };
 
   return (
     <div className="bg-card rounded-lg shadow-sm p-4 mt-6">
@@ -33,9 +39,17 @@ export function CalendarView() {
         </div>
       </div>
       
-      {viewType === 'week' && <WeekView />}
-      {viewType === 'month' && <MonthView />}
-      {viewType === 'list' && <EventList />}
+      <div onClick={handleViewClick} className="cursor-pointer">
+        {viewType === 'week' && <WeekView />}
+        {viewType === 'month' && <MonthView />}
+        {viewType === 'list' && <ListView />}
+      </div>
+
+      <FullViewModal
+        isOpen={isFullView}
+        onClose={() => setIsFullView(false)}
+        viewType={viewType}
+      />
     </div>
   );
 }
