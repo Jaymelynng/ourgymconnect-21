@@ -11,6 +11,8 @@ interface DayCardProps {
 }
 
 export function DayCard({ name, date, tasks, onClick }: DayCardProps) {
+  const taskCount = tasks.length;
+  
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
@@ -31,7 +33,7 @@ export function DayCard({ name, date, tasks, onClick }: DayCardProps) {
               {tasks[0]?.photo_examples && (
                 <img 
                   src={tasks[0].photo_examples} 
-                  alt="" 
+                  alt={`Preview for ${tasks[0].title}`}
                   className="w-8 h-8 rounded-full ring-2 ring-primary/20 transition-all duration-300 
                            group-hover:ring-primary/40 shadow-sm"
                 />
@@ -45,15 +47,15 @@ export function DayCard({ name, date, tasks, onClick }: DayCardProps) {
             <div className="flex items-center gap-2 mb-2">
               <Type className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-muted-foreground">
-                {tasks.length > 0 ? 'Tasks Available' : 'No Tasks'}
+                {taskCount > 0 ? `${taskCount} Task${taskCount !== 1 ? 's' : ''}` : 'No Tasks'}
               </span>
             </div>
             
-            {tasks.length > 0 && (
+            {taskCount > 0 && (
               <div className="mt-auto flex items-center gap-2 text-primary">
                 <CheckSquare className="w-4 h-4" />
                 <span className="text-sm">
-                  {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
+                  View Details
                 </span>
               </div>
             )}
@@ -69,7 +71,7 @@ export function DayCard({ name, date, tasks, onClick }: DayCardProps) {
             <Calendar className="w-5 h-5 text-primary" />
             <h4 className="font-semibold text-lg">{name}</h4>
           </div>
-          {tasks.length > 0 ? (
+          {taskCount > 0 ? (
             <div className="space-y-2">
               {tasks.map((task) => (
                 <div 

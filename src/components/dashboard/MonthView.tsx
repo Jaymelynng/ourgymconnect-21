@@ -1,20 +1,55 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, startOfMonth, endOfMonth } from "date-fns";
 import { Image } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export function MonthView() {
+  const { toast } = useToast();
+  const currentDate = new Date();
+  const monthStart = startOfMonth(currentDate);
+  const monthEnd = endOfMonth(currentDate);
+
   const { data: marketingItems = [] } = useQuery({
-    queryKey: ['marketing_content'],
+    queryKey: ['marketing_content', monthStart.toISOString(), monthEnd.toISOString()],
     queryFn: async () => {
+      console.log('Fetching marketing items for month view:', {
+        start: monthStart.toISOString(),
+        end: monthEnd.toISOString()
+      });
+
       const { data, error } = await supabase
         .from('marketing_content')
         .select('*')
+        .gte('scheduled_date', monthStart.toISOString())
+        .lte('scheduled_date', monthEnd.toISOString())
         .order('scheduled_date');
       
-      if (error) throw error;
-      return data || [];
-    }
+      if (error) {
+        console.error('Error fetching marketing items:', error);
+        toast({
+          title: "Error fetching content",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+        return [];
+      }
+
+      // Group items by date
+      const groupedItems = (data || []).reduce((acc: Record<string, any[]>, item) => {
+        if (item.scheduled_date) {
+          const date = format(parseISO(item.scheduled_date), 'yyyy-MM-dd');
+          if (!acc[date]) {
+            acc[date] = [];
+          }
+          acc[date].push(item);
+        }
+        return acc;
+      }, {});
+
+      return groupedItems;
+    },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   return (
@@ -24,32 +59,37 @@ export function MonthView() {
           {day}
         </div>
       ))}
-      {marketingItems.map((item) => (
+      {Object.entries(marketingItems).map(([date, items]) => (
         <div
-          key={item.id}
+          key={date}
           className="aspect-square rounded-lg transition-all cursor-pointer hover:shadow-lg bg-primary/80 group hover:bg-primary"
         >
           <div className="h-full p-2 flex flex-col">
             <div className="flex items-center justify-between">
               <span className="text-primary-foreground text-sm">
-                {item.scheduled_date ? format(parseISO(item.scheduled_date), 'd') : ''}
+                {format(parseISO(date), 'd')}
               </span>
-              {item.photo_examples ? (
-                <img 
-                  src={item.photo_examples} 
-                  alt="" 
-                  className="w-6 h-6 rounded-full"
-                />
-              ) : (
-                <Image className="w-4 h-4 text-primary-foreground/70" />
-              )}
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-primary-foreground/90">
+                  {items.length} task{items.length !== 1 ? 's' : ''}
+                </span>
+                {items[0]?.photo_examples ? (
+                  <img 
+                    src={items[0].photo_examples} 
+                    alt="" 
+                    className="w-6 h-6 rounded-full"
+                  />
+                ) : (
+                  <Image className="w-4 h-4 text-primary-foreground/70" />
+                )}
+              </div>
             </div>
             <div className="text-xs text-primary-foreground mt-1 line-clamp-3 group-hover:line-clamp-none">
-              {item.title}
+              {items[0]?.title}
             </div>
-            {item.theme && (
+            {items[0]?.theme && (
               <div className="text-xs text-primary-foreground/80 mt-1">
-                {item.theme}
+                {items[0].theme}
               </div>
             )}
           </div>

@@ -4,14 +4,15 @@ import { format, parseISO, isValid } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface MarketingItem {
   id: number;
   title: string;
-  description?: string;
   content_type?: string;
   scheduled_date?: string;
   photo_examples?: string;
+  theme?: string;
 }
 
 type GroupedItems = Record<string, MarketingItem[]>;
@@ -26,7 +27,7 @@ export function ListView() {
         console.log('Fetching marketing items for list view');
         const { data, error } = await supabase
           .from('marketing_content')
-          .select('id, title, description, content_type, scheduled_date, photo_examples')
+          .select('id, title, content_type, scheduled_date, photo_examples, theme')
           .order('scheduled_date');
         
         if (error) {
@@ -71,7 +72,7 @@ export function ListView() {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map(i => (
-          <div key={i} className="h-32 animate-pulse bg-primary/5 rounded-lg" />
+          <Skeleton key={i} className="h-32" />
         ))}
       </div>
     );
@@ -89,18 +90,20 @@ export function ListView() {
     <div className="space-y-8 animate-fade-in">
       {Object.entries(marketingItems).map(([date, items]) => (
         <div key={date} className="space-y-4">
-          <h2 className="text-2xl font-semibold text-primary">
-            {date === 'Unscheduled' ? date : format(parseISO(date), 'MMMM d, yyyy')}
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-primary">
+              {date === 'Unscheduled' ? date : format(parseISO(date), 'MMMM d, yyyy')}
+            </h2>
+            <Badge variant="secondary" className="text-sm">
+              {items.length} task{items.length !== 1 ? 's' : ''}
+            </Badge>
+          </div>
           <div className="grid gap-4">
             {items.map((item) => (
               <Card key={item.id} className="p-6 hover:shadow-md transition-shadow duration-200">
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
                     <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
-                    {item.description && (
-                      <p className="text-muted-foreground">{item.description}</p>
-                    )}
                     {item.content_type && (
                       <Badge variant="secondary" className="mt-2">
                         {item.content_type}
