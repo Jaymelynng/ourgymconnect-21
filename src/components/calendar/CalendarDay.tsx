@@ -32,10 +32,12 @@ export function CalendarDay({
 
   const handleDelete = async (itemId: string | number) => {
     try {
+      const id = typeof itemId === 'string' ? parseInt(itemId, 10) : itemId;
+      
       const { error } = await supabase
         .from('marketing_content')
         .delete()
-        .eq('id', itemId);
+        .eq('id', id);
 
       if (error) throw error;
 
