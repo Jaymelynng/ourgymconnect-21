@@ -14,37 +14,27 @@ export default function Login() {
     console.log('Login component mounted');
     console.log('Current origin:', window.location.origin);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session);
-      if (event === 'SIGNED_IN') {
-        console.log('User signed in, redirecting to /');
-        navigate("/");
-        toast.success("Successfully signed in!");
-      } else if (event === 'SIGNED_OUT') {
-        console.log('User signed out');
-        setError("");
-      } else if (event === 'USER_UPDATED') {
-        console.log('User updated, checking session');
-        const { error: sessionError } = await supabase.auth.getSession();
-        if (sessionError) {
-          console.error('Session error:', sessionError);
-          setError(sessionError.message);
-          toast.error(sessionError.message);
-        }
-      }
-    });
-
     // Check if we're already signed in
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       console.log('Initial session check:', session, error);
       if (session) {
         console.log('Session found, redirecting to /');
         navigate("/");
+        toast.success("Welcome back!");
       }
       if (error) {
         console.error('Initial session error:', error);
         setError(error.message);
         toast.error(error.message);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, session);
+      if (event === 'SIGNED_IN') {
+        console.log('User signed in, redirecting to /');
+        navigate("/");
+        toast.success("Successfully signed in!");
       }
     });
 
@@ -55,8 +45,8 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold">Create Account</h1>
-          <p className="text-muted-foreground mt-2">Sign up or sign in to continue</p>
+          <h1 className="text-2xl font-bold">Welcome Back</h1>
+          <p className="text-muted-foreground mt-2">Sign in to continue to your account</p>
         </div>
         
         {error && (
@@ -86,7 +76,7 @@ export default function Login() {
         </div>
 
         <div className="mt-4 text-center text-sm text-muted-foreground">
-          <p>Make sure to check your email after signing up</p>
+          <p>Need help? Contact support for assistance</p>
         </div>
       </div>
     </div>
