@@ -54,9 +54,6 @@ export default function Login() {
           case 'PASSWORD_RECOVERY':
             toast.info("Check your email for password reset instructions.");
             break;
-          case 'USER_DELETED':
-            toast.error("Account deleted.");
-            break;
           default:
             console.log('Unhandled auth event:', event);
         }
