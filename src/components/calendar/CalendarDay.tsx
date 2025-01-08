@@ -7,6 +7,7 @@ import { DayHeader } from "./day-components/DayHeader";
 import { ContentPreview } from "./day-components/ContentPreview";
 import { DayDialog } from "./day-components/DayDialog";
 
+// Props interface for better type clarity
 interface CalendarDayProps {
   day: Date;
   currentDate: Date;
@@ -25,11 +26,13 @@ export function CalendarDay({
   onDayClick,
   refetchItems
 }: CalendarDayProps) {
+  // State management
   const { toast } = useToast();
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  // Handlers
   const handleDelete = async (itemId: string | number) => {
     try {
       const id = typeof itemId === 'string' ? parseInt(itemId, 10) : itemId;
@@ -57,23 +60,31 @@ export function CalendarDay({
     }
   };
 
+  // Render
   return (
     <>
+      {/* Main Calendar Cell */}
       <div 
         onClick={() => setIsDialogOpen(true)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
+          // Base styles
           "min-h-[120px] border-b border-r border-border bg-card",
+          // Animation
           "transition-all duration-300 ease-in-out transform",
+          // Hover states
           isHovered && "scale-[1.02] shadow-lg",
           hasItems && "hover:bg-primary/10",
           !hasItems && "hover:bg-secondary/5",
+          // Animation
           "animate-fade-in cursor-pointer"
         )}
       >
+        {/* Day Header Section */}
         <DayHeader day={day} currentDate={currentDate} />
         
+        {/* Content Preview Section */}
         <div className={cn(
           "pt-8 px-2 pb-2 space-y-2",
           "transition-all duration-300",
@@ -94,6 +105,7 @@ export function CalendarDay({
         </div>
       </div>
 
+      {/* Dialogs Section */}
       <DayDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
