@@ -257,6 +257,9 @@ export type Database = {
           address: string | null
           code: string | null
           contact_email: string | null
+          email_approval_date: string | null
+          email_approval_notes: string | null
+          email_approved: boolean | null
           email_contact: string | null
           facebook_url: string | null
           gym_name: string
@@ -272,6 +275,9 @@ export type Database = {
           address?: string | null
           code?: string | null
           contact_email?: string | null
+          email_approval_date?: string | null
+          email_approval_notes?: string | null
+          email_approved?: boolean | null
           email_contact?: string | null
           facebook_url?: string | null
           gym_name: string
@@ -287,6 +293,9 @@ export type Database = {
           address?: string | null
           code?: string | null
           contact_email?: string | null
+          email_approval_date?: string | null
+          email_approval_notes?: string | null
+          email_approved?: boolean | null
           email_contact?: string | null
           facebook_url?: string | null
           gym_name?: string
