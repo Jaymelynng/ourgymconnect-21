@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "@/pages/Index";
 import Gallery from "@/pages/Gallery";
+import EmailReview from "@/pages/EmailReview";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -26,6 +27,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/gallery" element={<Gallery />} />
+            <Route path="/email-review/:id" element={<EmailReview />} />
           </Routes>
         </Router>
       </TooltipProvider>

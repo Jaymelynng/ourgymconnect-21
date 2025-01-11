@@ -1,8 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -13,6 +13,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
 import { GymSelector } from '../GymSelector';
+import RichTextEditor from '../RichTextEditor';
+import { supabase } from '@/integrations/supabase/client';
 
 interface EmailFormProps {
   onCancel: () => void;
@@ -20,27 +22,56 @@ interface EmailFormProps {
 
 export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
       subject: '',
       previewText: '',
       content: '',
       scheduledDate: new Date(),
+      gymId: '',
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log('Form submitted:', data);
-    toast({
-      title: "Email Created",
-      description: "Your email has been scheduled successfully.",
-    });
-    onCancel();
+  const onSubmit = async (data: any) => {
+    try {
+      const { data: emailContent, error } = await supabase
+        .from('email_content')
+        .insert([
+          {
+            subject_line: data.subject,
+            preview_text: data.previewText,
+            body_content: data.content,
+            scheduled_date: data.scheduledDate.toISOString(),
+            gym_id: data.gymId,
+            status: 'pending_approval'
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({
+        title: "Email Created",
+        description: "Your email has been sent for review.",
+      });
+      
+      onCancel();
+      navigate(`/email-review/${emailContent.id}`);
+    } catch (error) {
+      console.error('Error creating email:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create email",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <Dialog open={true} onOpenChange={() => onCancel()}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">Create Email Campaign</DialogTitle>
         </DialogHeader>
@@ -48,10 +79,19 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
-              <div className="mb-4">
-                <Label>Select Gym</Label>
-                <GymSelector />
-              </div>
+              <FormField
+                control={form.control}
+                name="gymId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select Gym</FormLabel>
+                    <FormControl>
+                      <GymSelector onGymChange={field.onChange} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
@@ -88,10 +128,9 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
                   <FormItem>
                     <FormLabel>Email Content</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Write your email content here..." 
-                        className="min-h-[200px]" 
-                        {...field} 
+                      <RichTextEditor 
+                        content={field.value} 
+                        onChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />
@@ -147,7 +186,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
                 Cancel
               </Button>
               <Button type="submit">
-                Schedule Email
+                Create Email
               </Button>
             </div>
           </form>
