@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ContentCreator } from "@/components/content/ContentCreator";
+import { EmailApprovals } from "@/components/email/EmailApprovals";
 import { useState } from "react";
 
 const Index = () => {
@@ -94,6 +95,8 @@ const Index = () => {
             </Button>
           </div>
         </div>
+
+        <EmailApprovals />
 
         <MetricsGrid />
 
