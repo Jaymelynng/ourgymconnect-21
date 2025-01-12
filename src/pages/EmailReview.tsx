@@ -1,13 +1,16 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { EmailContent } from "@/components/email/EmailContent";
+import { EmailApprovalActions } from "@/components/email/EmailApprovalActions";
+import { EmailContentType } from "@/integrations/supabase/types";
 
 export default function EmailReview() {
   const { id } = useParams();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: email, isLoading } = useQuery({
     queryKey: ['email_content', id],
@@ -15,23 +18,31 @@ export default function EmailReview() {
       const { data, error } = await supabase
         .from('email_content')
         .select('*')
-        .eq('id', id)
+        .eq('id', Number(id))
         .single();
 
       if (error) throw error;
-      return data;
+      return data as EmailContentType;
     }
+  });
+
+  const updateEmailStatus = useMutation({
+    mutationFn: async ({ status }: { status: 'approved' | 'rejected' }) => {
+      const { error } = await supabase
+        .from('email_content')
+        .update({ status })
+        .eq('id', Number(id));
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['email_content', id] });
+    },
   });
 
   const handleApprove = async () => {
     try {
-      const { error } = await supabase
-        .from('email_content')
-        .update({ status: 'approved' })
-        .eq('id', id);
-
-      if (error) throw error;
-
+      await updateEmailStatus.mutateAsync({ status: 'approved' });
       toast({
         title: "Email Approved",
         description: "The email has been approved for sending.",
@@ -48,13 +59,7 @@ export default function EmailReview() {
 
   const handleReject = async () => {
     try {
-      const { error } = await supabase
-        .from('email_content')
-        .update({ status: 'rejected' })
-        .eq('id', id);
-
-      if (error) throw error;
-
+      await updateEmailStatus.mutateAsync({ status: 'rejected' });
       toast({
         title: "Email Rejected",
         description: "The email has been rejected.",
@@ -79,48 +84,17 @@ export default function EmailReview() {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h1 className="text-2xl font-bold mb-6">Email Review</h1>
           
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-lg font-semibold">Subject Line</h2>
-              <p className="mt-2">{email?.subject_line}</p>
-            </div>
-
-            <div>
-              <h2 className="text-lg font-semibold">Preview Text</h2>
-              <p className="mt-2">{email?.preview_text}</p>
-            </div>
-
-            <div>
-              <h2 className="text-lg font-semibold">Email Content</h2>
-              <div 
-                className="mt-2 prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: email?.body_content }}
-              />
-            </div>
-
-            <div>
-              <h2 className="text-lg font-semibold">Scheduled Date</h2>
-              <p className="mt-2">
-                {email?.scheduled_date ? new Date(email.scheduled_date).toLocaleDateString() : 'Not scheduled'}
-              </p>
-            </div>
-
-            <div className="flex justify-end space-x-4">
-              <Button
-                variant="outline"
-                onClick={handleReject}
-                className="bg-red-50 hover:bg-red-100 text-red-600"
-              >
-                Reject
-              </Button>
-              <Button
-                onClick={handleApprove}
-                className="bg-green-600 hover:bg-green-700 text-white"
-              >
-                Approve
-              </Button>
-            </div>
-          </div>
+          {email && (
+            <>
+              <EmailContent email={email} />
+              <div className="mt-6">
+                <EmailApprovalActions
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </DashboardLayout>
