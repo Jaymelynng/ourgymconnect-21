@@ -3,6 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { format, parseISO, startOfMonth, endOfMonth } from "date-fns";
 import { Image } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Tables } from "@/integrations/supabase/types";
+
+type MarketingItem = Tables<'marketing_content'>;
+type GroupedItems = Record<string, MarketingItem[]>;
 
 export function MonthView() {
   const { toast } = useToast();
@@ -10,7 +14,7 @@ export function MonthView() {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
 
-  const { data: marketingItems = [] } = useQuery({
+  const { data: marketingItems = {} } = useQuery<GroupedItems>({
     queryKey: ['marketing_content', monthStart.toISOString(), monthEnd.toISOString()],
     queryFn: async () => {
       console.log('Fetching marketing items for month view:', {
@@ -32,11 +36,11 @@ export function MonthView() {
           description: "Please try again later",
           variant: "destructive",
         });
-        return [];
+        return {};
       }
 
       // Group items by date
-      const groupedItems = (data || []).reduce((acc: Record<string, any[]>, item) => {
+      const groupedItems = (data || []).reduce((acc: GroupedItems, item: MarketingItem) => {
         if (item.scheduled_date) {
           const date = format(parseISO(item.scheduled_date), 'yyyy-MM-dd');
           if (!acc[date]) {

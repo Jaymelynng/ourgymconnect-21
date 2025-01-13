@@ -4,8 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Image } from "lucide-react";
 import { Tables } from "@/integrations/supabase/types";
 
+type MarketingItem = Tables<'marketing_content'>;
+
 export function GalleryView() {
-  const { data: marketingItems, isLoading } = useQuery({
+  const { data: marketingItems, isLoading } = useQuery<MarketingItem[]>({
     queryKey: ['marketing_items'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -39,7 +41,7 @@ export function GalleryView() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in">
-      {items.map((item: Tables<'marketing_content'>) => (
+      {items.map((item: MarketingItem) => (
         <Card key={item.id} className="p-4 space-y-4 hover:shadow-lg transition-shadow">
           <div className="aspect-square bg-accent/10 rounded-lg flex items-center justify-center">
             {item.photo_examples ? (
