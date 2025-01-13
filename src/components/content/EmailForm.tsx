@@ -37,16 +37,14 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
     try {
       const { data: emailContent, error } = await supabase
         .from('email_content')
-        .insert([
-          {
-            subject_line: data.subject,
-            preview_text: data.previewText,
-            body_content: data.content,
-            scheduled_date: data.scheduledDate.toISOString(),
-            gym_id: data.gymId,
-            status: 'pending_approval'
-          }
-        ])
+        .insert({
+          subject_line: data.subject,
+          preview_text: data.previewText,
+          body_content: data.content,
+          scheduled_date: data.scheduledDate.toISOString(),
+          gym_id: data.gymId,
+          status: 'pending'
+        })
         .select()
         .single();
 

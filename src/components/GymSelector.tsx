@@ -11,9 +11,10 @@ import { useToast } from "@/hooks/use-toast";
 
 interface GymSelectorProps {
   onGymChange?: (gymId: string) => void;
+  onChange?: (gymId: string) => void;
 }
 
-export function GymSelector({ onGymChange }: GymSelectorProps) {
+export function GymSelector({ onGymChange, onChange }: GymSelectorProps) {
   const { toast } = useToast();
   
   const { data: gyms, isLoading } = useQuery({
@@ -39,10 +40,15 @@ export function GymSelector({ onGymChange }: GymSelectorProps) {
     }
   });
 
+  const handleChange = (value: string) => {
+    onGymChange?.(value);
+    onChange?.(value);
+  };
+
   if (isLoading) return <div className="animate-pulse h-10 bg-muted rounded-md" />;
 
   return (
-    <Select onValueChange={onGymChange}>
+    <Select onValueChange={handleChange}>
       <SelectTrigger className="w-full bg-white border-secondary/20">
         <SelectValue placeholder="Select a gym" />
       </SelectTrigger>

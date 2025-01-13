@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 export const EmailApprovals = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [selectedGym, setSelectedGym] = React.useState<number | null>(null);
+  const [selectedGym, setSelectedGym] = React.useState<string | null>(null);
 
   const { data: emails, isLoading } = useQuery({
     queryKey: ['email_approvals', selectedGym],
@@ -33,7 +33,7 @@ export const EmailApprovals = () => {
     }
   });
 
-  const handleGymChange = (gymId: number) => {
+  const handleGymChange = (gymId: string) => {
     setSelectedGym(gymId);
   };
 
@@ -53,7 +53,7 @@ export const EmailApprovals = () => {
     <Card className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Email Approvals</h2>
-        <GymSelector onChange={handleGymChange} />
+        <GymSelector onGymChange={handleGymChange} />
       </div>
 
       {emails?.length === 0 ? (

@@ -206,15 +206,15 @@ export type Database = {
           gym_id: number | null
           id: number
           preview_text: string | null
+          rejection_reason: string | null
           scheduled_date: string | null
           series_name: string | null
           series_order: number | null
+          status: string | null
           subject_line: string | null
           title: string | null
           total_posts: number | null
           updated_at: string | null
-          status: 'pending' | 'approved' | 'rejected'
-          rejection_reason: string | null
         }
         Insert: {
           body_content?: string | null
@@ -222,15 +222,15 @@ export type Database = {
           gym_id?: number | null
           id?: number
           preview_text?: string | null
+          rejection_reason?: string | null
           scheduled_date?: string | null
           series_name?: string | null
           series_order?: number | null
+          status?: string | null
           subject_line?: string | null
           title?: string | null
           total_posts?: number | null
           updated_at?: string | null
-          status?: 'pending' | 'approved' | 'rejected'
-          rejection_reason?: string | null
         }
         Update: {
           body_content?: string | null
@@ -238,15 +238,15 @@ export type Database = {
           gym_id?: number | null
           id?: number
           preview_text?: string | null
+          rejection_reason?: string | null
           scheduled_date?: string | null
           series_name?: string | null
           series_order?: number | null
+          status?: string | null
           subject_line?: string | null
           title?: string | null
           total_posts?: number | null
           updated_at?: string | null
-          status?: 'pending' | 'approved' | 'rejected'
-          rejection_reason?: string | null
         }
         Relationships: [
           {
@@ -848,23 +848,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-
-export interface EmailContentType {
-  id: number;
-  title: string | null;
-  subject_line: string | null;
-  preview_text: string | null;
-  body_content: string | null;
-  scheduled_date: string | null;
-  gym_id: number | null;
-  series_name: string | null;
-  series_order: number | null;
-  total_posts: number | null;
-  created_at: string | null;
-  updated_at: string | null;
-  status: 'pending' | 'approved' | 'rejected';
-  rejection_reason?: string;
-  gym_details?: {
-    gym_name: string;
-  };
-}
