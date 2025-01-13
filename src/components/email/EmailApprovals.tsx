@@ -24,7 +24,7 @@ export const EmailApprovals = () => {
         .eq('status', 'pending');
 
       if (selectedGym) {
-        query.eq('gym_id', selectedGym);
+        query.eq('gym_id', parseInt(selectedGym, 10));
       }
 
       const { data, error } = await query;
