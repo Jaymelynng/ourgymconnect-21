@@ -1,43 +1,97 @@
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { GymSelector } from '@/components/GymSelector';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { format } from 'date-fns';
+import { Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const EmailApprovals = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [selectedGym, setSelectedGym] = React.useState<number | null>(null);
 
-  const handleApprove = (gymId: number) => {
-    toast({
-      title: "Email Approved",
-      description: "The email has been approved for sending.",
-    });
+  const { data: emails, isLoading } = useQuery({
+    queryKey: ['email_approvals', selectedGym],
+    queryFn: async () => {
+      const query = supabase
+        .from('email_content')
+        .select('*, gym_details(gym_name)')
+        .eq('status', 'pending');
+
+      if (selectedGym) {
+        query.eq('gym_id', selectedGym);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const handleGymChange = (gymId: number) => {
+    setSelectedGym(gymId);
   };
+
+  const handleReviewEmail = (emailId: number) => {
+    navigate(`/email-review/${emailId}`);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <Card className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Email Approvals</h2>
-      <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <GymSelector />
-        </div>
-        <div className="space-y-2">
-          {/* Example email approval items */}
-          <div className="flex items-center justify-between p-4 bg-background rounded-lg border">
-            <div>
-              <h3 className="font-medium">Summer Camp Announcement</h3>
-              <p className="text-sm text-muted-foreground">Scheduled for June 1st</p>
-              <div className="flex gap-2 mt-2">
-                <Badge variant="secondary">Needs Approval</Badge>
-              </div>
-            </div>
-            <Button onClick={() => handleApprove(1)} size="sm">
-              Approve
-            </Button>
-          </div>
-        </div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold">Email Approvals</h2>
+        <GymSelector onChange={handleGymChange} />
       </div>
+
+      {emails?.length === 0 ? (
+        <div className="text-center py-8 text-muted-foreground">
+          No emails pending approval
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {emails?.map((email) => (
+            <div
+              key={email.id}
+              className="flex items-center justify-between p-4 bg-background rounded-lg border hover:border-primary transition-colors"
+            >
+              <div className="space-y-1">
+                <h3 className="font-medium">{email.title || 'Untitled Email'}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {email.gym_details?.gym_name}
+                </p>
+                <div className="flex gap-2 mt-2">
+                  <Badge variant="secondary">Needs Approval</Badge>
+                  {email.scheduled_date && (
+                    <Badge variant="outline">
+                      Scheduled for {format(new Date(email.scheduled_date), 'MMM d, yyyy')}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              <Button 
+                onClick={() => handleReviewEmail(email.id)}
+                size="sm"
+                className="ml-4"
+              >
+                Review
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
     </Card>
   );
 };
