@@ -97,7 +97,7 @@ const Index = () => {
 
         <MetricsGrid />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-6">
           {/* News and Updates Column */}
           <Card className="col-span-1">
             <CardHeader>
@@ -145,7 +145,9 @@ const Index = () => {
           </Card>
         </div>
 
-        <CalendarView />
+        <div className="w-full">
+          <CalendarView />
+        </div>
         
         {showContentCreator && (
           <ContentCreator />

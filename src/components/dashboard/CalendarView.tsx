@@ -14,9 +14,9 @@ export function CalendarView() {
   };
 
   return (
-    <div className="bg-card rounded-lg shadow-sm p-4 mt-6">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-primary">Calendar View</h3>
+    <div className="bg-card rounded-lg shadow-sm p-6 w-full">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="font-semibold text-xl text-primary">Calendar View</h3>
         <div className="flex gap-2">
           <Button 
             variant={viewType === 'week' ? "default" : "secondary"}
