@@ -1,28 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid, Instagram, Facebook, Share2, Palette, Plus } from 'lucide-react';
 import { Button } from './ui/button';
 import { GymSelector } from './GymSelector';
 import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const Toolkit = () => {
+  const [selectedGymId, setSelectedGymId] = useState<string | null>(null);
+
+  const { data: selectedGym, isLoading: isLoadingGym } = useQuery({
+    queryKey: ['gym_details', selectedGymId],
+    queryFn: async () => {
+      if (!selectedGymId) return null;
+      
+      const { data, error } = await supabase
+        .from('gym_details')
+        .select('instagram_url, facebook_url, sharepoint_url')
+        .eq('id', selectedGymId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching gym details:', error);
+        return null;
+      }
+      
+      return data;
+    },
+    enabled: !!selectedGymId
+  });
+
   const tools = [
     { 
       name: 'Instagram', 
       icon: Instagram, 
       color: 'hover:text-pink-400',
-      url: '#'
+      url: selectedGym?.instagram_url || '#',
+      disabled: !selectedGym?.instagram_url
     },
     { 
       name: 'Facebook', 
       icon: Facebook, 
       color: 'hover:text-blue-500',
-      url: '#'
+      url: selectedGym?.facebook_url || '#',
+      disabled: !selectedGym?.facebook_url
     },
     { 
       name: 'SharePoint', 
       icon: Share2, 
       color: 'hover:text-green-400',
-      url: '#'
+      url: selectedGym?.sharepoint_url || '#',
+      disabled: !selectedGym?.sharepoint_url
     },
     { 
       name: 'Canva', 
@@ -37,6 +65,10 @@ const Toolkit = () => {
     { title: 'Submit Tool Idea', subtitle: 'Coming Soon' }
   ];
 
+  const handleGymChange = (gymId: string) => {
+    setSelectedGymId(gymId);
+  };
+
   return (
     <div className="w-[280px] min-h-screen bg-gradient-to-b from-primary/95 to-primary/85 backdrop-blur-sm 
                     rounded-t-[15px] p-5 text-white shadow-lg border-r border-primary/20">
@@ -48,7 +80,7 @@ const Toolkit = () => {
         </h2>
         
         <div className="mb-6">
-          <GymSelector />
+          <GymSelector onChange={handleGymChange} />
         </div>
       </div>
 
@@ -59,11 +91,19 @@ const Toolkit = () => {
             <a
               key={tool.name}
               href={tool.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className={cn(
                 "bg-white/95 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center gap-2.5",
-                "cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-white shadow-sm group",
-                "animate-scale-in"
+                "transition-all duration-300 hover:scale-105 hover:bg-white shadow-sm group",
+                "animate-scale-in",
+                tool.disabled && "opacity-50 cursor-not-allowed hover:scale-100"
               )}
+              onClick={(e) => {
+                if (tool.disabled) {
+                  e.preventDefault();
+                }
+              }}
             >
               <IconComponent 
                 strokeWidth={1.5} 
