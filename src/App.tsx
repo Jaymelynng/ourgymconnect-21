@@ -13,6 +13,7 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
       retry: 1,
+      refetchOnWindowFocus: false, // Prevent unnecessary refetches
     },
   },
 });
@@ -21,7 +22,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Router>
+        <Router basename="/">
           <Toaster />
           <Sonner />
           <Routes>

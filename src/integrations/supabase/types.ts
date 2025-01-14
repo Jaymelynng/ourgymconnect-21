@@ -6,26 +6,6 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface EmailContentType {
-  id: number;
-  title: string | null;
-  subject_line: string | null;
-  preview_text: string | null;
-  body_content: string | null;
-  scheduled_date: string | null;
-  gym_id: number | null;
-  series_name: string | null;
-  series_order: number | null;
-  total_posts: number | null;
-  created_at: string | null;
-  updated_at: string | null;
-  status: 'pending' | 'approved' | 'rejected';
-  rejection_reason: string | null;
-  gym_details?: {
-    gym_name: string;
-  };
-}
-
 export type Database = {
   public: {
     Tables: {
@@ -868,4 +848,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-
