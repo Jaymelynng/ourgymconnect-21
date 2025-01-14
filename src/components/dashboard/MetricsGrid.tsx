@@ -75,25 +75,25 @@ export function MetricsGrid() {
         title="Tasks Due Soon"
         value={tasksDueSoon}
         description="Tasks due in the next 7 days"
-        icon={Clock}
+        icon={<Clock className="h-4 w-4" />}
       />
       <MetricCard
         title="Pending Emails"
         value={pendingEmails}
         description="Emails awaiting approval"
-        icon={Mail}
+        icon={<Mail className="h-4 w-4" />}
       />
       <MetricCard
         title="Scheduled Posts"
         value={scheduledPosts}
         description="Posts scheduled this month"
-        icon={Calendar}
+        icon={<Calendar className="h-4 w-4" />}
       />
       <MetricCard
         title="Uploaded Media"
         value={uploadedMedia}
         description="Total media assets"
-        icon={Image}
+        icon={<Image className="h-4 w-4" />}
       />
     </div>
   );

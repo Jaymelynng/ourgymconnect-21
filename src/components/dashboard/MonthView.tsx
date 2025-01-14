@@ -2,9 +2,14 @@ import { startOfMonth, endOfMonth, format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Tables } from "@/integrations/supabase/types";
 
-type MarketingItem = Tables["public"]["Tables"]["marketing_content"]["Row"];
+type MarketingItem = {
+  id: number;
+  title: string;
+  scheduled_date: string | null;
+  description: string | null;
+};
+
 type GroupedItems = Record<string, MarketingItem[]>;
 
 export function MonthView() {

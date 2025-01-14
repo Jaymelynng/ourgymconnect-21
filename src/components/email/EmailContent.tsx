@@ -1,6 +1,8 @@
 import React from 'react';
-import { EmailContentType } from '@/integrations/supabase/types';
 import { Badge } from '@/components/ui/badge';
+import { Tables } from '@/integrations/supabase/types';
+
+type EmailContentType = Tables['email_content']['Row'];
 
 interface EmailContentProps {
   email: EmailContentType;
