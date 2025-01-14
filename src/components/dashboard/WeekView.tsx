@@ -1,7 +1,8 @@
-import { format, startOfWeek, endOfWeek, addDays } from "date-fns";
-import { AlertCircle } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
+import { format, startOfWeek, endOfWeek, addDays, addWeeks, subWeeks } from "date-fns";
+import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { useMarketingContent } from "@/hooks/use-marketing-content";
 import { DayCard } from "./week-view/DayCard";
 import { TaskDetails } from "./week-view/TaskDetails";
@@ -14,11 +15,15 @@ interface DayTask {
 
 export function WeekView() {
   const [selectedDay, setSelectedDay] = useState<DayTask | null>(null);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-  const startDate = startOfWeek(new Date(), { weekStartsOn: 1 });
+  const startDate = startOfWeek(currentDate, { weekStartsOn: 1 });
   const endDate = endOfWeek(startDate, { weekStartsOn: 1 });
 
   const { data: marketingItems = [], isError } = useMarketingContent(startDate, endDate);
+
+  const nextWeek = () => setCurrentDate(addWeeks(currentDate, 1));
+  const prevWeek = () => setCurrentDate(subWeeks(currentDate, 1));
 
   if (isError) {
     return (
@@ -47,7 +52,20 @@ export function WeekView() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-foreground">Weekly Content Schedule</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold text-foreground">
+          Week of {format(startDate, 'MMMM d, yyyy')}
+        </h2>
+        <div className="flex gap-2">
+          <Button variant="outline" size="icon" onClick={prevWeek}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="icon" onClick={nextWeek}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-6 gap-4">
         {weekDays.map((day) => (
           <DayCard
