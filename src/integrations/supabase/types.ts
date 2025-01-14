@@ -761,7 +761,7 @@ export type Tables<
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
         Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
@@ -848,3 +848,24 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+// Add this type definition for email content
+export interface EmailContentType {
+  id: number;
+  title: string | null;
+  subject_line: string | null;
+  preview_text: string | null;
+  body_content: string | null;
+  scheduled_date: string | null;
+  gym_id: number | null;
+  series_name: string | null;
+  series_order: number | null;
+  total_posts: number | null;
+  status: string | null;
+  rejection_reason: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  gym_details?: {
+    gym_name: string;
+  };
+}
