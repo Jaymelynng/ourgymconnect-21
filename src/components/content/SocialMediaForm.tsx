@@ -4,34 +4,121 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Link2 } from 'lucide-react';
+import { Link2, Loader2 } from 'lucide-react';
 import { FormHeader } from './social-media/FormHeader';
 import { ContentDetails } from './social-media/ContentDetails';
 import { VisualTasks } from './social-media/VisualTasks';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface SocialMediaFormProps {
   onCancel: () => void;
 }
 
-export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) => {
-  const [formData, setFormData] = useState({
-    title: '',
-    series: 'single' as 'single' | 'series',
-    contentDate: '',
-    taskDueDate: '',
-    focus: '',
-    goal: '',
-    type: [] as string[],
-    keyNotes: '',
-    visualTasks: [{ id: Date.now(), text: '', completed: false }],
-    sharePointLink: ''
-  });
+const initialFormState = {
+  title: '',
+  series: 'single' as 'single' | 'series',
+  contentDate: '',
+  taskDueDate: '',
+  focus: '',
+  goal: '',
+  type: [] as string[],
+  keyNotes: '',
+  visualTasks: [{ id: Date.now(), text: '', completed: false }],
+  sharePointLink: ''
+};
 
-  const handleSubmit = (e: React.FormEvent) => {
+export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) => {
+  const [formData, setFormData] = useState(initialFormState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const validateForm = () => {
+    const requiredFields = {
+      title: 'Title',
+      contentDate: 'Content Date',
+      taskDueDate: 'Task Due Date',
+      focus: 'Focus',
+      type: 'Content Type'
+    };
+
+    const missingFields = Object.entries(requiredFields).filter(([key, label]) => {
+      if (key === 'type') {
+        return formData[key].length === 0;
+      }
+      return !formData[key as keyof typeof formData];
+    });
+
+    if (missingFields.length > 0) {
+      const missingFieldNames = missingFields.map(([_, label]) => label).join(', ');
+      toast({
+        title: "Required Fields Missing",
+        description: `Please fill in the following fields: ${missingFieldNames}`,
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const resetForm = () => {
+    setFormData(initialFormState);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // TODO: Implement form submission
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const { data, error } = await supabase
+        .from('social_media_content')
+        .insert([{
+          title: formData.title,
+          scheduled_date: formData.contentDate,
+          focus_area: formData.focus,
+          series_type: formData.series,
+          series_name: formData.series === 'series' ? formData.title : null,
+          media_urls: [],
+          photo_key_points: formData.keyNotes
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error submitting form:', error);
+        toast({
+          title: "Error",
+          description: "Failed to create social media content. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Success",
+        description: "Social media content has been created successfully.",
+      });
+
+      resetForm();
+      onCancel();
+
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -119,15 +206,27 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
               type="button"
               variant="outline"
               onClick={onCancel}
+              disabled={isSubmitting}
               className="border-gray-300 text-gray-700 hover:bg-gray-100"
             >
               Cancel
             </Button>
             <Button 
               type="submit"
-              className="bg-primary hover:bg-primary-hover text-white"
+              disabled={isSubmitting}
+              className={cn(
+                "bg-primary hover:bg-primary-hover text-white",
+                isSubmitting && "opacity-50 cursor-not-allowed"
+              )}
             >
-              Create Content
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Create Content"
+              )}
             </Button>
           </div>
         </form>
