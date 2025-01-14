@@ -1,102 +1,70 @@
-import { useParams } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { DashboardLayout } from "@/components/DashboardLayout";
 import { EmailContent } from "@/components/email/EmailContent";
 import { EmailApprovalActions } from "@/components/email/EmailApprovalActions";
-import { EmailContentType } from "@/integrations/supabase/types";
+import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+
+interface EmailContentType {
+  id: number;
+  title: string;
+  subject_line: string | null;
+  preview_text: string | null;
+  body_content: string | null;
+  status: string | null;
+  rejection_reason: string | null;
+}
 
 export default function EmailReview() {
-  const { id } = useParams();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  const { data: email, isLoading } = useQuery({
-    queryKey: ['email_content', id],
+  const { data: emails = [], isLoading } = useQuery({
+    queryKey: ['pending_emails'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('email_content')
         .select('*')
-        .eq('id', Number(id))
-        .single();
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return data as EmailContentType;
-    }
-  });
+      if (error) {
+        console.error('Error fetching emails:', error);
+        toast({
+          title: "Error fetching emails",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+        throw error;
+      }
 
-  const updateEmailStatus = useMutation({
-    mutationFn: async ({ status }: { status: 'approved' | 'rejected' }) => {
-      const { error } = await supabase
-        .from('email_content')
-        .update({ status })
-        .eq('id', Number(id));
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['email_content', id] });
+      return data || [];
     },
   });
-
-  const handleApprove = async () => {
-    try {
-      await updateEmailStatus.mutateAsync({ status: 'approved' });
-      toast({
-        title: "Email Approved",
-        description: "The email has been approved for sending.",
-      });
-    } catch (error) {
-      console.error('Error approving email:', error);
-      toast({
-        title: "Error",
-        description: "Failed to approve email",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleReject = async () => {
-    try {
-      await updateEmailStatus.mutateAsync({ status: 'rejected' });
-      toast({
-        title: "Email Rejected",
-        description: "The email has been rejected.",
-      });
-    } catch (error) {
-      console.error('Error rejecting email:', error);
-      toast({
-        title: "Error",
-        description: "Failed to reject email",
-        variant: "destructive",
-      });
-    }
-  };
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <DashboardLayout>
-      <div className="container mx-auto py-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold mb-6">Email Review</h1>
-          
-          {email && (
-            <>
+    <div className="container mx-auto py-8 space-y-8">
+      <h1 className="text-3xl font-bold">Email Review</h1>
+      
+      {emails.length === 0 ? (
+        <Card className="p-6">
+          <p className="text-center text-muted-foreground">No emails pending review</p>
+        </Card>
+      ) : (
+        <div className="space-y-8">
+          {emails.map((email) => (
+            <Card key={email.id} className="p-6">
               <EmailContent email={email} />
-              <div className="mt-6">
-                <EmailApprovalActions
-                  onApprove={handleApprove}
-                  onReject={handleReject}
-                />
+              <div className="mt-6 pt-6 border-t">
+                <EmailApprovalActions email={email} />
               </div>
-            </>
-          )}
+            </Card>
+          ))}
         </div>
-      </div>
-    </DashboardLayout>
+      )}
+    </div>
   );
 }

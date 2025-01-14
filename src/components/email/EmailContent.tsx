@@ -1,63 +1,57 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Tables } from '@/integrations/supabase/types';
 
-type EmailContentType = Tables['email_content']['Row'];
+interface EmailContentType {
+  id: number;
+  title: string;
+  subject_line: string | null;
+  preview_text: string | null;
+  body_content: string | null;
+  status: string | null;
+  rejection_reason: string | null;
+}
 
 interface EmailContentProps {
   email: EmailContentType;
 }
 
-export const EmailContent: React.FC<EmailContentProps> = ({ email }) => {
-  const getStatusBadge = () => {
-    switch (email?.status) {
-      case 'approved':
-        return <Badge className="bg-green-500">Approved</Badge>;
-      case 'rejected':
-        return <Badge variant="destructive">Rejected</Badge>;
-      default:
-        return <Badge variant="secondary">Pending Approval</Badge>;
-    }
-  };
-
+export function EmailContent({ email }: EmailContentProps) {
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">Email Details</h2>
-        {getStatusBadge()}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">{email.title}</h2>
+        <Badge variant={email.status === 'approved' ? 'default' : 'secondary'}>
+          {email.status}
+        </Badge>
       </div>
-
-      <div>
-        <h2 className="text-lg font-semibold">Subject Line</h2>
-        <p className="mt-2">{email?.subject_line}</p>
-      </div>
-
-      <div>
-        <h2 className="text-lg font-semibold">Preview Text</h2>
-        <p className="mt-2">{email?.preview_text}</p>
-      </div>
-
-      <div>
-        <h2 className="text-lg font-semibold">Email Content</h2>
-        <div 
-          className="mt-2 prose max-w-none"
-          dangerouslySetInnerHTML={{ __html: email?.body_content || '' }}
-        />
-      </div>
-
-      <div>
-        <h2 className="text-lg font-semibold">Scheduled Date</h2>
-        <p className="mt-2">
-          {email?.scheduled_date ? new Date(email.scheduled_date).toLocaleDateString() : 'Not scheduled'}
-        </p>
-      </div>
-
-      {email?.status === 'rejected' && email?.rejection_reason && (
+      
+      {email.subject_line && (
         <div>
-          <h2 className="text-lg font-semibold text-red-600">Rejection Reason</h2>
-          <p className="mt-2 text-red-600">{email.rejection_reason}</p>
+          <h3 className="text-sm font-medium text-muted-foreground">Subject Line</h3>
+          <p className="mt-1">{email.subject_line}</p>
+        </div>
+      )}
+      
+      {email.preview_text && (
+        <div>
+          <h3 className="text-sm font-medium text-muted-foreground">Preview Text</h3>
+          <p className="mt-1">{email.preview_text}</p>
+        </div>
+      )}
+      
+      {email.body_content && (
+        <div>
+          <h3 className="text-sm font-medium text-muted-foreground">Email Content</h3>
+          <div className="mt-1 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: email.body_content }} />
+        </div>
+      )}
+      
+      {email.rejection_reason && (
+        <div className="bg-destructive/10 p-4 rounded-lg">
+          <h3 className="text-sm font-medium text-destructive">Rejection Reason</h3>
+          <p className="mt-1 text-destructive">{email.rejection_reason}</p>
         </div>
       )}
     </div>
   );
-};
+}
