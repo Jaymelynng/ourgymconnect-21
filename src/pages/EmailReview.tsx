@@ -1,22 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { EmailContent } from "@/components/email/EmailContent";
 import { EmailApprovalActions } from "@/components/email/EmailApprovalActions";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Tables } from "@/integrations/supabase/types";
 
-interface EmailContentType {
-  id: number;
-  title: string;
-  subject_line: string | null;
-  preview_text: string | null;
-  body_content: string | null;
-  status: string | null;
-  rejection_reason: string | null;
-}
+type EmailContentType = Tables<"email_content">;
 
 export default function EmailReview() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: emails = [], isLoading } = useQuery({
     queryKey: ['pending_emails'],
@@ -37,9 +31,13 @@ export default function EmailReview() {
         throw error;
       }
 
-      return data || [];
+      return data as EmailContentType[];
     },
   });
+
+  const handleSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ['pending_emails'] });
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -59,7 +57,10 @@ export default function EmailReview() {
             <Card key={email.id} className="p-6">
               <EmailContent email={email} />
               <div className="mt-6 pt-6 border-t">
-                <EmailApprovalActions email={email} />
+                <EmailApprovalActions 
+                  emailId={email.id} 
+                  onSuccess={handleSuccess}
+                />
               </div>
             </Card>
           ))}
