@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 const Toolkit = () => {
-  const [selectedGymId, setSelectedGymId] = useState<string | null>(null);
+  const [selectedGymId, setSelectedGymId] = useState<number | null>(null);
 
   const { data: selectedGym, isLoading: isLoadingGym } = useQuery({
     queryKey: ['gym_details', selectedGymId],
@@ -66,7 +66,7 @@ const Toolkit = () => {
   ];
 
   const handleGymChange = (gymId: string) => {
-    setSelectedGymId(gymId);
+    setSelectedGymId(Number(gymId));
   };
 
   return (
