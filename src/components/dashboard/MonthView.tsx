@@ -5,7 +5,7 @@ import { Image } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tables } from "@/integrations/supabase/types";
 
-type MarketingItem = Tables<'marketing_content'>;
+type MarketingItem = Tables<'marketing_content', 'Row'>;
 type GroupedItems = Record<string, MarketingItem[]>;
 
 export function MonthView() {

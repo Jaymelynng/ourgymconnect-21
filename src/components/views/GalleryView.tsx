@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Image } from "lucide-react";
 import { Tables } from "@/integrations/supabase/types";
 
-type MarketingItem = Tables<'marketing_content'>;
+type MarketingItem = Tables<'marketing_content', 'Row'>;
 
 export function GalleryView() {
   const { data: marketingItems, isLoading } = useQuery<MarketingItem[]>({
