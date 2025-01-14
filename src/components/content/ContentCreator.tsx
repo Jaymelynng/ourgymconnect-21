@@ -7,7 +7,12 @@ import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export const ContentCreator = () => {
+interface ContentCreatorProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export const ContentCreator = ({ open, onOpenChange }: ContentCreatorProps) => {
   const [showTypeModal, setShowTypeModal] = useState(true);
   const [contentType, setContentType] = useState<'social' | 'email' | 'in-gym' | null>(null);
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
@@ -20,7 +25,8 @@ export const ContentCreator = () => {
 
   const handleClose = () => {
     setContentType(null);
-    setShowTypeModal(false);
+    setShowTypeModal(true);
+    onOpenChange(false);
   };
 
   const renderForm = () => {
@@ -36,10 +42,6 @@ export const ContentCreator = () => {
     }
   };
 
-  if (!showTypeModal && !contentType) {
-    return null;
-  }
-
   const contentTypes = [
     { id: 'social', label: 'Social Media', gradient: 'from-rose-400 to-orange-300' },
     { id: 'email', label: 'Email Marketing', gradient: 'from-violet-400 to-indigo-300' },
@@ -48,8 +50,8 @@ export const ContentCreator = () => {
 
   return (
     <Dialog 
-      open={showTypeModal || !!contentType} 
-      onOpenChange={() => handleClose()}
+      open={open} 
+      onOpenChange={onOpenChange}
     >
       <DialogContent className={cn(
         "sm:max-w-2xl transition-all duration-300 ease-in-out",

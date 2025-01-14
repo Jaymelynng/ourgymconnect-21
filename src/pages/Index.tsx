@@ -153,9 +153,10 @@ const Index = () => {
           <CalendarView />
         </div>
         
-        {showContentCreator && (
-          <ContentCreator />
-        )}
+        <ContentCreator 
+          open={showContentCreator} 
+          onOpenChange={setShowContentCreator}
+        />
       </div>
     </DashboardLayout>
   );
