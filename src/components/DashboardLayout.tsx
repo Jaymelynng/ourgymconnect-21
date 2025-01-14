@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Image, Menu } from "lucide-react";
+import { Home, Menu } from "lucide-react";
 import Toolkit from "@/components/Toolkit";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -19,14 +19,6 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         className="transition-all duration-300 hover:bg-primary/20"
       >
         <Home className="h-5 w-5" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => navigate("/gallery")}
-        className="transition-all duration-300 hover:bg-primary/20"
-      >
-        <Image className="h-5 w-5" />
       </Button>
     </div>
   );
@@ -66,4 +58,4 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
       </div>
     </div>
   );
-};
+}
