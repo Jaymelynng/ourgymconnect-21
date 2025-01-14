@@ -2,11 +2,13 @@ import { MetricCard } from "@/components/MetricCard";
 import { BarChart3, Mail, Calendar, Image } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { addDays } from "date-fns";
+import { addDays, startOfMonth, endOfMonth } from "date-fns";
 
 export function MetricsGrid() {
   const today = new Date();
   const nextWeek = addDays(today, 7);
+  const monthStart = startOfMonth(today);
+  const monthEnd = endOfMonth(today);
 
   // Fetch tasks due in the next 7 days
   const { data: tasksDueSoon = 0 } = useQuery({
@@ -35,7 +37,7 @@ export function MetricsGrid() {
     }
   });
 
-  // Fetch scheduled posts
+  // Fetch scheduled posts for current month
   const { data: scheduledPosts = 0 } = useQuery({
     queryKey: ['scheduled_posts'],
     queryFn: async () => {
@@ -43,7 +45,8 @@ export function MetricsGrid() {
       const { count } = await supabase
         .from('marketing_content')
         .select('*', { count: 'exact', head: true })
-        .not('scheduled_date', 'is', null);
+        .gte('scheduled_date', monthStart.toISOString())
+        .lte('scheduled_date', monthEnd.toISOString());
       return count || 0;
     }
   });
@@ -77,7 +80,7 @@ export function MetricsGrid() {
     { 
       title: 'Scheduled Posts',
       value: `${scheduledPosts}`,
-      description: 'Total scheduled',
+      description: 'This month',
       icon: <Calendar className="h-4 w-4" />
     },
     { 
