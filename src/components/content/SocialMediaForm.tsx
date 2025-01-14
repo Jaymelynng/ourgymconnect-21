@@ -83,7 +83,6 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
           title: formData.title,
           scheduled_date: formData.contentDate,
           focus_area: formData.focus,
-          series_type: formData.series,
           series_name: formData.series === 'series' ? formData.title : null,
           media_urls: [],
           photo_key_points: formData.keyNotes
