@@ -22,10 +22,11 @@ export function Calendar() {
     queryKey: ['marketing_content', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
       try {
-        console.log("Fetching marketing items for:", format(currentDate, 'yyyy-MM'));
-        console.log("Calendar date range:", {
-          start: calendarStart.toISOString(),
-          end: calendarEnd.toISOString()
+        console.log("=== Starting Marketing Items Fetch ===");
+        console.log("Current date:", currentDate);
+        console.log("Calendar range:", {
+          start: format(calendarStart, 'yyyy-MM-dd HH:mm:ss'),
+          end: format(calendarEnd, 'yyyy-MM-dd HH:mm:ss')
         });
         
         const { data, error } = await supabase
@@ -36,22 +37,37 @@ export function Calendar() {
           .order('scheduled_date');
         
         if (error) {
-          console.error("Error fetching marketing items:", error);
+          console.error("Supabase query error:", error);
           toast({
             title: "Error fetching marketing items",
-            description: "Please try again later",
+            description: error.message,
             variant: "destructive",
           });
           return [];
         }
         
-        const parsedData = data?.map(item => ({
-          ...item,
-          scheduled_date: item.scheduled_date ? parseISO(item.scheduled_date) : null
-        })) || [];
+        console.log("Raw data from Supabase:", data);
         
-        console.log("Fetched marketing items:", data);
-        console.log("Parsed marketing items:", parsedData);
+        if (!data || data.length === 0) {
+          console.log("No marketing items found for the date range");
+          return [];
+        }
+
+        const parsedData = data.map(item => {
+          console.log("Processing item:", {
+            id: item.id,
+            title: item.title,
+            rawDate: item.scheduled_date,
+            parsedDate: item.scheduled_date ? parseISO(item.scheduled_date) : null
+          });
+          
+          return {
+            ...item,
+            scheduled_date: item.scheduled_date ? parseISO(item.scheduled_date) : null
+          };
+        });
+        
+        console.log("Final parsed data:", parsedData);
         return parsedData;
       } catch (error) {
         console.error("Failed to fetch marketing items:", error);
@@ -63,7 +79,7 @@ export function Calendar() {
         return [];
       }
     },
-    staleTime: 0, // Disable caching temporarily for debugging
+    staleTime: 0,
     retry: 2
   });
 
@@ -71,14 +87,31 @@ export function Calendar() {
   const prevMonth = useCallback(() => setCurrentDate(subMonths(currentDate, 1)), [currentDate]);
 
   const getItemsForDay = useCallback((date: Date) => {
-    console.log("Checking items for date:", format(date, 'yyyy-MM-dd'));
+    console.log("\n=== Checking Items for Day ===");
+    console.log("Target date:", format(date, 'yyyy-MM-dd'));
+    console.log("Available items:", marketingItems?.length || 0);
+    
     const dayMarketingItems = marketingItems?.filter(item => {
-      if (!item.scheduled_date) return false;
-      const isSameDay = format(item.scheduled_date, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd');
-      console.log("Item:", item.title, "scheduled for:", format(item.scheduled_date, 'yyyy-MM-dd'), "matches:", isSameDay);
-      return isSameDay;
+      if (!item.scheduled_date) {
+        console.log("Item has no scheduled date:", item);
+        return false;
+      }
+      
+      const itemDate = format(item.scheduled_date, 'yyyy-MM-dd');
+      const targetDate = format(date, 'yyyy-MM-dd');
+      const matches = itemDate === targetDate;
+      
+      console.log("Comparing dates:", {
+        itemTitle: item.title,
+        itemDate,
+        targetDate,
+        matches
+      });
+      
+      return matches;
     }) || [];
 
+    console.log("Found items for day:", dayMarketingItems.length);
     return {
       marketingItems: dayMarketingItems,
       hasItems: dayMarketingItems.length > 0
