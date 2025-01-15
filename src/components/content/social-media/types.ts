@@ -25,3 +25,25 @@ export interface KeyNotesProps {
   keyNotes: string;
   onChange: (value: string) => void;
 }
+
+export interface ContentDetailsProps {
+  focus: string;
+  caption: string;
+  onFocusChange: (value: string) => void;
+  onCaptionChange: (value: string) => void;
+}
+
+export interface VisualTasksProps {
+  tasks: { id: number; text: string; completed: boolean }[];
+  onTasksChange: (tasks: { id: number; text: string; completed: boolean }[]) => void;
+  onTaskAdd: () => void;
+  onTaskDelete: (id: number) => void;
+  onTaskToggle: (id: number) => void;
+}
+
+export interface FormHeaderProps {
+  title: string;
+  contentDate: Date;
+  onTitleChange: (value: string) => void;
+  onContentDateChange: (value: Date) => void;
+}

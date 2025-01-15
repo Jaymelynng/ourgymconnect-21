@@ -4,25 +4,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { CheckSquare, Square, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-interface Task {
-  id: number;
-  text: string;
-  completed: boolean;
-}
-
-interface VisualTasksProps {
-  tasks: Task[];
-  onTaskAdd: () => void;
-  onTaskUpdate: (tasks: Task[]) => void;
-  onTaskDelete: (id: number) => void;
-  onTaskToggle: (id: number) => void;
-}
+import { VisualTasksProps } from './types';
 
 export const VisualTasks: React.FC<VisualTasksProps> = ({
   tasks,
+  onTasksChange,
   onTaskAdd,
-  onTaskUpdate,
   onTaskDelete,
   onTaskToggle,
 }) => {
@@ -65,7 +52,7 @@ export const VisualTasks: React.FC<VisualTasksProps> = ({
                 placeholder="Enter task description..."
                 value={task.text}
                 onChange={(e) => {
-                  onTaskUpdate(
+                  onTasksChange(
                     tasks.map(t =>
                       t.id === task.id ? { ...t, text: e.target.value } : t
                     )

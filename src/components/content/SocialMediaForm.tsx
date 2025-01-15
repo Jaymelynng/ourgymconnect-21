@@ -21,13 +21,31 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
   const [tasks, setTasks] = useState<{ id: number; text: string; completed: boolean; }[]>([]);
   const [sharePointLink, setSharePointLink] = useState('');
 
+  const handleAddTask = () => {
+    const newTask = {
+      id: tasks.length + 1,
+      text: '',
+      completed: false,
+    };
+    setTasks([...tasks, newTask]);
+  };
+
+  const handleDeleteTask = (id: number) => {
+    setTasks(tasks.filter(task => task.id !== id));
+  };
+
+  const handleToggleTask = (id: number) => {
+    setTasks(tasks.map(task => 
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
+  };
+
   const formData = {
     title,
     caption,
     scheduled_date: contentDate,
     photo_key_points: keyNotes,
     focus_area: focus,
-    // Add gym_id if available from context
   };
 
   return (
@@ -56,6 +74,9 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
           <VisualTasks
             tasks={tasks}
             onTasksChange={setTasks}
+            onTaskAdd={handleAddTask}
+            onTaskDelete={handleDeleteTask}
+            onTaskToggle={handleToggleTask}
           />
 
           <SharePointSection
