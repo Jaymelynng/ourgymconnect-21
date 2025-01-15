@@ -1,36 +1,34 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Link2, Loader2 } from 'lucide-react';
 import { FormHeader } from './social-media/FormHeader';
 import { ContentDetails } from './social-media/ContentDetails';
 import { VisualTasks } from './social-media/VisualTasks';
-import { cn } from '@/lib/utils';
+import { KeyNotes } from './social-media/KeyNotes';
+import { SharePointSection } from './social-media/SharePointSection';
+import { SubmitButtons } from './social-media/SubmitButtons';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { FormData } from './social-media/types';
 
 interface SocialMediaFormProps {
   onCancel: () => void;
 }
 
-const initialFormState = {
+const initialFormState: FormData = {
   title: '',
-  series: 'single' as 'single' | 'series',
+  series: 'single',
   contentDate: '',
   taskDueDate: '',
   focus: '',
   goal: '',
-  type: [] as string[],
+  type: [],
   keyNotes: '',
   visualTasks: [{ id: Date.now(), text: '', completed: false }],
   sharePointLink: ''
 };
 
 export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) => {
-  const [formData, setFormData] = useState(initialFormState);
+  const [formData, setFormData] = useState<FormData>(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -61,10 +59,6 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
     }
 
     return true;
-  };
-
-  const resetForm = () => {
-    setFormData(initialFormState);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,7 +98,7 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
         description: "Social media content has been created successfully.",
       });
 
-      resetForm();
+      setFormData(initialFormState);
       onCancel();
 
     } catch (error) {
@@ -143,16 +137,10 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
             onTypeChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
           />
 
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <Label className="text-gray-700">Key Notes</Label>
-            <Textarea
-              rows={4}
-              value={formData.keyNotes}
-              onChange={(e) => setFormData(prev => ({ ...prev, keyNotes: e.target.value }))}
-              placeholder="Overall notes about the content..."
-              className="bg-white border-gray-300 focus:ring-2 focus:ring-primary"
-            />
-          </div>
+          <KeyNotes
+            keyNotes={formData.keyNotes}
+            onChange={(value) => setFormData(prev => ({ ...prev, keyNotes: value }))}
+          />
 
           <VisualTasks
             tasks={formData.visualTasks}
@@ -182,51 +170,12 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
             }}
           />
 
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <Label className="text-gray-700">SharePoint Upload Folder</Label>
-            <div className="relative">
-              <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <Input
-                type="url"
-                className="pl-10 bg-white border-gray-300 focus:ring-2 focus:ring-primary"
-                placeholder="Paste SharePoint folder link for photo uploads..."
-                value={formData.sharePointLink}
-                onChange={(e) => setFormData(prev => ({ ...prev, sharePointLink: e.target.value }))}
-              />
-            </div>
-            <p className="mt-1 text-sm text-gray-600">
-              Share this link with contributors to upload their photos
-            </p>
-          </div>
+          <SharePointSection
+            sharePointLink={formData.sharePointLink}
+            onChange={(value) => setFormData(prev => ({ ...prev, sharePointLink: value }))}
+          />
 
-          <div className="flex justify-end gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              disabled={isSubmitting}
-              className="border-gray-300 text-gray-700 hover:bg-gray-100"
-            >
-              Cancel
-            </Button>
-            <Button 
-              type="submit"
-              disabled={isSubmitting}
-              className={cn(
-                "bg-primary hover:bg-primary-hover text-white",
-                isSubmitting && "opacity-50 cursor-not-allowed"
-              )}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                "Create Content"
-              )}
-            </Button>
-          </div>
+          <SubmitButtons isSubmitting={isSubmitting} onCancel={onCancel} />
         </form>
       </DialogContent>
     </Dialog>
