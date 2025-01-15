@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EditMarketingDialog } from "../marketing/EditMarketingDialog";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -22,10 +22,11 @@ export function ListView() {
   const { data: marketingItems, isLoading, refetch } = useQuery({
     queryKey: ['marketing_items'],
     queryFn: async () => {
+      console.log('Fetching all marketing items');
       const { data, error } = await supabase
         .from('marketing_content')
         .select('*')
-        .order('created_at');
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
       
@@ -38,9 +39,33 @@ export function ListView() {
         return acc;
       }, {});
 
+      console.log('Grouped marketing items:', groupedItems);
       return groupedItems;
     }
   });
+
+  // Subscribe to real-time updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('marketing_content_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'marketing_content'
+        },
+        (payload) => {
+          console.log('Real-time update received:', payload);
+          refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refetch]);
 
   const handleDelete = async (itemId: string | number) => {
     try {

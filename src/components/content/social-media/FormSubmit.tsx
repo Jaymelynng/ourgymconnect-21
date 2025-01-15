@@ -50,11 +50,15 @@ export const FormSubmit = ({ isSubmitting, onCancel, formData }: FormSubmitProps
 
       console.log("Successfully created content:", data);
 
-      // Invalidate all relevant queries
+      // Invalidate all relevant queries to ensure views are updated
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['marketing_content'] }),
         queryClient.invalidateQueries({ queryKey: ['marketing_items'] }),
         queryClient.invalidateQueries({ queryKey: ['upcoming_marketing_content'] }),
+        // Add specific month/week query invalidation
+        queryClient.invalidateQueries({ 
+          predicate: (query) => query.queryKey[0] === 'marketing_content' 
+        })
       ]);
 
       toast({
