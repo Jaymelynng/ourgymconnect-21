@@ -22,11 +22,12 @@ export function Calendar() {
     queryKey: ['marketing_content', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
       try {
-        console.log("=== Starting Marketing Items Fetch ===");
-        console.log("Current date:", currentDate);
-        console.log("Calendar range:", {
-          start: format(calendarStart, 'yyyy-MM-dd HH:mm:ss'),
-          end: format(calendarEnd, 'yyyy-MM-dd HH:mm:ss')
+        console.group("=== Marketing Items Fetch ===");
+        console.log("Query Parameters:", {
+          currentMonth: format(currentDate, 'yyyy-MM'),
+          calendarStart: format(calendarStart, 'yyyy-MM-dd HH:mm:ss'),
+          calendarEnd: format(calendarEnd, 'yyyy-MM-dd HH:mm:ss'),
+          currentTimestamp: new Date().toISOString()
         });
         
         const { data, error } = await supabase
@@ -37,7 +38,8 @@ export function Calendar() {
           .order('scheduled_date');
         
         if (error) {
-          console.error("Supabase query error:", error);
+          console.error("Supabase Query Error:", error);
+          console.groupEnd();
           toast({
             title: "Error fetching marketing items",
             description: error.message,
@@ -46,31 +48,46 @@ export function Calendar() {
           return [];
         }
         
-        console.log("Raw data from Supabase:", data);
+        console.log("Raw Supabase Response:", {
+          totalItems: data?.length || 0,
+          data: data
+        });
         
         if (!data || data.length === 0) {
-          console.log("No marketing items found for the date range");
+          console.log("No marketing items found in date range");
+          console.groupEnd();
           return [];
         }
 
         const parsedData = data.map(item => {
-          console.log("Processing item:", {
+          const parsedDate = item.scheduled_date ? parseISO(item.scheduled_date) : null;
+          console.log("Processing Item:", {
             id: item.id,
             title: item.title,
             rawDate: item.scheduled_date,
-            parsedDate: item.scheduled_date ? parseISO(item.scheduled_date) : null
+            parsedDate: parsedDate ? format(parsedDate, 'yyyy-MM-dd HH:mm:ss') : null,
+            isValidDate: parsedDate instanceof Date && !isNaN(parsedDate.getTime())
           });
           
           return {
             ...item,
-            scheduled_date: item.scheduled_date ? parseISO(item.scheduled_date) : null
+            scheduled_date: parsedDate
           };
         });
         
-        console.log("Final parsed data:", parsedData);
+        console.log("Final Processed Data:", {
+          totalProcessedItems: parsedData.length,
+          items: parsedData.map(item => ({
+            id: item.id,
+            title: item.title,
+            scheduled_date: item.scheduled_date ? format(item.scheduled_date, 'yyyy-MM-dd HH:mm:ss') : null
+          }))
+        });
+        console.groupEnd();
         return parsedData;
       } catch (error) {
         console.error("Failed to fetch marketing items:", error);
+        console.groupEnd();
         toast({
           title: "Error fetching marketing items",
           description: "Please try again later",
@@ -87,13 +104,18 @@ export function Calendar() {
   const prevMonth = useCallback(() => setCurrentDate(subMonths(currentDate, 1)), [currentDate]);
 
   const getItemsForDay = useCallback((date: Date) => {
-    console.log("\n=== Checking Items for Day ===");
-    console.log("Target date:", format(date, 'yyyy-MM-dd'));
-    console.log("Available items:", marketingItems?.length || 0);
+    console.group(`=== Checking Items for ${format(date, 'yyyy-MM-dd')} ===`);
+    console.log("Available Items:", {
+      total: marketingItems?.length || 0,
+      date: format(date, 'yyyy-MM-dd')
+    });
     
     const dayMarketingItems = marketingItems?.filter(item => {
       if (!item.scheduled_date) {
-        console.log("Item has no scheduled date:", item);
+        console.log("Skipping Item - No scheduled date:", {
+          id: item.id,
+          title: item.title
+        });
         return false;
       }
       
@@ -101,7 +123,8 @@ export function Calendar() {
       const targetDate = format(date, 'yyyy-MM-dd');
       const matches = itemDate === targetDate;
       
-      console.log("Comparing dates:", {
+      console.log("Comparing Dates:", {
+        itemId: item.id,
         itemTitle: item.title,
         itemDate,
         targetDate,
@@ -111,7 +134,17 @@ export function Calendar() {
       return matches;
     }) || [];
 
-    console.log("Found items for day:", dayMarketingItems.length);
+    console.log("Results for day:", {
+      date: format(date, 'yyyy-MM-dd'),
+      itemsFound: dayMarketingItems.length,
+      items: dayMarketingItems.map(item => ({
+        id: item.id,
+        title: item.title,
+        scheduled_date: item.scheduled_date ? format(item.scheduled_date, 'yyyy-MM-dd HH:mm:ss') : null
+      }))
+    });
+    console.groupEnd();
+    
     return {
       marketingItems: dayMarketingItems,
       hasItems: dayMarketingItems.length > 0
