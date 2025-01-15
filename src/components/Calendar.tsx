@@ -28,7 +28,8 @@ export function Calendar() {
         const { data, error } = await supabase
           .from('marketing_content')
           .select('*')
-          .or(`scheduled_date.gte.${calendarStart.toISOString()},scheduled_date.lte.${calendarEnd.toISOString()}`)
+          .gte('scheduled_date', calendarStart.toISOString())
+          .lte('scheduled_date', calendarEnd.toISOString())
           .order('scheduled_date');
         
         if (error) {
@@ -58,7 +59,7 @@ export function Calendar() {
         return [];
       }
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     retry: 2
   });
 
