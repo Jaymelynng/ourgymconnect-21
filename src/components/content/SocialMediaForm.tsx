@@ -43,6 +43,7 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
 
   const formData = {
     title,
+    caption: keyNotes, // Using keyNotes as caption since it contains the content description
     scheduled_date: contentDate,
     photo_key_points: keyNotes,
     focus_area: focus,
