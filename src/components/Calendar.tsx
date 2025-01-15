@@ -23,7 +23,10 @@ export function Calendar() {
     queryFn: async () => {
       try {
         console.log("Fetching marketing items for:", format(currentDate, 'yyyy-MM'));
-        console.log("Date range:", calendarStart.toISOString(), "to", calendarEnd.toISOString());
+        console.log("Calendar date range:", {
+          start: calendarStart.toISOString(),
+          end: calendarEnd.toISOString()
+        });
         
         const { data, error } = await supabase
           .from('marketing_content')
@@ -47,7 +50,8 @@ export function Calendar() {
           scheduled_date: item.scheduled_date ? parseISO(item.scheduled_date) : null
         })) || [];
         
-        console.log("Fetched and parsed marketing items:", parsedData);
+        console.log("Fetched marketing items:", data);
+        console.log("Parsed marketing items:", parsedData);
         return parsedData;
       } catch (error) {
         console.error("Failed to fetch marketing items:", error);
@@ -59,7 +63,7 @@ export function Calendar() {
         return [];
       }
     },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    staleTime: 0, // Disable caching temporarily for debugging
     retry: 2
   });
 
@@ -67,9 +71,13 @@ export function Calendar() {
   const prevMonth = useCallback(() => setCurrentDate(subMonths(currentDate, 1)), [currentDate]);
 
   const getItemsForDay = useCallback((date: Date) => {
-    const dayMarketingItems = marketingItems?.filter(item => 
-      item.scheduled_date && format(item.scheduled_date, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
-    ) || [];
+    console.log("Checking items for date:", format(date, 'yyyy-MM-dd'));
+    const dayMarketingItems = marketingItems?.filter(item => {
+      if (!item.scheduled_date) return false;
+      const isSameDay = format(item.scheduled_date, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd');
+      console.log("Item:", item.title, "scheduled for:", format(item.scheduled_date, 'yyyy-MM-dd'), "matches:", isSameDay);
+      return isSameDay;
+    }) || [];
 
     return {
       marketingItems: dayMarketingItems,
