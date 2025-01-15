@@ -3,15 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-
-interface ContentDetailsProps {
-  focus: string;
-  goal: string;
-  type: string[];
-  onFocusChange: (value: string) => void;
-  onGoalChange: (value: string) => void;
-  onTypeChange: (value: string[]) => void;
-}
+import { ContentDetailsProps } from './types';
 
 export const ContentDetails: React.FC<ContentDetailsProps> = ({
   focus,

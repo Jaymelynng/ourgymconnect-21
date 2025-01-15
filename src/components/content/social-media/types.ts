@@ -28,9 +28,11 @@ export interface KeyNotesProps {
 
 export interface ContentDetailsProps {
   focus: string;
-  caption: string;
+  goal: string;
+  type: string[];
   onFocusChange: (value: string) => void;
-  onCaptionChange: (value: string) => void;
+  onGoalChange: (value: string) => void;
+  onTypeChange: (value: string[]) => void;
 }
 
 export interface VisualTasksProps {

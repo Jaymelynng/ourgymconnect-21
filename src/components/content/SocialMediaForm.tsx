@@ -14,9 +14,10 @@ interface SocialMediaFormProps {
 export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState('');
-  const [caption, setCaption] = useState('');
   const [contentDate, setContentDate] = useState<Date>(new Date());
   const [focus, setFocus] = useState('');
+  const [goal, setGoal] = useState('');
+  const [type, setType] = useState<string[]>([]);
   const [keyNotes, setKeyNotes] = useState('');
   const [tasks, setTasks] = useState<{ id: number; text: string; completed: boolean; }[]>([]);
   const [sharePointLink, setSharePointLink] = useState('');
@@ -42,7 +43,6 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
 
   const formData = {
     title,
-    caption,
     scheduled_date: contentDate,
     photo_key_points: keyNotes,
     focus_area: focus,
@@ -61,9 +61,11 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
 
           <ContentDetails
             focus={focus}
-            caption={caption}
+            goal={goal}
+            type={type}
             onFocusChange={setFocus}
-            onCaptionChange={setCaption}
+            onGoalChange={setGoal}
+            onTypeChange={setType}
           />
 
           <KeyNotes
