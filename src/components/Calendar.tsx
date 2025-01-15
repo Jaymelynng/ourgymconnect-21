@@ -28,18 +28,21 @@ export function Calendar() {
         const { data, error } = await supabase
           .from('marketing_content')
           .select('*')
-          .gte('scheduled_date', calendarStart.toISOString())
-          .lte('scheduled_date', calendarEnd.toISOString())
+          .or(`scheduled_date.gte.${calendarStart.toISOString()},scheduled_date.lte.${calendarEnd.toISOString()}`)
           .order('scheduled_date');
         
         if (error) {
           console.error("Error fetching marketing items:", error);
-          throw error;
+          toast({
+            title: "Error fetching marketing items",
+            description: "Please try again later",
+            variant: "destructive",
+          });
+          return [];
         }
         
         const parsedData = data?.map(item => ({
           ...item,
-          created_at: item.created_at ? parseISO(item.created_at) : null,
           scheduled_date: item.scheduled_date ? parseISO(item.scheduled_date) : null
         })) || [];
         
