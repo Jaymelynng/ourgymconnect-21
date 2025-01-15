@@ -87,8 +87,7 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({ onCancel }) =>
           media_urls: [],
           photo_key_points: formData.keyNotes
         }])
-        .select()
-        .single();
+        .select();
 
       if (error) {
         console.error('Error submitting form:', error);
