@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { Grid, Instagram, Facebook, Share2, Palette, Plus } from 'lucide-react';
+import { Grid, Instagram, Facebook, Share2, Palette, Plus, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { GymSelector } from './GymSelector';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Toolkit = () => {
   const [selectedGymId, setSelectedGymId] = useState<number | null>(null);
 
-  const { data: selectedGym, isLoading: isLoadingGym } = useQuery({
+  const { data: selectedGym, isLoading: isLoadingGym, error } = useQuery({
     queryKey: ['gym_details', selectedGymId],
     queryFn: async () => {
       if (!selectedGymId) return null;
       
+      console.log('Fetching gym details for ID:', selectedGymId);
       const { data, error } = await supabase
         .from('gym_details')
         .select('instagram_url, facebook_url, sharepoint_url')
@@ -22,12 +24,15 @@ const Toolkit = () => {
       
       if (error) {
         console.error('Error fetching gym details:', error);
-        return null;
+        throw error;
       }
       
+      console.log('Gym details fetched successfully:', data);
       return data;
     },
-    enabled: !!selectedGymId
+    enabled: !!selectedGymId,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   const tools = [
@@ -68,6 +73,17 @@ const Toolkit = () => {
   const handleGymChange = (gymId: string) => {
     setSelectedGymId(Number(gymId));
   };
+
+  if (error) {
+    return (
+      <Alert variant="destructive" className="m-4">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Connection error. Please refresh the page or try again later.
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div className="w-[280px] min-h-screen bg-gradient-to-b from-primary/95 to-primary/85 backdrop-blur-sm 
