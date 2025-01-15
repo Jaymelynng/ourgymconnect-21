@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Session } from "@supabase/supabase-js";
 
 interface FormSubmitProps {
   isSubmitting: boolean;
@@ -21,10 +23,35 @@ interface FormSubmitProps {
 export const FormSubmit = ({ isSubmitting, onCancel, formData }: FormSubmitProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [session, setSession] = useState<Session | null>(null);
+
+  // Check and maintain auth session
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!session) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to create content",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       console.log("Submitting form data:", formData);
       
@@ -35,7 +62,7 @@ export const FormSubmit = ({ isSubmitting, onCancel, formData }: FormSubmitProps
           content_type: 'social_media',
           scheduled_date: formData.scheduled_date.toISOString(),
         }])
-        .select()
+        .select('*')
         .single();
 
       if (error) {
@@ -50,12 +77,11 @@ export const FormSubmit = ({ isSubmitting, onCancel, formData }: FormSubmitProps
 
       console.log("Successfully created content:", data);
 
-      // Invalidate all relevant queries to ensure views are updated
+      // Invalidate all relevant queries
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['marketing_content'] }),
         queryClient.invalidateQueries({ queryKey: ['marketing_items'] }),
         queryClient.invalidateQueries({ queryKey: ['upcoming_marketing_content'] }),
-        // Add specific month/week query invalidation
         queryClient.invalidateQueries({ 
           predicate: (query) => query.queryKey[0] === 'marketing_content' 
         })
@@ -89,7 +115,7 @@ export const FormSubmit = ({ isSubmitting, onCancel, formData }: FormSubmitProps
       </Button>
       <Button 
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || !session}
         onClick={handleSubmit}
       >
         {isSubmitting ? (
