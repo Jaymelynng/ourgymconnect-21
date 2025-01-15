@@ -35,7 +35,7 @@ export const FormSubmit = ({ isSubmitting, onCancel, formData }: FormSubmitProps
           content_type: 'social_media',
           scheduled_date: formData.scheduled_date.toISOString(),
         }])
-        .select('*')
+        .select()
         .single();
 
       if (error) {
