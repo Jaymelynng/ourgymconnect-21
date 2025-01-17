@@ -8,6 +8,8 @@ import { useState, useEffect } from 'react';
 import Index from "@/pages/Index";
 import Gallery from "@/pages/Gallery";
 import EmailReview from "@/pages/EmailReview";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
@@ -128,6 +130,8 @@ function App() {
                   )
                 } 
               />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
               <Route 
                 path="/auth" 
                 element={
