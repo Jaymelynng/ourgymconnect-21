@@ -8,13 +8,12 @@ import { Label } from "@/components/ui/label";
 import { GymSelector } from "@/components/GymSelector";
 
 export function AuthForm() {
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [selectedGym, setSelectedGym] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
+  const handleGymSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedGym) {
       toast({
@@ -26,8 +25,24 @@ export function AuthForm() {
     }
 
     try {
+      // Get the gym's email from gym_details
+      const { data: gymData, error: gymError } = await supabase
+        .from('gym_details')
+        .select('email_contact')
+        .eq('id', selectedGym)
+        .single();
+
+      if (gymError || !gymData?.email_contact) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not find gym details. Please contact support.",
+        });
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: gymData.email_contact,
         password,
       });
       
@@ -60,7 +75,7 @@ export function AuthForm() {
         </div>
       )}
 
-      <form onSubmit={handleEmailSignIn} className="space-y-4">
+      <form onSubmit={handleGymSignIn} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="gym">Gym</Label>
           <GymSelector 
@@ -68,18 +83,6 @@ export function AuthForm() {
           />
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input
@@ -101,15 +104,32 @@ export function AuthForm() {
           variant="link" 
           className="w-full"
           onClick={async () => {
-            if (!email) {
+            if (!selectedGym) {
               toast({
                 variant: "destructive",
                 title: "Error",
-                description: "Please enter your email address to reset your password.",
+                description: "Please select a gym to reset the password.",
               });
               return;
             }
-            const { error } = await supabase.auth.resetPasswordForEmail(email);
+
+            // Get gym email before resetting password
+            const { data: gymData, error: gymError } = await supabase
+              .from('gym_details')
+              .select('email_contact')
+              .eq('id', selectedGym)
+              .single();
+
+            if (gymError || !gymData?.email_contact) {
+              toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Could not find gym details. Please contact support.",
+              });
+              return;
+            }
+
+            const { error } = await supabase.auth.resetPasswordForEmail(gymData.email_contact);
             if (error) {
               toast({
                 variant: "destructive",
@@ -119,7 +139,7 @@ export function AuthForm() {
             } else {
               toast({
                 title: "Password Reset Email Sent",
-                description: "Check your email for the password reset link.",
+                description: "Check your gym's email for the password reset link.",
               });
             }
           }}
