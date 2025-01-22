@@ -29,7 +29,7 @@ export function AuthForm() {
       const { data: gymData, error: gymError } = await supabase
         .from('gym_details')
         .select('email_contact')
-        .eq('id', selectedGym)
+        .eq('id', parseInt(selectedGym, 10))
         .single();
 
       if (gymError || !gymData?.email_contact) {
@@ -117,7 +117,7 @@ export function AuthForm() {
             const { data: gymData, error: gymError } = await supabase
               .from('gym_details')
               .select('email_contact')
-              .eq('id', selectedGym)
+              .eq('id', parseInt(selectedGym, 10))
               .single();
 
             if (gymError || !gymData?.email_contact) {
