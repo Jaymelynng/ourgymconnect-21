@@ -318,22 +318,28 @@ export type Database = {
       gym_staff: {
         Row: {
           created_at: string | null
+          email: string
           gym_id: number | null
           id: number
+          initial_password_set: boolean | null
           role: string
           user_id: string
         }
         Insert: {
           created_at?: string | null
+          email?: string
           gym_id?: number | null
           id?: number
+          initial_password_set?: boolean | null
           role: string
           user_id: string
         }
         Update: {
           created_at?: string | null
+          email?: string
           gym_id?: number | null
           id?: number
+          initial_password_set?: boolean | null
           role?: string
           user_id?: string
         }
