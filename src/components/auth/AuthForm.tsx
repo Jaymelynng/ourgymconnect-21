@@ -17,6 +17,8 @@ export function AuthForm() {
 
   const handleGymSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthError(null);
+    
     if (!selectedGym) {
       toast({
         variant: "destructive",
@@ -27,47 +29,58 @@ export function AuthForm() {
     }
 
     try {
-      // Use the provided email directly for authentication
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('Attempting gym staff login with email:', email);
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
       if (error) {
+        console.error('Gym login error:', error);
         setAuthError(error.message);
         toast({
           variant: "destructive",
           title: "Authentication Error",
           description: error.message,
         });
+      } else {
+        console.log('Gym login successful:', data);
       }
     } catch (error) {
-      console.error('Auth error:', error);
+      console.error('Unexpected gym login error:', error);
       setAuthError('An unexpected error occurred during authentication.');
     }
   };
 
   const handleAdminSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthError(null);
+
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('Attempting admin login with email:', email);
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
       if (error) {
+        console.error('Admin login error:', error);
         setAuthError(error.message);
         toast({
           variant: "destructive",
           title: "Authentication Error",
           description: error.message,
         });
+      } else {
+        console.log('Admin login successful:', data);
       }
     } catch (error) {
-      console.error('Auth error:', error);
+      console.error('Unexpected admin login error:', error);
       setAuthError('An unexpected error occurred during authentication.');
     }
   };
+
+  // ... keep existing code (form JSX structure)
 
   return (
     <Card className="w-full max-w-md p-8 space-y-6">
@@ -84,7 +97,7 @@ export function AuthForm() {
         </div>
       )}
 
-      <Tabs defaultValue="gym" className="w-full">
+      <Tabs defaultValue="admin" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="gym">Gym Login</TabsTrigger>
           <TabsTrigger value="admin">Admin Login</TabsTrigger>
