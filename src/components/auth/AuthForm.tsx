@@ -27,23 +27,9 @@ export function AuthForm() {
     }
 
     try {
-      const { data: gymData, error: gymError } = await supabase
-        .from('gym_details')
-        .select('email_contact')
-        .eq('id', parseInt(selectedGym, 10))
-        .single();
-
-      if (gymError || !gymData?.email_contact) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not find gym details. Please contact support.",
-        });
-        return;
-      }
-
+      // Use the provided email directly for authentication
       const { error } = await supabase.auth.signInWithPassword({
-        email: gymData.email_contact,
+        email,
         password,
       });
       
@@ -112,6 +98,18 @@ export function AuthForm() {
                 onChange={(gymId) => setSelectedGym(gymId)}
               />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+              />
+            </div>
             
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -134,31 +132,16 @@ export function AuthForm() {
               variant="link" 
               className="w-full"
               onClick={async () => {
-                if (!selectedGym) {
+                if (!email) {
                   toast({
                     variant: "destructive",
                     title: "Error",
-                    description: "Please select a gym to reset the password.",
+                    description: "Please enter your email to reset the password.",
                   });
                   return;
                 }
 
-                const { data: gymData, error: gymError } = await supabase
-                  .from('gym_details')
-                  .select('email_contact')
-                  .eq('id', parseInt(selectedGym, 10))
-                  .single();
-
-                if (gymError || !gymData?.email_contact) {
-                  toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: "Could not find gym details. Please contact support.",
-                  });
-                  return;
-                }
-
-                const { error } = await supabase.auth.resetPasswordForEmail(gymData.email_contact);
+                const { error } = await supabase.auth.resetPasswordForEmail(email);
                 if (error) {
                   toast({
                     variant: "destructive",
@@ -168,7 +151,7 @@ export function AuthForm() {
                 } else {
                   toast({
                     title: "Password Reset Email Sent",
-                    description: "Check your gym's email for the password reset link.",
+                    description: "Check your email for the password reset link.",
                   });
                 }
               }}
@@ -181,9 +164,9 @@ export function AuthForm() {
         <TabsContent value="admin">
           <form onSubmit={handleAdminSignIn} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="admin-email">Email</Label>
               <Input
-                id="email"
+                id="admin-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
