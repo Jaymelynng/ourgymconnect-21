@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -13,7 +13,17 @@ export function AuthForm() {
   const [password, setPassword] = useState("");
   const [selectedGym, setSelectedGym] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [resetCooldown, setResetCooldown] = useState(0);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (resetCooldown > 0) {
+      const timer = setTimeout(() => {
+        setResetCooldown(prev => prev - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resetCooldown]);
 
   const handleGymSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +90,40 @@ export function AuthForm() {
     }
   };
 
-  // ... keep existing code (form JSX structure)
+  const handlePasswordReset = async () => {
+    if (resetCooldown > 0) {
+      toast({
+        variant: "destructive",
+        title: "Please wait",
+        description: `You can request another reset in ${resetCooldown} seconds.`,
+      });
+      return;
+    }
+
+    if (!email) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please enter your email to reset the password.",
+      });
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    } else {
+      toast({
+        title: "Password Reset Email Sent",
+        description: "Check your email for the password reset link.",
+      });
+      setResetCooldown(40); // Start 40-second cooldown
+    }
+  };
 
   return (
     <Card className="w-full max-w-md p-8 space-y-6">
@@ -144,32 +187,12 @@ export function AuthForm() {
               type="button" 
               variant="link" 
               className="w-full"
-              onClick={async () => {
-                if (!email) {
-                  toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: "Please enter your email to reset the password.",
-                  });
-                  return;
-                }
-
-                const { error } = await supabase.auth.resetPasswordForEmail(email);
-                if (error) {
-                  toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: error.message,
-                  });
-                } else {
-                  toast({
-                    title: "Password Reset Email Sent",
-                    description: "Check your email for the password reset link.",
-                  });
-                }
-              }}
+              onClick={handlePasswordReset}
+              disabled={resetCooldown > 0}
             >
-              Forgot Password?
+              {resetCooldown > 0 
+                ? `Reset Password (${resetCooldown}s)`
+                : 'Forgot Password?'}
             </Button>
           </form>
         </TabsContent>
@@ -208,32 +231,12 @@ export function AuthForm() {
               type="button" 
               variant="link" 
               className="w-full"
-              onClick={async () => {
-                if (!email) {
-                  toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: "Please enter your email to reset the password.",
-                  });
-                  return;
-                }
-
-                const { error } = await supabase.auth.resetPasswordForEmail(email);
-                if (error) {
-                  toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: error.message,
-                  });
-                } else {
-                  toast({
-                    title: "Password Reset Email Sent",
-                    description: "Check your email for the password reset link.",
-                  });
-                }
-              }}
+              onClick={handlePasswordReset}
+              disabled={resetCooldown > 0}
             >
-              Forgot Password?
+              {resetCooldown > 0 
+                ? `Reset Password (${resetCooldown}s)`
+                : 'Forgot Password?'}
             </Button>
           </form>
         </TabsContent>
