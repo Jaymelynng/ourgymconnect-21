@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -13,17 +13,7 @@ export function AuthForm() {
   const [password, setPassword] = useState("");
   const [selectedGym, setSelectedGym] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
-  const [resetCooldown, setResetCooldown] = useState(0);
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (resetCooldown > 0) {
-      const timer = setTimeout(() => {
-        setResetCooldown(prev => prev - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [resetCooldown]);
 
   const handleGymSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,15 +81,6 @@ export function AuthForm() {
   };
 
   const handlePasswordReset = async () => {
-    if (resetCooldown > 0) {
-      toast({
-        variant: "destructive",
-        title: "Please wait",
-        description: `You can request another reset in ${resetCooldown} seconds.`,
-      });
-      return;
-    }
-
     if (!email) {
       toast({
         variant: "destructive",
@@ -121,7 +102,6 @@ export function AuthForm() {
         title: "Password Reset Email Sent",
         description: "Check your email for the password reset link.",
       });
-      setResetCooldown(40); // Start 40-second cooldown
     }
   };
 
@@ -188,11 +168,8 @@ export function AuthForm() {
               variant="link" 
               className="w-full"
               onClick={handlePasswordReset}
-              disabled={resetCooldown > 0}
             >
-              {resetCooldown > 0 
-                ? `Reset Password (${resetCooldown}s)`
-                : 'Forgot Password?'}
+              Forgot Password?
             </Button>
           </form>
         </TabsContent>
@@ -232,11 +209,8 @@ export function AuthForm() {
               variant="link" 
               className="w-full"
               onClick={handlePasswordReset}
-              disabled={resetCooldown > 0}
             >
-              {resetCooldown > 0 
-                ? `Reset Password (${resetCooldown}s)`
-                : 'Forgot Password?'}
+              Forgot Password?
             </Button>
           </form>
         </TabsContent>
