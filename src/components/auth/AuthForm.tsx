@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -13,7 +13,50 @@ export function AuthForm() {
   const [password, setPassword] = useState("");
   const [selectedGym, setSelectedGym] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [isResetMode, setIsResetMode] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Check if we're in a password reset flow
+    const hash = window.location.hash;
+    if (hash && hash.includes('type=recovery')) {
+      setIsResetMode(true);
+      const accessToken = hash.split('&')[0].split('=')[1];
+      handlePasswordRecovery(accessToken);
+    }
+  }, []);
+
+  const handlePasswordRecovery = async (accessToken: string) => {
+    if (!password) return;
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: password
+      });
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Your password has been updated successfully.",
+        });
+        setIsResetMode(false);
+        window.location.hash = ''; // Clear the hash
+      }
+    } catch (error) {
+      console.error('Error updating password:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred while updating your password.",
+      });
+    }
+  };
 
   const handleGymSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +133,10 @@ export function AuthForm() {
       return;
     }
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/auth#recovery',
+    });
+    
     if (error) {
       toast({
         variant: "destructive",
@@ -104,6 +150,41 @@ export function AuthForm() {
       });
     }
   };
+
+  if (isResetMode) {
+    return (
+      <Card className="w-full max-w-md p-8 space-y-6">
+        <div className="space-y-2 text-center">
+          <h1 className="text-2xl font-bold tracking-tight">Reset Password</h1>
+          <p className="text-sm text-muted-foreground">
+            Enter your new password below
+          </p>
+        </div>
+
+        <form className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="new-password">New Password</Label>
+            <Input
+              id="new-password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your new password"
+              required
+            />
+          </div>
+
+          <Button 
+            type="button" 
+            className="w-full"
+            onClick={() => handlePasswordRecovery(window.location.hash.split('&')[0].split('=')[1])}
+          >
+            Update Password
+          </Button>
+        </form>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-md p-8 space-y-6">
