@@ -7,23 +7,27 @@ import { useMarketingContent } from "@/hooks/use-marketing-content";
 import { DayCard } from "./week-view/DayCard";
 import { TaskDetails } from "./week-view/TaskDetails";
 
+interface WeekViewProps {
+  currentDate: Date;
+  onDateChange: (date: Date) => void;
+}
+
 interface DayTask {
   name: string;
   date: Date;
   tasks: any[];
 }
 
-export function WeekView() {
+export function WeekView({ currentDate, onDateChange }: WeekViewProps) {
   const [selectedDay, setSelectedDay] = useState<DayTask | null>(null);
-  const [currentDate, setCurrentDate] = useState(new Date());
 
   const startDate = startOfWeek(currentDate, { weekStartsOn: 1 });
   const endDate = endOfWeek(startDate, { weekStartsOn: 1 });
 
   const { data: marketingItems = [], isError } = useMarketingContent(startDate, endDate);
 
-  const nextWeek = () => setCurrentDate(addWeeks(currentDate, 1));
-  const prevWeek = () => setCurrentDate(subWeeks(currentDate, 1));
+  const nextWeek = () => onDateChange(addWeeks(currentDate, 1));
+  const prevWeek = () => onDateChange(subWeeks(currentDate, 1));
 
   if (isError) {
     return (

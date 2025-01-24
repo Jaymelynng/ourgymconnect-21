@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, startOfMonth, endOfMonth, addMonths, subMonths } from "date-fns";
@@ -14,9 +13,13 @@ import {
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
 
-export function ListView() {
+interface ListViewProps {
+  currentDate: Date;
+  onDateChange: (date: Date) => void;
+}
+
+export function ListView({ currentDate, onDateChange }: ListViewProps) {
   const { toast } = useToast();
-  const [currentDate, setCurrentDate] = useState(new Date());
   
   const startDate = startOfMonth(currentDate);
   const endDate = endOfMonth(currentDate);
@@ -46,8 +49,8 @@ export function ListView() {
     }
   });
 
-  const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
-  const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
+  const nextMonth = () => onDateChange(addMonths(currentDate, 1));
+  const prevMonth = () => onDateChange(subMonths(currentDate, 1));
 
   if (isLoading) return (
     <div className="animate-pulse space-y-4">

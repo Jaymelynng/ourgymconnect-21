@@ -1,11 +1,14 @@
-import { useState } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from "date-fns";
 import { useMarketingContent } from "@/hooks/use-marketing-content";
 import { CalendarHeader } from "../calendar/CalendarHeader";
 import { CalendarDay } from "../calendar/CalendarDay";
 
-export function MonthView() {
-  const [currentDate, setCurrentDate] = useState(new Date());
+interface MonthViewProps {
+  currentDate: Date;
+  onDateChange: (date: Date) => void;
+}
+
+export function MonthView({ currentDate, onDateChange }: MonthViewProps) {
   const startDate = startOfMonth(currentDate);
   const endDate = endOfMonth(currentDate);
 
@@ -13,8 +16,8 @@ export function MonthView() {
 
   const days = eachDayOfInterval({ start: startDate, end: endDate });
 
-  const handlePrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
-  const handleNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
+  const handlePrevMonth = () => onDateChange(subMonths(currentDate, 1));
+  const handleNextMonth = () => onDateChange(addMonths(currentDate, 1));
   const handleDayClick = (date: Date) => {
     console.log('Day clicked:', format(date, 'yyyy-MM-dd'));
   };
