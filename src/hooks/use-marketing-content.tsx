@@ -59,7 +59,7 @@ export function useMarketingContent(startDate?: Date, endDate?: Date) {
       }
     },
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    cacheTime: 30 * 24 * 60 * 60 * 1000, // Keep cache for 30 days
+    gcTime: 30 * 24 * 60 * 60 * 1000, // Keep cache for 30 days (renamed from cacheTime)
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchOnReconnect: true,
