@@ -8,6 +8,7 @@ import { FullViewModal } from "../views/FullViewModal";
 export function CalendarView() {
   const [viewType, setViewType] = useState<'week' | 'month' | 'list'>('week');
   const [isFullView, setIsFullView] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const handleViewClick = () => {
     setIsFullView(true);
@@ -40,15 +41,32 @@ export function CalendarView() {
       </div>
       
       <div onClick={handleViewClick} className="cursor-pointer">
-        {viewType === 'week' && <WeekView />}
-        {viewType === 'month' && <MonthView />}
-        {viewType === 'list' && <ListView />}
+        {viewType === 'week' && (
+          <WeekView 
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+          />
+        )}
+        {viewType === 'month' && (
+          <MonthView 
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+          />
+        )}
+        {viewType === 'list' && (
+          <ListView 
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+          />
+        )}
       </div>
 
       <FullViewModal
         isOpen={isFullView}
         onClose={() => setIsFullView(false)}
         viewType={viewType}
+        currentDate={currentDate}
+        onDateChange={setCurrentDate}
       />
     </div>
   );

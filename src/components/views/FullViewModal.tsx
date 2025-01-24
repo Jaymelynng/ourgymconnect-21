@@ -7,15 +7,38 @@ interface FullViewModalProps {
   isOpen: boolean;
   onClose: () => void;
   viewType: 'week' | 'month' | 'list';
+  currentDate: Date;
+  onDateChange: (date: Date) => void;
 }
 
-export function FullViewModal({ isOpen, onClose, viewType }: FullViewModalProps) {
+export function FullViewModal({ 
+  isOpen, 
+  onClose, 
+  viewType,
+  currentDate,
+  onDateChange
+}: FullViewModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
-        {viewType === 'week' && <WeekView />}
-        {viewType === 'month' && <MonthView />}
-        {viewType === 'list' && <ListView />}
+        {viewType === 'week' && (
+          <WeekView 
+            currentDate={currentDate}
+            onDateChange={onDateChange}
+          />
+        )}
+        {viewType === 'month' && (
+          <MonthView 
+            currentDate={currentDate}
+            onDateChange={onDateChange}
+          />
+        )}
+        {viewType === 'list' && (
+          <ListView 
+            currentDate={currentDate}
+            onDateChange={onDateChange}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );
