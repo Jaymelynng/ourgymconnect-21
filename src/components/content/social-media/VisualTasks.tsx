@@ -1,18 +1,31 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { CheckSquare, Square, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { VisualTasksProps } from './types';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon, CheckSquare, Square, X } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
-export const VisualTasks: React.FC<VisualTasksProps> = ({
+interface VisualTasksProps {
+  tasks: { id: number; text: string; completed: boolean }[];
+  taskDueDate: Date;
+  onTasksChange: (tasks: { id: number; text: string; completed: boolean }[]) => void;
+  onTaskDueDateChange: (date: Date) => void;
+  onTaskAdd: () => void;
+  onTaskDelete: (id: number) => void;
+  onTaskToggle: (id: number) => void;
+}
+
+export const VisualTasks = ({
   tasks,
+  taskDueDate,
   onTasksChange,
+  onTaskDueDateChange,
   onTaskAdd,
   onTaskDelete,
   onTaskToggle,
-}) => {
+}: VisualTasksProps) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
       <div className="flex justify-between items-center">
@@ -25,6 +38,32 @@ export const VisualTasks: React.FC<VisualTasksProps> = ({
         >
           + Add Task
         </Button>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Group Due Date</Label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal",
+                !taskDueDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {taskDueDate ? format(taskDueDate, "PPP") : <span>Pick a date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={taskDueDate}
+              onSelect={(date) => date && onTaskDueDateChange(date)}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="space-y-3">
@@ -46,10 +85,7 @@ export const VisualTasks: React.FC<VisualTasksProps> = ({
               )}
             </Button>
             <div className="flex-1">
-              <Textarea
-                rows={2}
-                className="resize-none bg-white border-gray-300 focus:ring-2 focus:ring-primary"
-                placeholder="Enter task description..."
+              <Input
                 value={task.text}
                 onChange={(e) => {
                   onTasksChange(
@@ -58,13 +94,15 @@ export const VisualTasks: React.FC<VisualTasksProps> = ({
                     )
                   );
                 }}
+                placeholder="Enter task description..."
+                className="w-full"
               />
             </div>
             <Button
               type="button"
               variant="ghost"
               onClick={() => onTaskDelete(task.id)}
-              className="mt-3 p-1 opacity-0 group-hover:opacity-100 hover:bg-gray-100"
+              className="mt-2 p-1 opacity-0 group-hover:opacity-100 hover:bg-gray-100"
             >
               <X className="w-4 h-4 text-gray-500" />
             </Button>

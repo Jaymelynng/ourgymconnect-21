@@ -15,6 +15,7 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState('');
   const [contentDate, setContentDate] = useState<Date>(new Date());
+  const [taskDueDate, setTaskDueDate] = useState<Date>(new Date());
   const [focus, setFocus] = useState('');
   const [goal, setGoal] = useState('');
   const [type, setType] = useState<string[]>([]);
@@ -43,10 +44,12 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
 
   const formData = {
     title,
-    caption: keyNotes, // Using keyNotes as caption since it contains the content description
+    caption: keyNotes,
     scheduled_date: contentDate,
+    taskDueDate,
     photo_key_points: keyNotes,
     focus_area: focus,
+    tasks
   };
 
   return (
@@ -76,7 +79,9 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
 
           <VisualTasks
             tasks={tasks}
+            taskDueDate={taskDueDate}
             onTasksChange={setTasks}
+            onTaskDueDateChange={setTaskDueDate}
             onTaskAdd={handleAddTask}
             onTaskDelete={handleDeleteTask}
             onTaskToggle={handleToggleTask}

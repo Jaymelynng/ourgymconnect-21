@@ -525,6 +525,8 @@ export type Database = {
           content_id: number | null
           created_at: string | null
           due_date: string | null
+          group_due_date: string | null
+          group_id: string | null
           id: number
           priority: string | null
           status: string | null
@@ -536,6 +538,8 @@ export type Database = {
           content_id?: number | null
           created_at?: string | null
           due_date?: string | null
+          group_due_date?: string | null
+          group_id?: string | null
           id?: number
           priority?: string | null
           status?: string | null
@@ -547,6 +551,8 @@ export type Database = {
           content_id?: number | null
           created_at?: string | null
           due_date?: string | null
+          group_due_date?: string | null
+          group_id?: string | null
           id?: number
           priority?: string | null
           status?: string | null

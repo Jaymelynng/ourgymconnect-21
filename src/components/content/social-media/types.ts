@@ -37,7 +37,9 @@ export interface ContentDetailsProps {
 
 export interface VisualTasksProps {
   tasks: { id: number; text: string; completed: boolean }[];
+  taskDueDate: Date;
   onTasksChange: (tasks: { id: number; text: string; completed: boolean }[]) => void;
+  onTaskDueDateChange: (date: Date) => void;
   onTaskAdd: () => void;
   onTaskDelete: (id: number) => void;
   onTaskToggle: (id: number) => void;
