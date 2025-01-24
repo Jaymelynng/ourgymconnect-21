@@ -1,61 +1,64 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
 
 export interface MarketingItem {
   id: number;
   title: string;
-  content_type?: string;
-  description?: string;
-  scheduled_date?: string;
-  photo_examples?: string;
-  photo_key_points?: string;
-  theme?: string;
-  caption?: string;
+  content_type: string;
+  description: string;
+  scheduled_date: string;
+  photo_examples: string;
+  photo_key_points: string;
+  theme: string;
+  caption: string;
 }
 
-export function useMarketingContent(startDate?: Date, endDate?: Date) {
-  const { toast } = useToast();
-
+export function useMarketingContent(startDate: Date, endDate: Date) {
   return useQuery({
-    queryKey: ['marketing_content', startDate?.toISOString(), endDate?.toISOString()],
+    queryKey: ['marketing_content', format(startDate, 'yyyy-MM-dd'), format(endDate, 'yyyy-MM-dd')],
     queryFn: async () => {
-      try {
-        console.log('Fetching marketing items:', {
-          start: startDate?.toISOString(),
-          end: endDate?.toISOString()
-        });
+      console.group('=== Fetching Marketing Content ===');
+      console.log('Date Range:', {
+        start: format(startDate, 'yyyy-MM-dd'),
+        end: format(endDate, 'yyyy-MM-dd')
+      });
 
-        let query = supabase
+      try {
+        const { data, error } = await supabase
           .from('marketing_content')
-          .select('id, title, content_type, description, scheduled_date, photo_examples, photo_key_points, theme, caption')
+          .select('*')
+          .gte('scheduled_date', startDate.toISOString())
+          .lte('scheduled_date', endDate.toISOString())
           .order('scheduled_date');
 
-        if (startDate) {
-          query = query.gte('scheduled_date', startDate.toISOString());
-        }
-        if (endDate) {
-          query = query.lte('scheduled_date', endDate.toISOString());
-        }
-
-        const { data, error } = await query;
-        
         if (error) {
-          console.error('Error fetching marketing items:', error);
-          toast({
-            title: "Error fetching content",
-            description: "Please try again later",
-            variant: "destructive",
-          });
+          console.error('Supabase Error:', error);
+          console.groupEnd();
           throw error;
         }
 
-        console.log('Fetched marketing items:', data);
-        return data || [];
+        if (!data) {
+          console.log('No data returned');
+          console.groupEnd();
+          return [];
+        }
+
+        console.log('Fetched Items:', {
+          count: data.length,
+          items: data.map(item => ({
+            id: item.id,
+            title: item.title,
+            scheduled_date: item.scheduled_date
+          }))
+        });
+
+        console.groupEnd();
+        return data;
       } catch (error) {
-        // If offline, return cached data
-        console.log('Offline mode - returning cached data');
-        return [];
+        console.error('Failed to fetch marketing content:', error);
+        console.groupEnd();
+        throw error;
       }
     },
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
@@ -63,5 +66,7 @@ export function useMarketingContent(startDate?: Date, endDate?: Date) {
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchOnReconnect: true,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
 }
