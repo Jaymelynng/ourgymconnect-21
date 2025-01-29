@@ -8,10 +8,8 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 interface VisualTasksProps {
-  tasks: { id: number; text: string; completed: boolean }[];
-  taskDueDate: Date;
-  onTasksChange: (tasks: { id: number; text: string; completed: boolean }[]) => void;
-  onTaskDueDateChange: (date: Date) => void;
+  tasks: { id: number; text: string; completed: boolean; dueDate: Date }[];
+  onTasksChange: (tasks: { id: number; text: string; completed: boolean; dueDate: Date }[]) => void;
   onTaskAdd: () => void;
   onTaskDelete: (id: number) => void;
   onTaskToggle: (id: number) => void;
@@ -19,9 +17,7 @@ interface VisualTasksProps {
 
 export const VisualTasks = ({
   tasks,
-  taskDueDate,
   onTasksChange,
-  onTaskDueDateChange,
   onTaskAdd,
   onTaskDelete,
   onTaskToggle,
@@ -29,7 +25,7 @@ export const VisualTasks = ({
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
       <div className="flex justify-between items-center">
-        <Label className="text-gray-700">Visual Tasks</Label>
+        <Label className="text-gray-700">Tasks</Label>
         <Button
           type="button"
           variant="ghost"
@@ -38,32 +34,6 @@ export const VisualTasks = ({
         >
           + Add Task
         </Button>
-      </div>
-
-      <div className="space-y-2">
-        <Label>Group Due Date</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !taskDueDate && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {taskDueDate ? format(taskDueDate, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={taskDueDate}
-              onSelect={(date) => date && onTaskDueDateChange(date)}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
       </div>
 
       <div className="space-y-3">
@@ -84,7 +54,7 @@ export const VisualTasks = ({
                 <Square className="w-5 h-5 text-gray-500" />
               )}
             </Button>
-            <div className="flex-1">
+            <div className="flex-1 space-y-2">
               <Input
                 value={task.text}
                 onChange={(e) => {
@@ -97,6 +67,36 @@ export const VisualTasks = ({
                 placeholder="Enter task description..."
                 className="w-full"
               />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !task.dueDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {task.dueDate ? format(task.dueDate, "PPP") : <span>Set due date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={task.dueDate}
+                    onSelect={(date) => {
+                      if (date) {
+                        onTasksChange(
+                          tasks.map(t =>
+                            t.id === task.id ? { ...t, dueDate: date } : t
+                          )
+                        );
+                      }
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <Button
               type="button"
