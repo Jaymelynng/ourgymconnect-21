@@ -70,7 +70,7 @@ const Index = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 animate-fade-in">
+      <div className="space-y-6 animate-fade-in">
         <div className="bg-gradient-to-r from-primary/20 to-secondary/20 p-4 md:p-8 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="space-y-3">
@@ -93,6 +93,10 @@ const Index = () => {
 
         <MetricsGrid />
 
+        <div className="w-full animate-fade-in">
+          <CalendarView />
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {/* News and Updates Column */}
           <Card className="col-span-1 transition-all duration-300 hover:shadow-lg animate-fade-in">
@@ -149,10 +153,6 @@ const Index = () => {
           </Card>
         </div>
 
-        <div className="w-full animate-fade-in delay-300">
-          <CalendarView />
-        </div>
-        
         <ContentCreator 
           open={showContentCreator} 
           onOpenChange={setShowContentCreator}
