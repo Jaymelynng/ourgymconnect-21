@@ -7,7 +7,6 @@ import { DayHeader } from "./day-components/DayHeader";
 import { ContentPreview } from "./day-components/ContentPreview";
 import { DayDialog } from "./day-components/DayDialog";
 
-// Props interface for better type clarity
 interface CalendarDayProps {
   day: Date;
   currentDate: Date;
@@ -26,13 +25,11 @@ export function CalendarDay({
   onDayClick,
   refetchItems
 }: CalendarDayProps) {
-  // State management
   const { toast } = useToast();
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Handlers
   const handleDelete = async (itemId: string | number) => {
     try {
       const id = typeof itemId === 'string' ? parseInt(itemId, 10) : itemId;
@@ -60,10 +57,8 @@ export function CalendarDay({
     }
   };
 
-  // Render
   return (
     <>
-      {/* Main Calendar Cell */}
       <div 
         onClick={() => setIsDialogOpen(true)}
         onMouseEnter={() => setIsHovered(true)}
@@ -71,24 +66,33 @@ export function CalendarDay({
         className={cn(
           // Base styles
           "min-h-[120px] border-b border-r border-border bg-card",
-          // Animation
-          "transition-all duration-300 ease-in-out transform",
-          // Hover states
-          isHovered && "scale-[1.02] shadow-lg",
-          hasItems && "hover:bg-primary/10",
+          // Animation and transition
+          "transition-all duration-500 ease-in-out transform",
+          // Hover states with expanded size
+          isHovered && [
+            "absolute inset-4 z-50 scale-[1.02]",
+            "shadow-2xl rounded-xl border",
+            "min-h-[80vh]",
+            "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/95"
+          ],
+          hasItems && "hover:bg-primary/5",
           !hasItems && "hover:bg-secondary/5",
           // Animation
           "animate-fade-in cursor-pointer"
         )}
+        style={{
+          transformOrigin: 'center',
+        }}
       >
         {/* Day Header Section */}
         <DayHeader day={day} currentDate={currentDate} />
         
         {/* Content Preview Section */}
         <div className={cn(
-          "pt-8 px-2 pb-2 space-y-2",
+          "px-2 pb-2 space-y-2",
           "transition-all duration-300",
-          isHovered && "transform translate-y-[-4px]"
+          isHovered ? "pt-4 px-4 md:px-8" : "pt-8",
+          isHovered && "overflow-y-auto max-h-[calc(80vh-4rem)]"
         )}>
           {marketingItems.map((item) => (
             <ContentPreview

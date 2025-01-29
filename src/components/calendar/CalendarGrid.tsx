@@ -64,7 +64,7 @@ export function CalendarGrid({ currentDate, marketingItems, refetchItems }: Cale
   }, [marketingItems]);
 
   return (
-    <div className="grid grid-cols-7 border-t border-l border-border">
+    <div className="grid grid-cols-7 border-t border-l border-border relative">
       {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
         <div 
           key={day} 
