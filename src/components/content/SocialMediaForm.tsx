@@ -6,6 +6,8 @@ import { KeyNotes } from './social-media/KeyNotes';
 import { VisualTasks } from './social-media/VisualTasks';
 import { SharePointSection } from './social-media/SharePointSection';
 import { FormSubmit } from './social-media/FormSubmit';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 interface SocialMediaFormProps {
   onCancel: () => void;
@@ -21,6 +23,7 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
   const [keyNotes, setKeyNotes] = useState('');
   const [tasks, setTasks] = useState<{ id: number; text: string; completed: boolean; dueDate: Date; }[]>([]);
   const [sharePointLink, setSharePointLink] = useState('');
+  const [contentType, setContentType] = useState<'photos' | 'video' | 'canvas'>('photos');
 
   const handleAddTask = () => {
     const newTask = {
@@ -48,6 +51,7 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
     scheduled_date: contentDate,
     photo_key_points: keyNotes,
     focus_area: focus,
+    content_type: contentType,
     tasks
   };
 
@@ -55,6 +59,29 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
     <Dialog open={true} onOpenChange={() => onCancel()}>
       <DialogContent className="sm:max-w-[800px]">
         <form className="space-y-6">
+          <div className="bg-[#1A1F2C] p-4 rounded-lg shadow-sm">
+            <Label className="text-gray-200 mb-3 block">Content Type</Label>
+            <RadioGroup
+              defaultValue="photos"
+              value={contentType}
+              onValueChange={(value) => setContentType(value as 'photos' | 'video' | 'canvas')}
+              className="flex gap-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="photos" id="photos" />
+                <Label htmlFor="photos" className="text-gray-200">Photo Post</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="video" id="video" />
+                <Label htmlFor="video" className="text-gray-200">Video Post</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="canvas" id="canvas" />
+                <Label htmlFor="canvas" className="text-gray-200">Canvas Template</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
           <FormHeader
             title={title}
             contentDate={contentDate}
@@ -71,22 +98,33 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
             onTypeChange={setType}
           />
 
-          <KeyNotes
-            keyNotes={keyNotes}
-            onChange={setKeyNotes}
-          />
+          {contentType === 'canvas' ? (
+            <div className="bg-[#1A1F2C] p-4 rounded-lg shadow-sm">
+              <Label className="text-gray-200 mb-3 block">Canvas Template Details</Label>
+              <p className="text-gray-400 text-sm">
+                This will be a canvas template that can be customized with specific content later.
+              </p>
+            </div>
+          ) : (
+            <KeyNotes
+              keyNotes={keyNotes}
+              onChange={setKeyNotes}
+              label={contentType === 'video' ? 'Video Description & Key Points' : 'Photo Key Points'}
+            />
+          )}
 
           <VisualTasks
             tasks={tasks}
             onTasksChange={setTasks}
             onTaskAdd={handleAddTask}
-            onTaskDelete={handleDeleteTask}
-            onTaskToggle={handleToggleTask}
+            onTaskDelete={handleTaskDelete}
+            onTaskToggle={handleTaskToggle}
           />
 
           <SharePointSection
             sharePointLink={sharePointLink}
             onChange={setSharePointLink}
+            contentType={contentType}
           />
 
           <FormSubmit

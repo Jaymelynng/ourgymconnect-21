@@ -1,18 +1,17 @@
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { KeyNotesProps } from './types';
+import RichTextEditor from '@/components/RichTextEditor';
 
-export const KeyNotes = ({ keyNotes, onChange }: KeyNotesProps) => {
+interface KeyNotesProps {
+  keyNotes: string;
+  onChange: (value: string) => void;
+  label?: string;
+}
+
+export const KeyNotes = ({ keyNotes, onChange, label = "Key Notes" }: KeyNotesProps) => {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm">
-      <Label className="text-gray-700">Key Notes</Label>
-      <Textarea
-        rows={4}
-        value={keyNotes}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Overall notes about the content..."
-        className="bg-white border-gray-300 focus:ring-2 focus:ring-primary"
-      />
+    <div className="bg-[#1A1F2C] p-4 rounded-lg shadow-sm">
+      <Label className="text-gray-200 mb-3 block">{label}</Label>
+      <RichTextEditor content={keyNotes} onChange={onChange} />
     </div>
   );
 };
