@@ -84,10 +84,8 @@ export function CalendarDay({
           transformOrigin: 'center',
         }}
       >
-        {/* Day Header Section */}
         <DayHeader day={day} currentDate={currentDate} />
         
-        {/* Content Preview Section */}
         <div className={cn(
           "px-2 pb-2 space-y-2",
           "transition-all duration-300",
@@ -102,14 +100,13 @@ export function CalendarDay({
               onDelete={handleDelete}
               onDayClick={(e) => {
                 e.stopPropagation();
-                onDayClick(day);
+                setIsDialogOpen(true);
               }}
             />
           ))}
         </div>
       </div>
 
-      {/* Dialogs Section */}
       <DayDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}

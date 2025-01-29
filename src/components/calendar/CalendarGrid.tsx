@@ -84,7 +84,7 @@ export function CalendarGrid({ currentDate, marketingItems, refetchItems }: Cale
             tasks={[]}
             marketingItems={dayMarketingItems}
             hasItems={hasItems}
-            onDayClick={() => {}}
+            onDayClick={() => {}} // We'll handle the click in the CalendarDay component directly
             refetchItems={refetchItems}
           />
         );
