@@ -117,8 +117,8 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
             tasks={tasks}
             onTasksChange={setTasks}
             onTaskAdd={handleAddTask}
-            onTaskDelete={handleTaskDelete}
-            onTaskToggle={handleTaskToggle}
+            onTaskDelete={handleDeleteTask}
+            onTaskToggle={handleToggleTask}
           />
 
           <SharePointSection
