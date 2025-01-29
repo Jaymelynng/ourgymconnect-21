@@ -8,6 +8,7 @@ import { SharePointSection } from './social-media/SharePointSection';
 import { FormSubmit } from './social-media/FormSubmit';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface SocialMediaFormProps {
   onCancel: () => void;
@@ -21,9 +22,10 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
   const [goal, setGoal] = useState('');
   const [type, setType] = useState<string[]>([]);
   const [keyNotes, setKeyNotes] = useState('');
-  const [tasks, setTasks] = useState<{ id: number; text: string; completed: boolean; dueDate: Date; }[]>([]);
+  const [tasks, setTasks] = useState<{ id: number; text: string; completed: boolean; dueDate: Date; assignedTo?: string; }[]>([]);
   const [sharePointLink, setSharePointLink] = useState('');
   const [contentType, setContentType] = useState<'photos' | 'video' | 'canvas'>('photos');
+  const [photoCount, setPhotoCount] = useState<string>('');
 
   const handleAddTask = () => {
     const newTask = {
@@ -31,6 +33,7 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
       text: '',
       completed: false,
       dueDate: new Date(),
+      assignedTo: '',
     };
     setTasks([...tasks, newTask]);
   };
@@ -52,30 +55,42 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
     photo_key_points: keyNotes,
     focus_area: focus,
     content_type: contentType,
-    tasks
+    tasks,
+    photo_count: photoCount,
   };
 
   return (
     <Dialog open={true} onOpenChange={() => onCancel()}>
-      <DialogContent className="sm:max-w-[800px]">
+      <DialogContent className="sm:max-w-[800px] bg-[#1A1F2C]">
         <form className="space-y-6">
-          <div className="bg-[#1A1F2C] p-4 rounded-lg shadow-sm">
-            <Label className="text-gray-200 mb-3 block">Content Type</Label>
+          <div className="bg-[#2F3A4A] p-6 rounded-lg shadow-md border border-gray-700">
+            <Label className="text-gray-200 text-lg font-semibold mb-4 block">Visuals</Label>
             <RadioGroup
               defaultValue="photos"
               value={contentType}
               onValueChange={(value) => setContentType(value as 'photos' | 'video' | 'canvas')}
-              className="flex gap-4"
+              className="flex gap-6"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="photos" id="photos" />
-                <Label htmlFor="photos" className="text-gray-200">Photo Post</Label>
+              <div className="flex flex-col space-y-2 bg-[#222222] p-4 rounded-lg hover:bg-[#333333] transition-colors">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="photos" id="photos" />
+                  <Label htmlFor="photos" className="text-gray-200">Photo Post</Label>
+                </div>
+                {contentType === 'photos' && (
+                  <Input
+                    type="number"
+                    placeholder="Number of photos needed"
+                    value={photoCount}
+                    onChange={(e) => setPhotoCount(e.target.value)}
+                    className="bg-[#1A1F2C] border-gray-700 text-gray-200 w-40"
+                  />
+                )}
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 bg-[#222222] p-4 rounded-lg hover:bg-[#333333] transition-colors">
                 <RadioGroupItem value="video" id="video" />
                 <Label htmlFor="video" className="text-gray-200">Video Post</Label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 bg-[#222222] p-4 rounded-lg hover:bg-[#333333] transition-colors">
                 <RadioGroupItem value="canvas" id="canvas" />
                 <Label htmlFor="canvas" className="text-gray-200">Canvas Template</Label>
               </div>
@@ -99,8 +114,8 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
           />
 
           {contentType === 'canvas' ? (
-            <div className="bg-[#1A1F2C] p-4 rounded-lg shadow-sm">
-              <Label className="text-gray-200 mb-3 block">Canvas Template Details</Label>
+            <div className="bg-[#2F3A4A] p-6 rounded-lg shadow-md border border-gray-700">
+              <Label className="text-gray-200 text-lg font-semibold mb-3 block">Canvas Template Details</Label>
               <p className="text-gray-400 text-sm">
                 This will be a canvas template that can be customized with specific content later.
               </p>
@@ -119,6 +134,7 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
             onTaskAdd={handleAddTask}
             onTaskDelete={handleDeleteTask}
             onTaskToggle={handleToggleTask}
+            contentType={contentType}
           />
 
           <SharePointSection
