@@ -61,38 +61,40 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
 
   return (
     <Dialog open={true} onOpenChange={() => onCancel()}>
-      <DialogContent className="sm:max-w-[800px] bg-[#1A1F2C]">
+      <DialogContent className="sm:max-w-[800px] bg-background">
         <form className="space-y-6">
-          <div className="bg-[#221F26] p-6 rounded-lg shadow-md border border-[#403E43]">
-            <Label className="text-[#FFFFFF] text-lg font-semibold mb-4 block">Visuals</Label>
+          <div className="p-6 rounded-lg border">
+            <Label className="text-foreground text-lg font-semibold mb-4 block">Visuals</Label>
             <RadioGroup
               defaultValue="photos"
               value={contentType}
               onValueChange={(value) => setContentType(value as 'photos' | 'video' | 'canvas')}
-              className="flex gap-6"
+              className="flex flex-col space-y-4"
             >
-              <div className="flex flex-col space-y-2 bg-[#1A1F2C] p-4 rounded-lg hover:bg-[#2F3A4A] transition-colors">
+              <div className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="photos" id="photos" />
-                  <Label htmlFor="photos" className="text-[#FFFFFF]">Photo Post</Label>
+                  <Label htmlFor="photos">Photo Post</Label>
                 </div>
                 {contentType === 'photos' && (
-                  <Input
-                    type="number"
-                    placeholder="Number of photos needed"
-                    value={photoCount}
-                    onChange={(e) => setPhotoCount(e.target.value)}
-                    className="bg-[#1A1F2C] border-[#403E43] text-[#FFFFFF] w-40"
-                  />
+                  <div className="ml-6">
+                    <Input
+                      type="number"
+                      placeholder="Number of photos needed"
+                      value={photoCount}
+                      onChange={(e) => setPhotoCount(e.target.value)}
+                      className="w-40"
+                    />
+                  </div>
                 )}
               </div>
-              <div className="flex items-center space-x-2 bg-[#1A1F2C] p-4 rounded-lg hover:bg-[#2F3A4A] transition-colors">
+              <div className="flex items-center space-x-2">
                 <RadioGroupItem value="video" id="video" />
-                <Label htmlFor="video" className="text-[#FFFFFF]">Video Post</Label>
+                <Label htmlFor="video">Video Post</Label>
               </div>
-              <div className="flex items-center space-x-2 bg-[#1A1F2C] p-4 rounded-lg hover:bg-[#2F3A4A] transition-colors">
+              <div className="flex items-center space-x-2">
                 <RadioGroupItem value="canvas" id="canvas" />
-                <Label htmlFor="canvas" className="text-[#FFFFFF]">Canvas Template</Label>
+                <Label htmlFor="canvas">Canvas Template</Label>
               </div>
             </RadioGroup>
           </div>
@@ -114,9 +116,9 @@ export const SocialMediaForm = ({ onCancel }: SocialMediaFormProps) => {
           />
 
           {contentType === 'canvas' ? (
-            <div className="bg-[#221F26] p-6 rounded-lg shadow-md border border-[#403E43]">
-              <Label className="text-[#FFFFFF] text-lg font-semibold mb-3 block">Canvas Template Details</Label>
-              <p className="text-[#8E9196] text-sm">
+            <div className="p-6 rounded-lg border">
+              <Label className="text-foreground text-lg font-semibold mb-3 block">Canvas Template Details</Label>
+              <p className="text-muted-foreground text-sm">
                 This will be a canvas template that can be customized with specific content later.
               </p>
             </div>
