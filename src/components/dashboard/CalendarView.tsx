@@ -15,7 +15,7 @@ export function CalendarView() {
   };
 
   return (
-    <div className="bg-card rounded-lg shadow-sm p-6 w-full">
+    <div className="bg-card rounded-lg shadow-sm p-4 md:p-6 w-full max-w-[100vw] overflow-x-auto">
       <div className="flex justify-between items-center mb-6">
         <h3 className="font-semibold text-xl text-primary">Calendar View</h3>
         <div className="flex gap-2">
@@ -40,7 +40,7 @@ export function CalendarView() {
         </div>
       </div>
       
-      <div onClick={handleViewClick} className="cursor-pointer">
+      <div onClick={handleViewClick} className="cursor-pointer w-full">
         {viewType === 'week' && (
           <WeekView 
             currentDate={currentDate}
