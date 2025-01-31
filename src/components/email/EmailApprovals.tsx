@@ -53,7 +53,7 @@ export const EmailApprovals = () => {
     <Card className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Email Approvals</h2>
-        <GymSelector onGymChange={handleGymChange} />
+        <GymSelector onChange={handleGymChange} />
       </div>
 
       {emails?.length === 0 ? (

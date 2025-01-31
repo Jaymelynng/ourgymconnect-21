@@ -25,6 +25,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
   const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
+      title: '',
       subject: '',
       previewText: '',
       content: '',
@@ -38,6 +39,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
       const { data: emailContent, error } = await supabase
         .from('email_content')
         .insert({
+          title: data.subject, // Use subject as title
           subject_line: data.subject,
           preview_text: data.previewText,
           body_content: data.content,

@@ -31,6 +31,7 @@ export interface EmailContent {
   scheduled_date?: string;
   gym_id?: number;
   created_at: string;
+  rejection_reason?: string | null;
 }
 
 export interface MarketingTask {
