@@ -13,12 +13,13 @@ export interface MarketingContent {
   description?: string;
   content_type: string;
   scheduled_date?: string;
-  photo_examples?: string[];
+  photo_examples?: string[];  // Changed from string to string[]
   photo_key_points?: string;
   theme?: string;
   caption?: string;
   gym_id?: number;
   created_at: string;
+  total_posts?: number;  // Added for ContentSeriesSection
 }
 
 export interface EmailContent {
@@ -31,7 +32,7 @@ export interface EmailContent {
   scheduled_date?: string;
   gym_id?: number;
   created_at: string;
-  rejection_reason?: string | null;
+  rejection_reason?: string;  // Added for EmailReview
 }
 
 export interface MarketingTask {
@@ -54,16 +55,10 @@ export interface DashboardSection {
   created_at: string;
 }
 
-export interface MarketingItem {
-  id: number;
-  title: string;
-  description?: string;
-  content_type: string;
-  scheduled_date?: string;
-  photo_examples?: string[];
-  photo_key_points?: string;
-  theme?: string;
-  caption?: string;
-  gym_id?: number;
-  created_at: string;
+export interface DayTask {
+  name: string;
+  date: Date;
+  tasks: MarketingContent[];
 }
+
+export type MarketingItem = MarketingContent;

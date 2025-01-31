@@ -1,35 +1,31 @@
 import { useState, useCallback } from "react";
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from "date-fns";
+import { format, addMonths, subMonths } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { WeekView } from "@/components/views/WeekView";
+import { MonthView } from "@/components/views/MonthView";
+import { ListView } from "@/components/views/ListView";
 import { useToast } from "@/hooks/use-toast";
-import type { MarketingItem } from "@/types/database";
+import type { MarketingContent } from "@/types/database";
 
 export function CalendarSection() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewType, setViewType] = useState('week');
   const { toast } = useToast();
 
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
-  const calendarStart = startOfWeek(monthStart);
-  const calendarEnd = endOfWeek(monthEnd);
-
   const { data: events = [], isLoading } = useQuery({
     queryKey: ['marketing_content', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from('marketing_content')
+          .from('marketing_content')  // Changed from calendar_events to marketing_content
           .select('*')
-          .gte('scheduled_date', calendarStart.toISOString())
-          .lte('scheduled_date', calendarEnd.toISOString())
           .order('scheduled_date');
 
         if (error) throw error;
-        return data as MarketingItem[];
+        return data as MarketingContent[];
       } catch (error) {
         console.error('Error fetching calendar events:', error);
         toast({
