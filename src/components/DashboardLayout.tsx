@@ -25,8 +25,6 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
 
   return (
     <div className="flex min-h-screen bg-background">
-      {!isMobile && <Toolkit />}
-      
       <div className="flex-1 flex flex-col">
         <header className="border-b bg-card sticky top-0 z-50">
           <div className="container flex items-center justify-between py-4">
@@ -38,7 +36,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
                       <Menu className="h-5 w-5" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="left" className="w-[240px] sm:w-[280px]">
+                  <SheetContent side="right" className="w-[240px] sm:w-[280px]">
                     <div className="py-4">
                       <Toolkit />
                     </div>
@@ -56,6 +54,8 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
           {children}
         </main>
       </div>
+      
+      {!isMobile && <Toolkit />}
     </div>
   );
 }

@@ -87,7 +87,7 @@ const Toolkit = () => {
 
   return (
     <div className="w-[280px] min-h-screen bg-gradient-to-b from-primary/95 to-primary/85 backdrop-blur-sm 
-                    rounded-t-[15px] p-5 text-white shadow-lg border-r border-primary/20">
+                    rounded-t-[15px] p-5 text-white shadow-lg border-l border-primary/20">
       <div className="mb-8 animate-fade-in">
         <h2 className="text-2xl font-bold flex items-center gap-3 mb-6 bg-gradient-to-r from-white to-white/80 
                        bg-clip-text text-transparent">
