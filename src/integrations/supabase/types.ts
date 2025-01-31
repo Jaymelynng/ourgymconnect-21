@@ -56,6 +56,104 @@ export type Database = {
           },
         ]
       }
+      dashboard_sections: {
+        Row: {
+          active: boolean | null
+          content: string | null
+          created_at: string | null
+          id: number
+          priority: number | null
+          section_name: string
+        }
+        Insert: {
+          active?: boolean | null
+          content?: string | null
+          created_at?: string | null
+          id?: never
+          priority?: number | null
+          section_name: string
+        }
+        Update: {
+          active?: boolean | null
+          content?: string | null
+          created_at?: string | null
+          id?: never
+          priority?: number | null
+          section_name?: string
+        }
+        Relationships: []
+      }
+      email_content: {
+        Row: {
+          body_content: string
+          created_at: string | null
+          gym_id: number | null
+          id: number
+          preview_text: string | null
+          scheduled_date: string | null
+          status: string | null
+          subject_line: string
+          title: string
+        }
+        Insert: {
+          body_content: string
+          created_at?: string | null
+          gym_id?: number | null
+          id?: never
+          preview_text?: string | null
+          scheduled_date?: string | null
+          status?: string | null
+          subject_line: string
+          title: string
+        }
+        Update: {
+          body_content?: string
+          created_at?: string | null
+          gym_id?: number | null
+          id?: never
+          preview_text?: string | null
+          scheduled_date?: string | null
+          status?: string | null
+          subject_line?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_content_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gym_details: {
+        Row: {
+          created_at: string | null
+          facebook_url: string | null
+          gym_name: string
+          id: number
+          instagram_url: string | null
+          sharepoint_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          facebook_url?: string | null
+          gym_name: string
+          id?: never
+          instagram_url?: string | null
+          sharepoint_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          facebook_url?: string | null
+          gym_name?: string
+          id?: never
+          instagram_url?: string | null
+          sharepoint_url?: string | null
+        }
+        Relationships: []
+      }
       gyms: {
         Row: {
           created_at: string
@@ -73,6 +171,97 @@ export type Database = {
           name?: Database["public"]["Enums"]["gym_location"]
         }
         Relationships: []
+      }
+      marketing_content: {
+        Row: {
+          caption: string | null
+          content_type: string
+          created_at: string | null
+          description: string | null
+          gym_id: number | null
+          id: number
+          photo_examples: string[] | null
+          photo_key_points: string | null
+          scheduled_date: string | null
+          theme: string | null
+          title: string
+        }
+        Insert: {
+          caption?: string | null
+          content_type: string
+          created_at?: string | null
+          description?: string | null
+          gym_id?: number | null
+          id?: never
+          photo_examples?: string[] | null
+          photo_key_points?: string | null
+          scheduled_date?: string | null
+          theme?: string | null
+          title: string
+        }
+        Update: {
+          caption?: string | null
+          content_type?: string
+          created_at?: string | null
+          description?: string | null
+          gym_id?: number | null
+          id?: never
+          photo_examples?: string[] | null
+          photo_key_points?: string | null
+          scheduled_date?: string | null
+          theme?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_content_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketing_tasks: {
+        Row: {
+          assigned_to: string | null
+          content_id: number | null
+          created_at: string | null
+          due_date: string | null
+          id: number
+          status: string | null
+          task_name: string
+          task_type: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          content_id?: number | null
+          created_at?: string | null
+          due_date?: string | null
+          id?: never
+          status?: string | null
+          task_name: string
+          task_type: string
+        }
+        Update: {
+          assigned_to?: string | null
+          content_id?: number | null
+          created_at?: string | null
+          due_date?: string | null
+          id?: never
+          status?: string | null
+          task_name?: string
+          task_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_tasks_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_content"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       task_details: {
         Row: {

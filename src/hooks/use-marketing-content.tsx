@@ -1,18 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-
-export interface MarketingItem {
-  id: number;
-  title: string;
-  content_type: string;
-  description: string;
-  scheduled_date: string;
-  photo_examples: string;
-  photo_key_points: string;
-  theme: string;
-  caption: string;
-}
+import type { MarketingContent } from "@/types/database";
 
 export function useMarketingContent(startDate: Date, endDate: Date) {
   return useQuery({
@@ -54,7 +43,7 @@ export function useMarketingContent(startDate: Date, endDate: Date) {
         });
 
         console.groupEnd();
-        return data;
+        return data as MarketingContent[];
       } catch (error) {
         console.error('Failed to fetch marketing content:', error);
         console.groupEnd();
@@ -62,7 +51,7 @@ export function useMarketingContent(startDate: Date, endDate: Date) {
       }
     },
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    gcTime: 30 * 24 * 60 * 60 * 1000, // Keep cache for 30 days (renamed from cacheTime)
+    gcTime: 30 * 24 * 60 * 60 * 1000, // Keep cache for 30 days
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchOnReconnect: true,

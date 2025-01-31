@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ContentCreator } from "@/components/content/ContentCreator";
 import { useState } from "react";
+import type { DashboardSection } from "@/types/database";
 
 const Index = () => {
   const { toast } = useToast();
@@ -32,17 +33,9 @@ const Index = () => {
         });
         return [];
       }
-      return data || [];
+      return data as DashboardSection[];
     }
   });
-
-  const renderSkeleton = () => (
-    <div className="space-y-4">
-      <Skeleton className="h-24 w-full animate-pulse" />
-      <Skeleton className="h-24 w-full animate-pulse delay-150" />
-      <Skeleton className="h-24 w-full animate-pulse delay-300" />
-    </div>
-  );
 
   return (
     <DashboardLayout>
@@ -69,14 +62,17 @@ const Index = () => {
 
         <MetricsGrid />
 
-        {/* News & Updates Section */}
         <Card className="transition-all duration-300 hover:shadow-lg animate-fade-in">
           <CardHeader>
             <CardTitle>News & Updates</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {isLoadingSections ? (
-              renderSkeleton()
+              <div className="animate-pulse space-y-4">
+                {[1,2,3].map(i => (
+                  <div key={i} className="h-32 bg-muted rounded-lg" />
+                ))}
+              </div>
             ) : !dashboardSections?.length ? (
               <p className="text-muted-foreground">No news or updates available</p>
             ) : (
