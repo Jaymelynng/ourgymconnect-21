@@ -6,6 +6,8 @@ import { EditMarketingDialog } from "../marketing/EditMarketingDialog";
 import { DayHeader } from "./day-components/DayHeader";
 import { ContentPreview } from "./day-components/ContentPreview";
 import { DayDialog } from "./day-components/DayDialog";
+import { X } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface CalendarDayProps {
   day: Date;
@@ -28,7 +30,7 @@ export function CalendarDay({
   const { toast } = useToast();
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleDelete = async (itemId: string | number) => {
     try {
@@ -57,64 +59,90 @@ export function CalendarDay({
     }
   };
 
+  const handleExpand = () => {
+    setIsExpanded(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleCollapse = () => {
+    setIsExpanded(false);
+    document.body.style.overflow = 'auto';
+  };
+
   return (
     <>
       <div 
-        onClick={() => setIsDialogOpen(true)}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onClick={handleExpand}
         className={cn(
           // Base styles
           "min-h-[120px] border-b border-r border-border bg-card",
           // Animation and transition
           "transition-all duration-500 ease-in-out transform",
-          // Hover states with expanded size
-          isHovered && [
-            "absolute inset-4 z-50 scale-[1.02]",
-            "shadow-2xl rounded-xl border",
-            "min-h-[80vh]",
-            "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/95"
+          // Expanded state
+          isExpanded && [
+            "fixed inset-0 z-50",
+            "min-h-screen w-screen",
+            "bg-background",
+            "overflow-y-auto"
           ],
-          hasItems && "hover:bg-primary/5",
-          !hasItems && "hover:bg-secondary/5",
+          // Normal hover state
+          !isExpanded && [
+            hasItems && "hover:bg-primary/5",
+            !hasItems && "hover:bg-secondary/5",
+          ],
           // Animation
           "animate-fade-in cursor-pointer"
         )}
-        style={{
-          transformOrigin: 'center',
-        }}
       >
-        <DayHeader day={day} currentDate={currentDate} />
-        
         <div className={cn(
-          "px-2 pb-2 space-y-2",
           "transition-all duration-300",
-          isHovered ? "pt-4 px-4 md:px-8" : "pt-8",
-          isHovered && "overflow-y-auto max-h-[calc(80vh-4rem)]"
+          isExpanded ? "container mx-auto py-8" : ""
         )}>
-          {marketingItems.map((item) => (
-            <ContentPreview
-              key={item.id}
-              item={item}
-              onEdit={setEditingItem}
-              onDelete={handleDelete}
-              onDayClick={(e) => {
-                e.stopPropagation();
-                setIsDialogOpen(true);
-              }}
-            />
-          ))}
+          <div className={cn(
+            "flex items-center justify-between",
+            isExpanded ? "mb-6" : ""
+          )}>
+            <DayHeader day={day} currentDate={currentDate} />
+            {isExpanded && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCollapse();
+                }}
+                className="animate-fade-in"
+              >
+                <X className="h-6 w-6" />
+              </Button>
+            )}
+          </div>
+          
+          <div className={cn(
+            "space-y-4",
+            isExpanded ? "mt-8" : "px-2 pb-2"
+          )}>
+            {marketingItems.map((item) => (
+              <ContentPreview
+                key={item.id}
+                item={item}
+                onEdit={setEditingItem}
+                onDelete={handleDelete}
+                onDayClick={(e) => {
+                  e.stopPropagation();
+                  setIsDialogOpen(true);
+                }}
+              />
+            ))}
+            
+            {marketingItems.length === 0 && (
+              <p className="text-center text-muted-foreground py-4">
+                No content scheduled for this day
+              </p>
+            )}
+          </div>
         </div>
       </div>
-
-      <DayDialog
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        day={day}
-        items={marketingItems}
-        onEdit={setEditingItem}
-        onDelete={handleDelete}
-      />
 
       {editingItem && (
         <EditMarketingDialog
