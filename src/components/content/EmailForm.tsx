@@ -86,7 +86,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
                   <FormItem>
                     <FormLabel>Select Gym</FormLabel>
                     <FormControl>
-                      <GymSelector onGymChange={field.onChange} />
+                      <GymSelector onChange={field.onChange} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

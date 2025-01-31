@@ -53,3 +53,17 @@ export interface DashboardSection {
   active?: boolean;
   created_at: string;
 }
+
+export interface MarketingItem {
+  id: number;
+  title: string;
+  description?: string;
+  content_type: string;
+  scheduled_date?: string;
+  photo_examples?: string[];
+  photo_key_points?: string;
+  theme?: string;
+  caption?: string;
+  gym_id?: number;
+  created_at: string;
+}
