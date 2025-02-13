@@ -9,80 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      content_submissions: {
-        Row: {
-          content_type: Database["public"]["Enums"]["content_type"]
-          created_at: string
-          description: string | null
-          due_date: string
-          feedback: string | null
-          file_url: string | null
-          gym_id: number
-          id: number
-          status: Database["public"]["Enums"]["approval_status"] | null
-          title: string
-        }
-        Insert: {
-          content_type: Database["public"]["Enums"]["content_type"]
-          created_at?: string
-          description?: string | null
-          due_date: string
-          feedback?: string | null
-          file_url?: string | null
-          gym_id: number
-          id?: number
-          status?: Database["public"]["Enums"]["approval_status"] | null
-          title: string
-        }
-        Update: {
-          content_type?: Database["public"]["Enums"]["content_type"]
-          created_at?: string
-          description?: string | null
-          due_date?: string
-          feedback?: string | null
-          file_url?: string | null
-          gym_id?: number
-          id?: number
-          status?: Database["public"]["Enums"]["approval_status"] | null
-          title?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "content_submissions_gym_id_fkey"
-            columns: ["gym_id"]
-            isOneToOne: false
-            referencedRelation: "gyms"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      dashboard_sections: {
-        Row: {
-          active: boolean | null
-          content: string | null
-          created_at: string | null
-          id: number
-          priority: number | null
-          section_name: string
-        }
-        Insert: {
-          active?: boolean | null
-          content?: string | null
-          created_at?: string | null
-          id?: never
-          priority?: number | null
-          section_name: string
-        }
-        Update: {
-          active?: boolean | null
-          content?: string | null
-          created_at?: string | null
-          id?: never
-          priority?: number | null
-          section_name?: string
-        }
-        Relationships: []
-      }
       email_content: {
         Row: {
           body_content: string
@@ -154,24 +80,6 @@ export type Database = {
         }
         Relationships: []
       }
-      gyms: {
-        Row: {
-          created_at: string
-          id: number
-          name: Database["public"]["Enums"]["gym_location"]
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          name: Database["public"]["Enums"]["gym_location"]
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          name?: Database["public"]["Enums"]["gym_location"]
-        }
-        Relationships: []
-      }
       marketing_content: {
         Row: {
           caption: string | null
@@ -183,6 +91,7 @@ export type Database = {
           photo_examples: string[] | null
           photo_key_points: string | null
           scheduled_date: string | null
+          status: string | null
           theme: string | null
           title: string
         }
@@ -196,6 +105,7 @@ export type Database = {
           photo_examples?: string[] | null
           photo_key_points?: string | null
           scheduled_date?: string | null
+          status?: string | null
           theme?: string | null
           title: string
         }
@@ -209,6 +119,7 @@ export type Database = {
           photo_examples?: string[] | null
           photo_key_points?: string | null
           scheduled_date?: string | null
+          status?: string | null
           theme?: string | null
           title?: string
         }
@@ -229,6 +140,7 @@ export type Database = {
           created_at: string | null
           due_date: string | null
           id: number
+          parent_task_id: number | null
           status: string | null
           task_name: string
           task_type: string
@@ -239,6 +151,7 @@ export type Database = {
           created_at?: string | null
           due_date?: string | null
           id?: never
+          parent_task_id?: number | null
           status?: string | null
           task_name: string
           task_type: string
@@ -249,6 +162,7 @@ export type Database = {
           created_at?: string | null
           due_date?: string | null
           id?: never
+          parent_task_id?: number | null
           status?: string | null
           task_name?: string
           task_type?: string
@@ -261,81 +175,14 @@ export type Database = {
             referencedRelation: "marketing_content"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      task_details: {
-        Row: {
-          assigned_to: string
-          created_at: string | null
-          due_date: string
-          id: number
-          parent_task_id: number | null
-          status: Database["public"]["Enums"]["task_status"] | null
-          task_name: string
-        }
-        Insert: {
-          assigned_to: string
-          created_at?: string | null
-          due_date: string
-          id?: number
-          parent_task_id?: number | null
-          status?: Database["public"]["Enums"]["task_status"] | null
-          task_name: string
-        }
-        Update: {
-          assigned_to?: string
-          created_at?: string | null
-          due_date?: string
-          id?: number
-          parent_task_id?: number | null
-          status?: Database["public"]["Enums"]["task_status"] | null
-          task_name?: string
-        }
-        Relationships: [
           {
-            foreignKeyName: "task_details_parent_task_id_fkey"
+            foreignKeyName: "marketing_tasks_parent_task_id_fkey"
             columns: ["parent_task_id"]
             isOneToOne: false
-            referencedRelation: "tasks"
+            referencedRelation: "marketing_tasks"
             referencedColumns: ["id"]
           },
         ]
-      }
-      tasks: {
-        Row: {
-          created_at: string | null
-          due_date: string | null
-          go_live_date: string | null
-          has_tasks: boolean | null
-          id: number
-          instructions: string | null
-          status: Database["public"]["Enums"]["task_status"] | null
-          title: string
-          type: Database["public"]["Enums"]["task_type"]
-        }
-        Insert: {
-          created_at?: string | null
-          due_date?: string | null
-          go_live_date?: string | null
-          has_tasks?: boolean | null
-          id?: number
-          instructions?: string | null
-          status?: Database["public"]["Enums"]["task_status"] | null
-          title: string
-          type: Database["public"]["Enums"]["task_type"]
-        }
-        Update: {
-          created_at?: string | null
-          due_date?: string | null
-          go_live_date?: string | null
-          has_tasks?: boolean | null
-          id?: number
-          instructions?: string | null
-          status?: Database["public"]["Enums"]["task_status"] | null
-          title?: string
-          type?: Database["public"]["Enums"]["task_type"]
-        }
-        Relationships: []
       }
     }
     Views: {
