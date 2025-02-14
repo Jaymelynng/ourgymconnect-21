@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Grid, Instagram, Facebook, Share2, Palette, Plus, AlertCircle } from 'lucide-react';
+import { Grid, Instagram, Facebook, Share2, Palette, Plus, AlertCircle, Globe } from 'lucide-react';
 import { Button } from './ui/button';
 import { GymSelector } from './GymSelector';
 import { cn } from '@/lib/utils';
@@ -18,7 +19,7 @@ const Toolkit = () => {
       console.log('Fetching gym details for ID:', selectedGymId);
       const { data, error } = await supabase
         .from('gym_details')
-        .select('instagram_url, facebook_url, sharepoint_url')
+        .select('instagram_url, facebook_url, sharepoint_url, website_url')
         .eq('id', selectedGymId)
         .single();
       
@@ -36,6 +37,13 @@ const Toolkit = () => {
   });
 
   const tools = [
+    { 
+      name: 'Website', 
+      icon: Globe, 
+      color: 'hover:text-blue-600',
+      url: selectedGym?.website_url || '#',
+      disabled: !selectedGym?.website_url
+    },
     { 
       name: 'Instagram', 
       icon: Instagram, 
