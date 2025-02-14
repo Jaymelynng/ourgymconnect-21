@@ -17,8 +17,8 @@ const WeekView = ({ events }: { events: CalendarEvent[] }) => (
     ))}
     {Array.from({ length: 6 }).map((_, index) => {
       const dayEvents = events.filter(event => {
-        const eventDate = parseISO(event.start_date);
-        return format(eventDate, 'd') === String(index + 1);
+        const eventDate = event.scheduled_date ? parseISO(event.scheduled_date) : null;
+        return eventDate && format(eventDate, 'd') === String(index + 1);
       });
       
       return (
@@ -52,8 +52,8 @@ const MonthView = ({ events }: { events: CalendarEvent[] }) => (
     ))}
     {Array.from({ length: 28 }).map((_, index) => {
       const dayEvents = events.filter(event => {
-        const eventDate = parseISO(event.start_date);
-        return format(eventDate, 'd') === String(index + 1);
+        const eventDate = event.scheduled_date ? parseISO(event.scheduled_date) : null;
+        return eventDate && format(eventDate, 'd') === String(index + 1);
       });
       
       return (
@@ -86,7 +86,7 @@ const ListView = ({ events }: { events: CalendarEvent[] }) => (
         className="p-3 rounded-lg transition-all cursor-pointer bg-card hover:shadow-md border-l-4 border-primary"
       >
         <div className="text-sm font-medium text-primary">
-          {format(parseISO(event.start_date), 'MMM d, yyyy')}
+          {event.scheduled_date ? format(parseISO(event.scheduled_date), 'MMM d, yyyy') : 'No date set'}
         </div>
         <div className="text-sm text-muted-foreground">
           {event.title}
@@ -97,8 +97,8 @@ const ListView = ({ events }: { events: CalendarEvent[] }) => (
 );
 
 export function CalendarSection() {
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [viewType, setViewType] = useState('week');
+  const [currentDate, setCurrentDate] = useState(new Date());
   const { toast } = useToast();
 
   const monthStart = startOfMonth(currentDate);
@@ -107,18 +107,23 @@ export function CalendarSection() {
   const calendarEnd = endOfWeek(monthEnd);
 
   const { data: events = [], isLoading } = useQuery({
-    queryKey: ['calendar_events', format(currentDate, 'yyyy-MM')],
+    queryKey: ['marketing_content', format(currentDate, 'yyyy-MM')],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from('calendar_events')
+          .from('marketing_content')
           .select('*')
-          .gte('start_date', calendarStart.toISOString())
-          .lte('start_date', calendarEnd.toISOString())
-          .order('start_date');
+          .gte('scheduled_date', calendarStart.toISOString())
+          .lte('scheduled_date', calendarEnd.toISOString())
+          .order('scheduled_date');
 
         if (error) throw error;
-        return data || [];
+
+        // Transform the data to match CalendarEvent type
+        return (data || []).map(item => ({
+          ...item,
+          type: 'marketing' as const
+        })) as CalendarEvent[];
       } catch (error) {
         console.error('Error fetching calendar events:', error);
         toast({

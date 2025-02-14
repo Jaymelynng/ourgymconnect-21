@@ -1,4 +1,17 @@
 
+export interface MarketingTask {
+  id: number;
+  task_name: string;
+  task_type: string;
+  content_id: number | null;
+  assigned_to: string | null;
+  status: string | null;
+  due_date: string | null;
+  group_due_date: string | null;
+  parent_task_id: number | null;
+  created_at: string | null;
+}
+
 export interface MarketingItem {
   id: number;
   title: string;
@@ -19,7 +32,7 @@ export interface MarketingItem {
   created_at?: string;
   gym_id?: number;
   total_posts?: number;
-  type?: 'marketing' | 'email';  // Added to fix CalendarEvent type issues
+  type?: 'marketing' | 'email';
 }
 
 export interface EmailContent {

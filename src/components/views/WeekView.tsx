@@ -1,40 +1,31 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { format, parseISO, startOfWeek, addDays, endOfWeek, isWithinInterval, isBefore } from "date-fns";
-import { Image, Calendar, Type, CheckSquare } from "lucide-react";
+import { format, parseISO, startOfWeek, addDays, endOfWeek, isBefore } from "date-fns";
+import { Calendar, Type, CheckSquare } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-
-interface MarketingItem {
-  id: number;
-  title: string;
-  content_type: string;
-  description?: string;
-  scheduled_date: string;
-  photo_examples?: string;
-  photo_key_points?: string;
-}
+import type { MarketingTask } from "@/types/marketing";
 
 interface DayTask {
   name: string;
   date: Date;
-  tasks: MarketingItem[];
+  tasks: MarketingTask[];
 }
 
 export function WeekView() {
   const [selectedDay, setSelectedDay] = useState<DayTask | null>(null);
   const today = new Date();
 
-  const { data: marketingItems = [] } = useQuery({
+  const { data: marketingTasks = [] } = useQuery({
     queryKey: ['marketing_tasks'],
     queryFn: async () => {
       const startDate = startOfWeek(new Date(), { weekStartsOn: 1 });
       const endDate = endOfWeek(startDate, { weekStartsOn: 1 });
       
-      console.log('Fetching marketing items for week:', {
+      console.log('Fetching marketing tasks for week:', {
         start: startDate.toISOString(),
         end: endDate.toISOString()
       });
@@ -57,9 +48,9 @@ export function WeekView() {
   // Create an array of the 6 days (Mon-Sat)
   const weekDays = Array.from({ length: 6 }, (_, index) => {
     const date = addDays(startOfCurrentWeek, index);
-    const dayTasks = marketingItems.filter(item => 
-      item.scheduled_date && 
-      format(parseISO(item.scheduled_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+    const dayTasks = marketingTasks.filter(item => 
+      item.due_date && 
+      format(parseISO(item.due_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
     );
 
     return {
@@ -71,7 +62,7 @@ export function WeekView() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-foreground">Weekly Content Schedule</h2>
+      <h2 className="text-2xl font-semibold text-foreground">Weekly Task Schedule</h2>
       <div className="grid grid-cols-6 gap-4">
         {weekDays.map((day) => (
           <div key={day.name}>
@@ -143,8 +134,8 @@ export function WeekView() {
                             isBefore(day.date, today) ? "bg-red-50" : "bg-primary/5"
                           )}
                         >
-                          <p className="font-medium text-foreground">{task.title}</p>
-                          <p className="text-sm text-muted-foreground">{task.content_type}</p>
+                          <p className="font-medium text-foreground">{task.task_name}</p>
+                          <p className="text-sm text-muted-foreground">{task.task_type}</p>
                         </div>
                       ))}
                     </div>
@@ -178,28 +169,18 @@ export function WeekView() {
                   )}
                 >
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-lg text-foreground">{task.title}</h3>
-                    {task.photo_examples && (
-                      <img 
-                        src={task.photo_examples} 
-                        alt="" 
-                        className="w-12 h-12 rounded-full ring-2 ring-primary/20"
-                      />
-                    )}
+                    <h3 className="font-semibold text-lg text-foreground">{task.task_name}</h3>
                   </div>
                   <div className="flex items-center gap-2">
                     <Type className="w-4 h-4 text-primary" />
                     <span className="text-sm font-medium text-muted-foreground">
-                      {task.content_type}
+                      {task.task_type}
                     </span>
                   </div>
-                  {task.description && (
-                    <p className="text-sm text-muted-foreground">{task.description}</p>
-                  )}
-                  {task.photo_key_points && (
-                    <div className="text-sm text-muted-foreground">
-                      <strong>Key Points:</strong> {task.photo_key_points}
-                    </div>
+                  {task.assigned_to && (
+                    <p className="text-sm text-muted-foreground">
+                      Assigned to: {task.assigned_to}
+                    </p>
                   )}
                 </div>
               ))
