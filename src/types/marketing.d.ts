@@ -8,14 +8,14 @@ export interface MarketingItem {
   start_date?: string;
   end_date?: string;
   scheduled_date?: string;
-  photo_examples: string;
-  photo_key_points: string;
+  photo_examples: string | null;
+  photo_key_points: string | null;
   rejection_reason?: string;
   status: string;
   theme?: string;
   caption?: string;
-  visuals_notes?: string;
-  key_notes?: string;
+  visuals_notes?: string | null;
+  key_notes?: string | null;
   created_at?: string;
   gym_id?: number;
   total_posts?: number;
@@ -25,11 +25,11 @@ export interface EmailContent {
   id: number;
   title: string;
   subject_line: string;
-  preview_text?: string;
+  preview_text?: string | null;
   body_content: string;
   scheduled_date?: string;
   gym_id?: number;
   status?: string;
-  rejection_reason?: string;
+  rejection_reason?: string | null;
   created_at?: string;
 }

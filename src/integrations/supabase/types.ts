@@ -14,28 +14,40 @@ export type Database = {
           body_content: string
           content_id: number | null
           created_at: string | null
+          gym_id: number | null
           id: number
           preview_text: string | null
+          rejection_reason: string | null
+          scheduled_date: string | null
           status: string | null
           subject_line: string
+          title: string | null
         }
         Insert: {
           body_content: string
           content_id?: number | null
           created_at?: string | null
+          gym_id?: number | null
           id?: number
           preview_text?: string | null
+          rejection_reason?: string | null
+          scheduled_date?: string | null
           status?: string | null
           subject_line: string
+          title?: string | null
         }
         Update: {
           body_content?: string
           content_id?: number | null
           created_at?: string | null
+          gym_id?: number | null
           id?: number
           preview_text?: string | null
+          rejection_reason?: string | null
+          scheduled_date?: string | null
           status?: string | null
           subject_line?: string
+          title?: string | null
         }
         Relationships: [
           {
@@ -43,6 +55,13 @@ export type Database = {
             columns: ["content_id"]
             isOneToOne: false
             referencedRelation: "marketing_content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_details_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_details"
             referencedColumns: ["id"]
           },
         ]
