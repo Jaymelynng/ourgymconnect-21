@@ -1,12 +1,13 @@
+
 import { format } from "date-fns";
 import { Calendar, Type, CheckSquare } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
-import type { MarketingItem } from "@/hooks/use-marketing-content";
+import type { MarketingContent } from "@/types/database";
 
 interface DayCardProps {
   name: string;
   date: Date;
-  tasks: MarketingItem[];
+  tasks: MarketingContent[];
   onClick: () => void;
 }
 
@@ -30,9 +31,9 @@ export function DayCard({ name, date, tasks, onClick }: DayCardProps) {
                   {format(date, 'd')}
                 </span>
               </div>
-              {tasks[0]?.photo_examples && (
+              {tasks[0]?.photo_examples && tasks[0].photo_examples.length > 0 && (
                 <img 
-                  src={tasks[0].photo_examples} 
+                  src={tasks[0].photo_examples[0]} 
                   alt={`Preview for ${tasks[0].title}`}
                   className="w-8 h-8 rounded-full ring-2 ring-primary/20 transition-all duration-300 
                            group-hover:ring-primary/40 shadow-sm"
