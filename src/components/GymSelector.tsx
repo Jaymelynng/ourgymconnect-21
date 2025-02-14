@@ -35,8 +35,13 @@ export function GymSelector({ onGymChange, onChange }: GymSelectorProps) {
           throw error;
         }
 
-        console.log('Gyms fetched successfully:', data?.length || 0, 'gyms');
-        return data || [];
+        if (!data || data.length === 0) {
+          console.log('No gyms found in the database');
+          return [];
+        }
+
+        console.log('Gyms fetched successfully:', data.length, 'gyms');
+        return data;
       } catch (error) {
         console.error('Error fetching gyms:', error);
         toast({
@@ -47,8 +52,8 @@ export function GymSelector({ onGymChange, onChange }: GymSelectorProps) {
         throw error;
       }
     },
-    retry: 2,
-    retryDelay: 1000,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
   const handleChange = (value: string) => {
@@ -69,13 +74,24 @@ export function GymSelector({ onGymChange, onChange }: GymSelectorProps) {
 
   if (isLoading) return <div className="animate-pulse h-10 bg-muted rounded-md" />;
 
+  if (!gyms || gyms.length === 0) {
+    return (
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          No gyms available. Please add gyms to the system.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
   return (
     <Select onValueChange={handleChange}>
       <SelectTrigger className="w-full bg-white border-secondary/20">
         <SelectValue placeholder="Select a gym" />
       </SelectTrigger>
       <SelectContent className="bg-white max-h-[300px]">
-        {gyms?.map((gym) => (
+        {gyms.map((gym) => (
           <SelectItem key={gym.id.toString()} value={gym.id.toString()} className="focus:bg-primary/10">
             {gym.gym_name}
           </SelectItem>
