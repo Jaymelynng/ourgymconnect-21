@@ -79,7 +79,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         
         <main 
           className={cn(
-            "flex-1 container py-4 md:py-6 px-4 md:px-6",
+            "flex-1 container max-w-[100vw] py-4 md:py-6 px-4 md:px-6",
             "animate-fade-in relative"
           )}
           style={{
@@ -94,9 +94,9 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
       {!isMobile && (
         <div 
           className={cn(
-            "w-[280px] transition-all duration-500 ease-in-out",
-            "transform-gpu",
-            isCollapsed ? "translate-x-[220px]" : "translate-x-0",
+            "w-[240px] transition-all duration-500 ease-in-out",
+            "transform-gpu sticky top-0 h-screen overflow-y-auto",
+            isCollapsed ? "translate-x-[180px]" : "translate-x-0",
             "hover:translate-x-0"
           )}
           style={{

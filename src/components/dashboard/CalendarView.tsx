@@ -16,7 +16,7 @@ export function CalendarView() {
   };
 
   return (
-    <div className="bg-card rounded-xl shadow-lg p-4 md:p-6 lg:p-8 w-full max-w-[95vw] md:max-w-[90vw] overflow-x-auto
+    <div className="bg-card rounded-xl shadow-lg p-4 md:p-6 lg:p-8 w-full overflow-x-auto
                     transform transition-all duration-300 hover:shadow-xl
                     border border-primary/10">
       <div className="flex justify-between items-center mb-6">
@@ -48,7 +48,7 @@ export function CalendarView() {
       
       <div 
         onClick={handleViewClick} 
-        className="cursor-pointer w-full min-h-[70vh] transition-all duration-300"
+        className="cursor-pointer w-full min-h-[calc(100vh-300px)] transition-all duration-300"
       >
         {viewType === 'week' && (
           <WeekView 
