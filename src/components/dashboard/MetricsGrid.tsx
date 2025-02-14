@@ -1,7 +1,8 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MetricCard } from "@/components/MetricCard";
-import { Calendar, Mail, MessageSquare } from "lucide-react";
+import { Calendar, Mail, MessageSquare, Users } from "lucide-react";
 
 export function MetricsGrid() {
   const { data: emailCount = 0 } = useQuery({
@@ -16,8 +17,8 @@ export function MetricsGrid() {
     }
   });
 
-  const { data: socialMediaCount = 0 } = useQuery({
-    queryKey: ['social_media_count'],
+  const { data: socialCount = 0 } = useQuery({
+    queryKey: ['social_count'],
     queryFn: async () => {
       const { count, error } = await supabase
         .from('social_media_details')
@@ -28,23 +29,11 @@ export function MetricsGrid() {
     }
   });
 
-  const { data: inGymCount = 0 } = useQuery({
-    queryKey: ['in_gym_count'],
+  const { data: gymCount = 0 } = useQuery({
+    queryKey: ['gym_count'],
     queryFn: async () => {
       const { count, error } = await supabase
-        .from('in_gym_details')
-        .select('*', { count: 'exact', head: true });
-      
-      if (error) throw error;
-      return count || 0;
-    }
-  });
-
-  const { data: taskCount = 0 } = useQuery({
-    queryKey: ['task_count'],
-    queryFn: async () => {
-      const { count, error } = await supabase
-        .from('marketing_tasks')
+        .from('gym_details')
         .select('*', { count: 'exact', head: true });
       
       if (error) throw error;
@@ -53,30 +42,30 @@ export function MetricsGrid() {
   });
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <MetricCard
         title="Total Emails"
         value={emailCount}
-        description="Total email campaigns created"
-        icon={Mail}
+        description="Email campaigns created"
+        icon={<Mail className="h-4 w-4" />}
       />
       <MetricCard
-        title="Social Media Posts"
-        value={socialMediaCount}
-        description="Total social media posts scheduled"
-        icon={MessageSquare}
+        title="Social Posts"
+        value={socialCount}
+        description="Social media posts created"
+        icon={<MessageSquare className="h-4 w-4" />}
       />
       <MetricCard
-        title="In-Gym Marketing"
-        value={inGymCount}
-        description="Total in-gym marketing materials created"
-        icon={Calendar}
+        title="Active Gyms"
+        value={gymCount}
+        description="Gyms using the platform"
+        icon={<Users className="h-4 w-4" />}
       />
-       <MetricCard
-        title="Total Tasks"
-        value={taskCount}
-        description="Total marketing tasks created"
-        icon={Calendar}
+      <MetricCard
+        title="This Month"
+        value={0}
+        description="Posts scheduled this month"
+        icon={<Calendar className="h-4 w-4" />}
       />
     </div>
   );
