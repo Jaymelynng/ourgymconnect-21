@@ -1,4 +1,46 @@
 
+export interface MarketingContent {
+  id: number;
+  title: string;
+  description?: string;
+  content_type: string;
+  scheduled_date?: string;
+  gym_id?: number;
+  created_at: string;
+  status?: string;
+  rejection_reason?: string;
+  theme?: string;
+}
+
+export interface EmailDetails {
+  id: number;
+  content_id: number;
+  subject_line: string;
+  preview_text?: string;
+  body_content: string;
+  created_at: string;
+}
+
+export interface SocialMediaDetails {
+  id: number;
+  content_id: number;
+  platform: string;
+  photo_examples?: string[];
+  photo_key_points?: string;
+  caption?: string;
+  created_at: string;
+}
+
+export interface InGymDetails {
+  id: number;
+  content_id: number;
+  format: string;
+  size?: string;
+  print_quantity?: number;
+  placement_locations?: string[];
+  created_at: string;
+}
+
 export interface GymDetails {
   id: number;
   gym_name: string;
@@ -6,34 +48,6 @@ export interface GymDetails {
   facebook_url?: string;
   sharepoint_url?: string;
   created_at: string;
-}
-
-export interface MarketingContent {
-  id: number;
-  title: string;
-  description?: string;
-  content_type: string;
-  scheduled_date?: string;
-  photo_examples?: string[];
-  photo_key_points?: string;
-  theme?: string;
-  caption?: string;
-  gym_id?: number;
-  created_at: string;
-  total_posts?: number;
-}
-
-export interface EmailContent {
-  id: number;
-  title: string;
-  subject_line: string;
-  preview_text?: string;
-  body_content: string;
-  status?: string;
-  scheduled_date?: string;
-  gym_id?: number;
-  created_at: string;
-  rejection_reason?: string;
 }
 
 export interface MarketingTask {
@@ -75,5 +89,3 @@ export interface DayTask {
   date: Date;
   tasks: MarketingContent[];
 }
-
-export type MarketingItem = MarketingContent;

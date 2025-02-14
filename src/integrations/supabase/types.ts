@@ -36,46 +36,37 @@ export type Database = {
         }
         Relationships: []
       }
-      email_content: {
+      email_details: {
         Row: {
           body_content: string
+          content_id: number | null
           created_at: string | null
-          gym_id: number | null
           id: number
           preview_text: string | null
-          scheduled_date: string | null
-          status: string | null
           subject_line: string
-          title: string
         }
         Insert: {
           body_content: string
+          content_id?: number | null
           created_at?: string | null
-          gym_id?: number | null
-          id?: never
+          id?: number
           preview_text?: string | null
-          scheduled_date?: string | null
-          status?: string | null
           subject_line: string
-          title: string
         }
         Update: {
           body_content?: string
+          content_id?: number | null
           created_at?: string | null
-          gym_id?: number | null
-          id?: never
+          id?: number
           preview_text?: string | null
-          scheduled_date?: string | null
-          status?: string | null
           subject_line?: string
-          title?: string
         }
         Relationships: [
           {
-            foreignKeyName: "email_content_gym_id_fkey"
-            columns: ["gym_id"]
+            foreignKeyName: "email_details_content_id_fkey"
+            columns: ["content_id"]
             isOneToOne: false
-            referencedRelation: "gym_details"
+            referencedRelation: "marketing_content"
             referencedColumns: ["id"]
           },
         ]
@@ -107,6 +98,44 @@ export type Database = {
         }
         Relationships: []
       }
+      in_gym_details: {
+        Row: {
+          content_id: number | null
+          created_at: string | null
+          format: string
+          id: number
+          placement_locations: string[] | null
+          print_quantity: number | null
+          size: string | null
+        }
+        Insert: {
+          content_id?: number | null
+          created_at?: string | null
+          format: string
+          id?: number
+          placement_locations?: string[] | null
+          print_quantity?: number | null
+          size?: string | null
+        }
+        Update: {
+          content_id?: number | null
+          created_at?: string | null
+          format?: string
+          id?: number
+          placement_locations?: string[] | null
+          print_quantity?: number | null
+          size?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "in_gym_details_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marketing_content: {
         Row: {
           caption: string | null
@@ -117,6 +146,7 @@ export type Database = {
           id: number
           photo_examples: string[] | null
           photo_key_points: string | null
+          rejection_reason: string | null
           scheduled_date: string | null
           status: string | null
           theme: string | null
@@ -131,6 +161,7 @@ export type Database = {
           id?: never
           photo_examples?: string[] | null
           photo_key_points?: string | null
+          rejection_reason?: string | null
           scheduled_date?: string | null
           status?: string | null
           theme?: string | null
@@ -145,6 +176,7 @@ export type Database = {
           id?: never
           photo_examples?: string[] | null
           photo_key_points?: string | null
+          rejection_reason?: string | null
           scheduled_date?: string | null
           status?: string | null
           theme?: string | null
@@ -207,6 +239,44 @@ export type Database = {
             columns: ["parent_task_id"]
             isOneToOne: false
             referencedRelation: "marketing_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_media_details: {
+        Row: {
+          caption: string | null
+          content_id: number | null
+          created_at: string | null
+          id: number
+          photo_examples: string[] | null
+          photo_key_points: string | null
+          platform: string
+        }
+        Insert: {
+          caption?: string | null
+          content_id?: number | null
+          created_at?: string | null
+          id?: number
+          photo_examples?: string[] | null
+          photo_key_points?: string | null
+          platform: string
+        }
+        Update: {
+          caption?: string | null
+          content_id?: number | null
+          created_at?: string | null
+          id?: number
+          photo_examples?: string[] | null
+          photo_key_points?: string | null
+          platform?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_details_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_content"
             referencedColumns: ["id"]
           },
         ]
