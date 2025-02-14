@@ -5,9 +5,7 @@ import { EmailContent } from "@/components/email/EmailContent";
 import { EmailApprovalActions } from "@/components/email/EmailApprovalActions";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Tables } from "@/integrations/supabase/types";
-
-type EmailContentType = Tables<"email_content">;
+import type { EmailContent as EmailContentType } from "@/types/database";
 
 export default function EmailReview() {
   const { toast } = useToast();

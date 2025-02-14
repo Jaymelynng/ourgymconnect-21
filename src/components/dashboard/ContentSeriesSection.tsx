@@ -5,10 +5,10 @@ import { Eye, PenSquare, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { MarketingItem } from "@/hooks/use-marketing-content";
+import type { MarketingContent } from "@/types/database";
 
 export function ContentSeriesSection() {
-  const { data: series = [] } = useQuery<MarketingItem[]>({
+  const { data: series = [] } = useQuery<MarketingContent[]>({
     queryKey: ['marketing_series'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -17,8 +17,11 @@ export function ContentSeriesSection() {
         .eq('content_type', 'series')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return data as MarketingItem[];
+      if (error) {
+        console.error('Error fetching series:', error);
+        return [];
+      }
+      return data || [];
     }
   });
 
