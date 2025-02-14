@@ -42,7 +42,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
 
   return (
     <div className="flex min-h-screen bg-background">
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0"> {/* Added min-w-0 to prevent flex item from overflowing */}
         <header 
           className={cn(
             "border-b bg-card/80 backdrop-blur-md sticky top-0 z-50",
@@ -76,10 +76,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         </header>
         
         <main 
-          className={cn(
-            "flex-1 py-4 md:py-6 px-4 md:px-6 lg:px-8",
-            "animate-fade-in relative"
-          )}
+          className="flex-1 p-6 overflow-x-hidden w-full"
           style={{
             perspective: "1000px",
             transform: `translateZ(0) rotateX(${scrollY * 0.02}deg)`
@@ -90,17 +87,17 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
       </div>
       
       {!isMobile && (
-        <div 
+        <aside 
           className={cn(
-            "w-[200px] transition-all duration-500 ease-in-out",
-            "transform-gpu sticky top-0 max-h-screen overflow-y-auto",
-            "border-l border-border bg-card/50 backdrop-blur-sm",
-            isCollapsed ? "translate-x-[160px]" : "translate-x-0",
+            "w-[280px] transition-all duration-300 ease-in-out",
+            "sticky top-0 h-screen overflow-y-auto",
+            "border-l border-border",
+            isCollapsed ? "translate-x-[200px]" : "translate-x-0",
             "hover:translate-x-0"
           )}
         >
           <Toolkit />
-        </div>
+        </aside>
       )}
     </div>
   );
