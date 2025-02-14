@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,18 +59,23 @@ export function CalendarDay({
     }
   };
 
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <div 
       className={cn(
         "min-h-[120px] border-b border-r border-border bg-card",
         "transition-all duration-300 ease-in-out",
         hasItems ? "hover:bg-primary/5" : "hover:bg-secondary/5",
-        "animate-fade-in"
+        "animate-fade-in cursor-pointer",
+        isExpanded ? "col-span-2 row-span-2" : ""
       )}
+      onClick={toggleExpand}
     >
       <div 
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="cursor-pointer p-4 flex items-center justify-between group"
+        className="p-4 flex items-center justify-between group"
       >
         <DayHeader day={day} currentDate={currentDate} />
         <ChevronDown className={cn(

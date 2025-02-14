@@ -1,3 +1,4 @@
+
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
 import { CalendarDay } from "./CalendarDay";
 import { useCallback } from "react";
@@ -64,7 +65,7 @@ export function CalendarGrid({ currentDate, marketingItems, refetchItems }: Cale
   }, [marketingItems]);
 
   return (
-    <div className="grid grid-cols-7 border-t border-l border-border relative">
+    <div className="grid grid-cols-7 auto-rows-fr border-t border-l border-border relative gap-0">
       {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
         <div 
           key={day} 
