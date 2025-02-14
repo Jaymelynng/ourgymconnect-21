@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Menu } from "lucide-react";
 import Toolkit from "@/components/Toolkit";
@@ -10,10 +10,13 @@ import { cn } from "@/lib/utils";
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
   const [scrollY, setScrollY] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const isMainRoute = location.pathname === "/";
+  
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
@@ -39,7 +42,10 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className={cn(
+        "flex-1 flex flex-col min-h-screen",
+        !isMainRoute && "w-full"
+      )}>
         <header 
           className={cn(
             "border-b bg-background/95 backdrop-blur-md sticky top-0 z-50 px-4",
@@ -77,7 +83,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         </main>
       </div>
       
-      {!isMobile && (
+      {!isMobile && isMainRoute && (
         <aside 
           className={cn(
             "w-[300px] transition-all duration-300 ease-in-out",
