@@ -1,85 +1,52 @@
+
 import React, { useState } from 'react';
-import { Grid, Instagram, Facebook, Share2, Palette, Plus, AlertCircle } from 'lucide-react';
+import { Grid, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { GymSelector } from './GymSelector';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import * as Icons from 'lucide-react';
+import type { ToolkitItem } from '@/types/database';
 
 const Toolkit = () => {
   const [selectedGymId, setSelectedGymId] = useState<number | null>(null);
 
-  const { data: selectedGym, isLoading: isLoadingGym, error } = useQuery({
-    queryKey: ['gym_details', selectedGymId],
+  const { data: toolkitItems, isLoading: isLoadingTools, error: toolsError } = useQuery({
+    queryKey: ['toolkit_items', selectedGymId],
     queryFn: async () => {
-      if (!selectedGymId) return null;
-      
-      console.log('Fetching gym details for ID:', selectedGymId);
-      const { data, error } = await supabase
-        .from('gym_details')
-        .select('instagram_url, facebook_url, sharepoint_url')
-        .eq('id', selectedGymId)
-        .single();
+      console.log('Fetching toolkit items for gym:', selectedGymId);
+      const query = supabase
+        .from('toolkit_items')
+        .select('*')
+        .order('sort_order', { ascending: true });
+
+      if (selectedGymId) {
+        query.or(`gym_id.eq.${selectedGymId},gym_id.is.null`);
+      }
+
+      const { data, error } = await query;
       
       if (error) {
-        console.error('Error fetching gym details:', error);
+        console.error('Error fetching toolkit items:', error);
         throw error;
       }
       
-      console.log('Gym details fetched successfully:', data);
-      return data;
+      return data as ToolkitItem[];
     },
-    enabled: !!selectedGymId,
-    retry: 2,
-    retryDelay: 1000,
   });
-
-  const tools = [
-    { 
-      name: 'Instagram', 
-      icon: Instagram, 
-      color: 'hover:text-pink-400',
-      url: selectedGym?.instagram_url || '#',
-      disabled: !selectedGym?.instagram_url
-    },
-    { 
-      name: 'Facebook', 
-      icon: Facebook, 
-      color: 'hover:text-blue-500',
-      url: selectedGym?.facebook_url || '#',
-      disabled: !selectedGym?.facebook_url
-    },
-    { 
-      name: 'SharePoint', 
-      icon: Share2, 
-      color: 'hover:text-green-400',
-      url: selectedGym?.sharepoint_url || '#',
-      disabled: !selectedGym?.sharepoint_url
-    },
-    { 
-      name: 'Canva', 
-      icon: Palette, 
-      color: 'hover:text-purple-400',
-      url: '#'
-    }
-  ];
-
-  const comingSoonTools = [
-    { title: 'Tuition Estimator', subtitle: 'Coming Soon' },
-    { title: 'Submit Tool Idea', subtitle: 'Coming Soon' }
-  ];
 
   const handleGymChange = (gymId: string) => {
     setSelectedGymId(Number(gymId));
   };
 
-  if (error) {
+  if (toolsError) {
     return (
       <Alert variant="destructive" className="m-4">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          Connection error. Please refresh the page or try again later.
+          Failed to load toolkit items. Please try again later.
         </AlertDescription>
       </Alert>
     );
@@ -101,22 +68,32 @@ const Toolkit = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
-        {tools.map((tool) => {
-          const IconComponent = tool.icon;
+        {isLoadingTools ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div 
+              key={i}
+              className="h-24 bg-white/10 rounded-xl animate-pulse"
+            />
+          ))
+        ) : toolkitItems?.map((tool) => {
+          // Dynamically get the icon component
+          const IconComponent = (Icons as any)[tool.icon] || Icons.Link;
+          
           return (
             <a
-              key={tool.name}
-              href={tool.url}
+              key={tool.id}
+              href={tool.url || '#'}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
                 "bg-white/95 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center gap-2.5",
                 "transition-all duration-300 hover:scale-105 hover:bg-white shadow-sm group",
                 "animate-scale-in",
-                tool.disabled && "opacity-50 cursor-not-allowed hover:scale-100"
+                !tool.url && "opacity-50 cursor-not-allowed hover:scale-100",
+                !tool.is_enabled && "hidden"
               )}
               onClick={(e) => {
-                if (tool.disabled) {
+                if (!tool.url) {
                   e.preventDefault();
                 }
               }}
@@ -137,28 +114,13 @@ const Toolkit = () => {
         })}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        {comingSoonTools.map((item, index) => (
-          <div
-            key={index}
-            className="bg-white/20 rounded-xl p-4 flex flex-col items-center justify-center 
-                     text-center hover:bg-white/30 transition-all duration-300 cursor-not-allowed
-                     animate-fade-in"
-          >
-            <Plus size={20} className="mb-2 opacity-50" />
-            <span className="text-white text-sm font-medium mb-1">{item.title}</span>
-            <span className="text-white/80 text-xs">{item.subtitle}</span>
-          </div>
-        ))}
-      </div>
-
       <Button 
         variant="ghost" 
         className="w-full mt-6 bg-white/10 hover:bg-white/20 text-white
                    transition-all duration-300 animate-fade-in"
         onClick={() => window.open('https://github.com/your-repo/issues/new', '_blank')}
       >
-        <Plus className="w-4 h-4 mr-2" />
+        <Icons.Plus className="w-4 h-4 mr-2" />
         Suggest New Tool
       </Button>
     </div>

@@ -1,3 +1,4 @@
+
 export interface GymDetails {
   id: number;
   gym_name: string;
@@ -13,13 +14,13 @@ export interface MarketingContent {
   description?: string;
   content_type: string;
   scheduled_date?: string;
-  photo_examples?: string[];  // Changed from string to string[]
+  photo_examples?: string[];
   photo_key_points?: string;
   theme?: string;
   caption?: string;
   gym_id?: number;
   created_at: string;
-  total_posts?: number;  // Added for ContentSeriesSection
+  total_posts?: number;
 }
 
 export interface EmailContent {
@@ -32,7 +33,7 @@ export interface EmailContent {
   scheduled_date?: string;
   gym_id?: number;
   created_at: string;
-  rejection_reason?: string;  // Added for EmailReview
+  rejection_reason?: string;
 }
 
 export interface MarketingTask {
@@ -52,6 +53,20 @@ export interface DashboardSection {
   content?: string;
   priority?: number;
   active?: boolean;
+  created_at: string;
+}
+
+export interface ToolkitItem {
+  id: number;
+  name: string;
+  icon: string;
+  url?: string;
+  color?: string;
+  type: string;
+  is_enabled: boolean;
+  sort_order?: number;
+  category?: string;
+  gym_id?: number;
   created_at: string;
 }
 

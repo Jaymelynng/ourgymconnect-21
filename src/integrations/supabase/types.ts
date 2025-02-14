@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      dashboard_sections: {
+        Row: {
+          active: boolean | null
+          content: string | null
+          created_at: string | null
+          id: number
+          priority: number | null
+          section_name: string
+        }
+        Insert: {
+          active?: boolean | null
+          content?: string | null
+          created_at?: string | null
+          id?: number
+          priority?: number | null
+          section_name: string
+        }
+        Update: {
+          active?: boolean | null
+          content?: string | null
+          created_at?: string | null
+          id?: number
+          priority?: number | null
+          section_name?: string
+        }
+        Relationships: []
+      }
       email_content: {
         Row: {
           body_content: string
@@ -180,6 +207,56 @@ export type Database = {
             columns: ["parent_task_id"]
             isOneToOne: false
             referencedRelation: "marketing_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      toolkit_items: {
+        Row: {
+          category: string | null
+          color: string | null
+          created_at: string | null
+          gym_id: number | null
+          icon: string
+          id: number
+          is_enabled: boolean | null
+          name: string
+          sort_order: number | null
+          type: string
+          url: string | null
+        }
+        Insert: {
+          category?: string | null
+          color?: string | null
+          created_at?: string | null
+          gym_id?: number | null
+          icon: string
+          id?: number
+          is_enabled?: boolean | null
+          name: string
+          sort_order?: number | null
+          type: string
+          url?: string | null
+        }
+        Update: {
+          category?: string | null
+          color?: string | null
+          created_at?: string | null
+          gym_id?: number | null
+          icon?: string
+          id?: number
+          is_enabled?: boolean | null
+          name?: string
+          sort_order?: number | null
+          type?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "toolkit_items_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_details"
             referencedColumns: ["id"]
           },
         ]
