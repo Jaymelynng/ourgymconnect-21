@@ -16,9 +16,8 @@ export function CalendarView() {
   };
 
   return (
-    <div className="bg-card rounded-xl shadow-lg p-4 md:p-6 lg:p-8 w-full overflow-x-auto
-                    transform transition-all duration-300 hover:shadow-xl
-                    border border-primary/10">
+    <div className="bg-card rounded-lg shadow p-4 md:p-6 lg:p-8 w-full overflow-x-auto
+                    transform transition-all duration-300 hover:shadow-lg">
       <div className="flex justify-between items-center mb-6">
         <h3 className="font-semibold text-xl text-primary">Calendar View</h3>
         <div className="flex gap-2">
