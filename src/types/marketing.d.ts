@@ -15,6 +15,7 @@ export interface MarketingItem {
   key_notes?: string;
   created_at?: string;
   gym_id?: number;
+  total_posts?: number;
 }
 
 export interface CalendarEvent {
@@ -23,6 +24,20 @@ export interface CalendarEvent {
   description?: string;
   start_date: string;
   end_date?: string;
-  type?: string;
+  event_type?: string;
   status?: string;
+  gym_id?: number;
+}
+
+export interface EmailContent {
+  id: number;
+  title: string;
+  subject_line: string;
+  preview_text?: string;
+  body_content: string;
+  scheduled_date?: string;
+  gym_id?: number;
+  status?: string;
+  rejection_reason?: string;
+  created_at?: string;
 }

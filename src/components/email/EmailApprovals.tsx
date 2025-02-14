@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import type { EmailContent } from '@/types/marketing';
 
 export const EmailApprovals = () => {
   const { toast } = useToast();
@@ -16,10 +18,10 @@ export const EmailApprovals = () => {
   const [selectedGym, setSelectedGym] = React.useState<string | null>(null);
 
   const { data: emails, isLoading } = useQuery({
-    queryKey: ['email_approvals', selectedGym],
+    queryKey: ['email_details', selectedGym],
     queryFn: async () => {
       const query = supabase
-        .from('email_content')
+        .from('email_details')
         .select('*, gym_details(gym_name)')
         .eq('status', 'pending');
 
@@ -29,7 +31,7 @@ export const EmailApprovals = () => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data;
+      return data as (EmailContent & { gym_details: { gym_name: string } })[];
     }
   });
 

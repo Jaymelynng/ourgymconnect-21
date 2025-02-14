@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, parseISO } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
@@ -5,8 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import type { CalendarEvent } from "@/types/marketing";
 
-const WeekView = ({ events }: { events: any[] }) => (
+const WeekView = ({ events }: { events: CalendarEvent[] }) => (
   <div className="grid grid-cols-6 gap-2">
     {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
       <div key={day} className="text-center text-sm font-medium p-2 text-muted-foreground">
@@ -41,7 +43,7 @@ const WeekView = ({ events }: { events: any[] }) => (
   </div>
 );
 
-const MonthView = ({ events }: { events: any[] }) => (
+const MonthView = ({ events }: { events: CalendarEvent[] }) => (
   <div className="grid grid-cols-7 gap-2">
     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
       <div key={day} className="text-center text-sm font-medium p-2 text-muted-foreground">
@@ -76,7 +78,7 @@ const MonthView = ({ events }: { events: any[] }) => (
   </div>
 );
 
-const ListView = ({ events }: { events: any[] }) => (
+const ListView = ({ events }: { events: CalendarEvent[] }) => (
   <div className="space-y-2">
     {events.map((event) => (
       <div 

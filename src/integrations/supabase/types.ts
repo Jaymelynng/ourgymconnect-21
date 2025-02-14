@@ -9,6 +9,50 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      calendar_events: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          event_type: string | null
+          gym_id: number | null
+          id: number
+          start_date: string
+          status: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          event_type?: string | null
+          gym_id?: number | null
+          id?: number
+          start_date: string
+          status?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          event_type?: string | null
+          gym_id?: number | null
+          id?: number
+          start_date?: string
+          status?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dashboard_sections: {
         Row: {
           active: boolean | null
@@ -147,13 +191,16 @@ export type Database = {
           description: string | null
           gym_id: number | null
           id: number
-          photo_examples: string[] | null
+          key_notes: string | null
+          photo_examples: string | null
           photo_key_points: string | null
           rejection_reason: string | null
           scheduled_date: string | null
           status: string | null
           theme: string | null
           title: string
+          total_posts: number | null
+          visuals_notes: string | null
         }
         Insert: {
           caption?: string | null
@@ -162,13 +209,16 @@ export type Database = {
           description?: string | null
           gym_id?: number | null
           id?: never
-          photo_examples?: string[] | null
+          key_notes?: string | null
+          photo_examples?: string | null
           photo_key_points?: string | null
           rejection_reason?: string | null
           scheduled_date?: string | null
           status?: string | null
           theme?: string | null
           title: string
+          total_posts?: number | null
+          visuals_notes?: string | null
         }
         Update: {
           caption?: string | null
@@ -177,13 +227,16 @@ export type Database = {
           description?: string | null
           gym_id?: number | null
           id?: never
-          photo_examples?: string[] | null
+          key_notes?: string | null
+          photo_examples?: string | null
           photo_key_points?: string | null
           rejection_reason?: string | null
           scheduled_date?: string | null
           status?: string | null
           theme?: string | null
           title?: string
+          total_posts?: number | null
+          visuals_notes?: string | null
         }
         Relationships: [
           {
@@ -201,6 +254,7 @@ export type Database = {
           content_id: number | null
           created_at: string | null
           due_date: string | null
+          group_due_date: string | null
           id: number
           parent_task_id: number | null
           status: string | null
@@ -212,6 +266,7 @@ export type Database = {
           content_id?: number | null
           created_at?: string | null
           due_date?: string | null
+          group_due_date?: string | null
           id?: never
           parent_task_id?: number | null
           status?: string | null
@@ -223,6 +278,7 @@ export type Database = {
           content_id?: number | null
           created_at?: string | null
           due_date?: string | null
+          group_due_date?: string | null
           id?: never
           parent_task_id?: number | null
           status?: string | null
