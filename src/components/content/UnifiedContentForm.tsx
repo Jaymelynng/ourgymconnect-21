@@ -14,7 +14,7 @@ import RichTextEditor from '@/components/RichTextEditor';
 import { useToast } from '@/hooks/use-toast';
 import { GymSelector } from '../GymSelector';
 import { supabase } from '@/integrations/supabase/client';
-import type { UnifiedContentForm } from '@/types/marketing';
+import type { UnifiedContentForm as UnifiedContentFormType, MarketingTask } from '@/types/marketing';
 
 interface UnifiedContentFormProps {
   open: boolean;
@@ -24,7 +24,7 @@ interface UnifiedContentFormProps {
 export function UnifiedContentForm({ open, onOpenChange }: UnifiedContentFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<UnifiedContentForm>({
+  const [formData, setFormData] = useState<UnifiedContentFormType>({
     title: '',
     contentType: 'social_media',
     scheduledDate: new Date(),
@@ -32,14 +32,13 @@ export function UnifiedContentForm({ open, onOpenChange }: UnifiedContentFormPro
     rawNotes: '',
   });
 
-  const handleInputChange = (field: keyof UnifiedContentForm, value: any) => {
+  const handleInputChange = (field: keyof UnifiedContentFormType, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const processRawNotes = (notes: string) => {
-    // This is a simple example of notes processing - can be enhanced based on specific patterns
     const lines = notes.split('\n');
-    const processed: Partial<UnifiedContentForm> = {
+    const processed: Partial<UnifiedContentFormType> = {
       tasks: [],
     };
 
@@ -47,12 +46,13 @@ export function UnifiedContentForm({ open, onOpenChange }: UnifiedContentFormPro
       if (line.toLowerCase().includes('title:')) {
         processed.title = line.split('title:')[1].trim();
       } else if (line.toLowerCase().includes('task:')) {
-        processed.tasks?.push({
-          id: Math.random(),
-          task_name: line.split('task:')[1].trim(),
+        const taskName = line.split('task:')[1].trim();
+        const task: MarketingTask = {
+          task_name: taskName,
           task_type: formData.contentType,
           status: 'Pending',
-        });
+        };
+        processed.tasks?.push(task);
       } else if (line.toLowerCase().includes('notes:')) {
         processed.keyNotes = line.split('notes:')[1].trim();
       }
@@ -98,14 +98,16 @@ export function UnifiedContentForm({ open, onOpenChange }: UnifiedContentFormPro
 
       // Insert tasks if any
       if (formData.tasks.length > 0) {
+        const tasksToInsert = formData.tasks.map(task => ({
+          task_name: task.task_name,
+          task_type: task.task_type,
+          content_id: contentData.id,
+          status: task.status || 'Pending',
+        }));
+
         const { error: tasksError } = await supabase
           .from('marketing_tasks')
-          .insert(
-            formData.tasks.map(task => ({
-              ...task,
-              content_id: contentData.id,
-            }))
-          );
+          .insert(tasksToInsert);
 
         if (tasksError) throw tasksError;
       }

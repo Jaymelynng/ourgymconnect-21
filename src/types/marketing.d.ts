@@ -1,15 +1,13 @@
-
 export interface MarketingTask {
-  id: number;
   task_name: string;
   task_type: string;
-  content_id: number | null;
-  assigned_to: string | null;
-  status: string | null;
-  due_date: string | null;
-  group_due_date: string | null;
-  parent_task_id: number | null;
-  created_at: string | null;
+  content_id?: number | null;
+  assigned_to?: string | null;
+  status?: string | null;
+  due_date?: string | null;
+  group_due_date?: string | null;
+  parent_task_id?: number | null;
+  created_at?: string | null;
 }
 
 export interface MarketingItem {
