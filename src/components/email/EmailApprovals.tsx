@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import type { MarketingContent, EmailDetails } from '@/types/database';
 
 interface EmailWithDetails extends MarketingContent {
-  email_details: EmailDetails;
+  email_details: EmailDetails[];
   gym_details: {
     gym_name: string;
   };
@@ -24,7 +24,7 @@ export const EmailApprovals = () => {
   const navigate = useNavigate();
   const [selectedGym, setSelectedGym] = React.useState<string | null>(null);
 
-  const { data: emails, isLoading } = useQuery({
+  const { data: emails = [], isLoading } = useQuery({
     queryKey: ['email_approvals', selectedGym],
     queryFn: async () => {
       const query = supabase
