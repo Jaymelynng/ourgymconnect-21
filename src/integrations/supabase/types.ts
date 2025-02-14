@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      email_content: {
+        Row: {
+          body_content: string
+          created_at: string | null
+          gym_id: number | null
+          id: number
+          preview_text: string | null
+          rejection_reason: string | null
+          scheduled_date: string | null
+          status: string | null
+          subject_line: string
+          title: string
+        }
+        Insert: {
+          body_content: string
+          created_at?: string | null
+          gym_id?: number | null
+          id?: number
+          preview_text?: string | null
+          rejection_reason?: string | null
+          scheduled_date?: string | null
+          status?: string | null
+          subject_line: string
+          title: string
+        }
+        Update: {
+          body_content?: string
+          created_at?: string | null
+          gym_id?: number | null
+          id?: number
+          preview_text?: string | null
+          rejection_reason?: string | null
+          scheduled_date?: string | null
+          status?: string | null
+          subject_line?: string
+          title?: string
+        }
+        Relationships: []
+      }
       email_details: {
         Row: {
           body_content: string
