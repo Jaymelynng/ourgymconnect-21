@@ -1,3 +1,4 @@
+
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from "date-fns";
 import { useMarketingContent } from "@/hooks/use-marketing-content";
 import { CalendarHeader } from "../calendar/CalendarHeader";
@@ -9,11 +10,10 @@ interface MonthViewProps {
 }
 
 export function MonthView({ currentDate, onDateChange }: MonthViewProps) {
+  const { marketingItems, isLoading } = useMarketingContent();
+
   const startDate = startOfMonth(currentDate);
   const endDate = endOfMonth(currentDate);
-
-  const { data: marketingItems = [], isLoading } = useMarketingContent(startDate, endDate);
-
   const days = eachDayOfInterval({ start: startDate, end: endDate });
 
   const handlePrevMonth = () => onDateChange(subMonths(currentDate, 1));
