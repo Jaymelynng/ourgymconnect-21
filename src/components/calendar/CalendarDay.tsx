@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,13 +68,13 @@ export function CalendarDay({
         "min-h-[120px] border-b border-r border-border bg-card",
         "transition-all duration-300 ease-in-out",
         hasItems ? "hover:bg-primary/5" : "hover:bg-secondary/5",
-        "animate-fade-in cursor-pointer",
-        isExpanded ? "col-span-2 row-span-2" : ""
+        "animate-fade-in cursor-pointer relative",
+        isExpanded ? "h-[300px]" : "h-[120px]"
       )}
       onClick={toggleExpand}
     >
       <div 
-        className="p-4 flex items-center justify-between group"
+        className="p-4 flex items-center justify-between group sticky top-0 bg-card border-b border-border"
       >
         <DayHeader day={day} currentDate={currentDate} />
         <ChevronDown className={cn(
@@ -87,31 +86,29 @@ export function CalendarDay({
       
       <div 
         className={cn(
-          "grid transition-[grid-template-rows] duration-300 ease-in-out",
-          isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          "overflow-hidden transition-all duration-300 ease-in-out",
+          isExpanded ? "opacity-100 max-h-[250px]" : "opacity-0 max-h-0"
         )}
       >
-        <div className="overflow-hidden">
-          <div className="p-4 space-y-4">
-            {marketingItems.map((item) => (
-              <ContentPreview
-                key={item.id}
-                item={item}
-                onEdit={setEditingItem}
-                onDelete={handleDelete}
-                onDayClick={(e) => {
-                  e.stopPropagation();
-                  setIsDialogOpen(true);
-                }}
-              />
-            ))}
-            
-            {marketingItems.length === 0 && (
-              <p className="text-center text-muted-foreground py-2">
-                No content scheduled for this day
-              </p>
-            )}
-          </div>
+        <div className="p-4 space-y-4 overflow-y-auto max-h-[230px]">
+          {marketingItems.map((item) => (
+            <ContentPreview
+              key={item.id}
+              item={item}
+              onEdit={setEditingItem}
+              onDelete={handleDelete}
+              onDayClick={(e) => {
+                e.stopPropagation();
+                setIsDialogOpen(true);
+              }}
+            />
+          ))}
+          
+          {marketingItems.length === 0 && (
+            <p className="text-center text-muted-foreground py-2">
+              No content scheduled for this day
+            </p>
+          )}
         </div>
       </div>
 
