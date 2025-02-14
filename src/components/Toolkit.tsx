@@ -12,6 +12,7 @@ import type { ToolkitItem } from '@/types/database';
 
 const Toolkit = () => {
   const [selectedGymId, setSelectedGymId] = useState<number | null>(null);
+  const [hoveredTool, setHoveredTool] = useState<number | null>(null);
 
   const { data: toolkitItems, isLoading: isLoadingTools, error: toolsError } = useQuery({
     queryKey: ['toolkit_items', selectedGymId],
@@ -53,21 +54,38 @@ const Toolkit = () => {
   }
 
   return (
-    <div className="w-[280px] min-h-screen bg-gradient-to-b from-primary/95 to-primary/85 backdrop-blur-sm 
-                    rounded-t-[15px] p-5 text-white shadow-lg border-l border-primary/20">
-      <div className="mb-8 animate-fade-in">
-        <h2 className="text-2xl font-bold flex items-center gap-3 mb-6 bg-gradient-to-r from-white to-white/80 
-                       bg-clip-text text-transparent">
+    <div 
+      className={cn(
+        "sticky top-0 min-h-screen",
+        "bg-gradient-to-b from-primary/95 to-primary/85",
+        "backdrop-blur-sm rounded-t-[15px] p-5",
+        "text-white shadow-lg border-l border-primary/20",
+        "transition-all duration-300 ease-in-out",
+        "transform-gpu will-change-transform"
+      )}
+    >
+      <div className="mb-8 animate-fade-in space-y-6">
+        <h2 className={cn(
+          "text-2xl font-bold flex items-center gap-3 mb-6",
+          "bg-gradient-to-r from-white to-white/80",
+          "bg-clip-text text-transparent"
+        )}>
           <Grid strokeWidth={2} size={24} className="animate-pulse text-white" />
           Toolkit
         </h2>
         
-        <div className="mb-6">
-          <GymSelector onChange={handleGymChange} />
+        <div className="relative">
+          <div className={cn(
+            "absolute inset-0 bg-white/5 rounded-xl",
+            "transform transition-transform duration-300",
+            "hover:scale-105"
+          )}>
+            <GymSelector onChange={handleGymChange} />
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-2 gap-4 mb-6 relative">
         {isLoadingTools ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div 
@@ -75,9 +93,9 @@ const Toolkit = () => {
               className="h-24 bg-white/10 rounded-xl animate-pulse"
             />
           ))
-        ) : toolkitItems?.map((tool) => {
-          // Dynamically get the icon component
+        ) : toolkitItems?.map((tool, index) => {
           const IconComponent = (Icons as any)[tool.icon] || Icons.Link;
+          const isHovered = hoveredTool === tool.id;
           
           return (
             <a
@@ -86,24 +104,32 @@ const Toolkit = () => {
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                "bg-white/95 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center gap-2.5",
-                "transition-all duration-300 hover:scale-105 hover:bg-white shadow-sm group",
-                "animate-scale-in",
+                "bg-white/95 backdrop-blur-sm rounded-xl p-4",
+                "flex flex-col items-center justify-center gap-2.5",
+                "transition-all duration-300 shadow-sm group",
+                "hover:scale-105 hover:bg-white hover:shadow-lg",
+                "transform perspective-1000",
                 !tool.url && "opacity-50 cursor-not-allowed hover:scale-100",
-                !tool.is_enabled && "hidden"
+                !tool.is_enabled && "hidden",
+                isHovered && "rotate-y-180"
               )}
+              onMouseEnter={() => setHoveredTool(tool.id)}
+              onMouseLeave={() => setHoveredTool(null)}
               onClick={(e) => {
                 if (!tool.url) {
                   e.preventDefault();
                 }
               }}
+              style={{
+                transform: `perspective(1000px) rotateY(${isHovered ? '10deg' : '0deg'})`,
+              }}
             >
               <IconComponent 
                 strokeWidth={1.5} 
                 className={cn(
-                  "w-10 h-10 text-gray-500 transition-all duration-300",
+                  "w-10 h-10 transition-all duration-300",
                   tool.color,
-                  "group-hover:scale-110"
+                  "group-hover:scale-110 group-hover:rotate-12"
                 )} 
               />
               <span className="text-sm font-medium text-gray-500 group-hover:text-gray-700">
@@ -116,8 +142,11 @@ const Toolkit = () => {
 
       <Button 
         variant="ghost" 
-        className="w-full mt-6 bg-white/10 hover:bg-white/20 text-white
-                   transition-all duration-300 animate-fade-in"
+        className={cn(
+          "w-full mt-6 bg-white/10 hover:bg-white/20 text-white",
+          "transition-all duration-300 animate-fade-in",
+          "transform hover:scale-105 active:scale-95"
+        )}
         onClick={() => window.open('https://github.com/your-repo/issues/new', '_blank')}
       >
         <Icons.Plus className="w-4 h-4 mr-2" />

@@ -1,15 +1,30 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Menu } from "lucide-react";
 import Toolkit from "@/components/Toolkit";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [scrollY, setScrollY] = useState(0);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Handle parallax effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+      // Auto-collapse toolkit on scroll down
+      setIsCollapsed(window.scrollY > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const NavigationContent = () => (
     <div className="flex items-center gap-4">
@@ -17,7 +32,10 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         variant="ghost"
         size="icon"
         onClick={() => navigate("/")}
-        className="transition-all duration-300 hover:bg-primary/20"
+        className={cn(
+          "transition-all duration-300 hover:bg-primary/20",
+          "transform hover:scale-105 active:scale-95"
+        )}
       >
         <Home className="h-5 w-5" />
       </Button>
@@ -27,12 +45,22 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
   return (
     <div className="flex min-h-screen bg-background">
       <div className="flex-1 flex flex-col">
-        <header className="border-b bg-card sticky top-0 z-50">
+        <header 
+          className={cn(
+            "border-b bg-card/80 backdrop-blur-md sticky top-0 z-50",
+            "transition-all duration-300 ease-in-out",
+            scrollY > 50 ? "shadow-md" : "shadow-none"
+          )}
+        >
           {isMobile ? (
             <div className="flex items-center gap-4">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="transform hover:scale-105 active:scale-95 transition-transform"
+                  >
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
@@ -49,12 +77,36 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
           )}
         </header>
         
-        <main className="flex-1 container py-4 md:py-6 px-4 md:px-6 animate-fade-in">
+        <main 
+          className={cn(
+            "flex-1 container py-4 md:py-6 px-4 md:px-6",
+            "animate-fade-in relative"
+          )}
+          style={{
+            perspective: "1000px",
+            transform: `translateZ(0) rotateX(${scrollY * 0.02}deg)`
+          }}
+        >
           {children}
         </main>
       </div>
       
-      {!isMobile && <Toolkit />}
+      {!isMobile && (
+        <div 
+          className={cn(
+            "w-[280px] transition-all duration-500 ease-in-out",
+            "transform-gpu",
+            isCollapsed ? "translate-x-[220px]" : "translate-x-0",
+            "hover:translate-x-0"
+          )}
+          style={{
+            transform: `translateY(${scrollY * 0.1}px)`,
+            transition: "transform 0.1s ease-out"
+          }}
+        >
+          <Toolkit />
+        </div>
+      )}
     </div>
   );
 }
