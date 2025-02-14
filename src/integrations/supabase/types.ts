@@ -106,6 +106,7 @@ export type Database = {
           event_type: string | null
           gym_id: number | null
           id: number
+          item_type: string | null
           key_notes: string | null
           photo_examples: string | null
           photo_key_points: string | null
@@ -127,6 +128,7 @@ export type Database = {
           event_type?: string | null
           gym_id?: number | null
           id?: never
+          item_type?: string | null
           key_notes?: string | null
           photo_examples?: string | null
           photo_key_points?: string | null
@@ -148,6 +150,7 @@ export type Database = {
           event_type?: string | null
           gym_id?: number | null
           id?: never
+          item_type?: string | null
           key_notes?: string | null
           photo_examples?: string | null
           photo_key_points?: string | null
