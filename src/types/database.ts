@@ -1,4 +1,3 @@
-
 export interface MarketingContent {
   id: number;
   title: string;
@@ -10,15 +9,19 @@ export interface MarketingContent {
   status?: string;
   rejection_reason?: string;
   theme?: string;
+  photo_examples?: string[];
+  photo_key_points?: string;
+  caption?: string;
 }
 
 export interface EmailDetails {
   id: number;
-  content_id: number;
+  content_id?: number;
   subject_line: string;
   preview_text?: string;
   body_content: string;
-  created_at: string;
+  created_at?: string;
+  status?: string;
 }
 
 export interface SocialMediaDetails {

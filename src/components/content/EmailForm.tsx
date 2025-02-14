@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -36,15 +37,12 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
 
   const onSubmit = async (data: any) => {
     try {
-      const { data: emailContent, error } = await supabase
-        .from('email_content')
+      const { data: emailDetails, error } = await supabase
+        .from('email_details')
         .insert({
-          title: data.subject, // Use subject as title
           subject_line: data.subject,
           preview_text: data.previewText,
           body_content: data.content,
-          scheduled_date: data.scheduledDate.toISOString(),
-          gym_id: data.gymId,
           status: 'pending'
         })
         .select()
@@ -52,13 +50,26 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
 
       if (error) throw error;
 
+      // Create the marketing content entry
+      const { error: marketingError } = await supabase
+        .from('marketing_content')
+        .insert({
+          title: data.subject,
+          content_type: 'email',
+          gym_id: data.gymId,
+          scheduled_date: data.scheduledDate.toISOString(),
+          status: 'pending'
+        });
+
+      if (marketingError) throw marketingError;
+
       toast({
         title: "Email Created",
         description: "Your email has been sent for review.",
       });
       
       onCancel();
-      navigate(`/email-review/${emailContent.id}`);
+      navigate(`/email-review/${emailDetails.id}`);
     } catch (error) {
       console.error('Error creating email:', error);
       toast({
