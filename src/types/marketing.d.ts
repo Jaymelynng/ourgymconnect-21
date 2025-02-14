@@ -19,6 +19,7 @@ export interface MarketingItem {
   created_at?: string;
   gym_id?: number;
   total_posts?: number;
+  type?: 'marketing' | 'email';  // Added to fix CalendarEvent type issues
 }
 
 export interface EmailContent {

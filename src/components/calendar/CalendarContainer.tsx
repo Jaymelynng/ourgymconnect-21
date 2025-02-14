@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
@@ -6,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { CalendarHeader } from "./CalendarHeader";
 import { CalendarGrid } from "./CalendarGrid";
+import type { MarketingItem, CalendarEvent } from "@/types/marketing";
 
 export function CalendarContainer() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -57,28 +59,17 @@ export function CalendarContainer() {
           return [];
         }
 
-        const parsedData = data.map(item => {
-          const parsedDate = item.scheduled_date ? new Date(item.scheduled_date) : null;
-          console.log("Processing Item:", {
-            id: item.id,
-            title: item.title,
-            rawDate: item.scheduled_date,
-            parsedDate: parsedDate ? format(parsedDate, 'yyyy-MM-dd HH:mm:ss') : null,
-            isValidDate: parsedDate instanceof Date && !isNaN(parsedDate.getTime())
-          });
-          
-          return {
-            ...item,
-            scheduled_date: parsedDate
-          };
-        });
+        const parsedData = data.map(item => ({
+          ...item,
+          type: 'marketing' as const
+        })) as CalendarEvent[];
         
         console.log("Final Processed Data:", {
           totalProcessedItems: parsedData.length,
           items: parsedData.map(item => ({
             id: item.id,
             title: item.title,
-            scheduled_date: item.scheduled_date ? format(item.scheduled_date, 'yyyy-MM-dd HH:mm:ss') : null
+            scheduled_date: item.scheduled_date ? format(new Date(item.scheduled_date), 'yyyy-MM-dd HH:mm:ss') : null
           }))
         });
         console.groupEnd();

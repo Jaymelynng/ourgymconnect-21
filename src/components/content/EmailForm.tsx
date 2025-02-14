@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -36,7 +37,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onCancel }) => {
   const onSubmit = async (data: any) => {
     try {
       const { data: emailContent, error } = await supabase
-        .from('email_content')
+        .from('email_details')
         .insert({
           subject_line: data.subject,
           preview_text: data.previewText,
