@@ -1,3 +1,4 @@
+
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { EmailContent } from "@/components/email/EmailContent";
@@ -5,8 +6,7 @@ import { EmailApprovalActions } from "@/components/email/EmailApprovalActions";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Tables } from "@/integrations/supabase/types";
-
-type EmailContentType = Tables<"email_content">;
+import type { EmailDetails } from "@/types/database";
 
 export default function EmailReview() {
   const { toast } = useToast();
@@ -16,7 +16,7 @@ export default function EmailReview() {
     queryKey: ['pending_emails'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('email_content')
+        .from('email_details')
         .select('*')
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
@@ -31,7 +31,7 @@ export default function EmailReview() {
         throw error;
       }
 
-      return data as EmailContentType[];
+      return data as EmailDetails[];
     },
   });
 
@@ -55,7 +55,7 @@ export default function EmailReview() {
         <div className="space-y-8">
           {emails.map((email) => (
             <Card key={email.id} className="p-6">
-              <EmailContent email={email} />
+              <EmailContent content={email} />
               <div className="mt-6 pt-6 border-t">
                 <EmailApprovalActions 
                   emailId={email.id} 

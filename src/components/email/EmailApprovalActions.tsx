@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -16,7 +17,7 @@ export const EmailApprovalActions: React.FC<EmailApprovalActionsProps> = ({
 
   const handleApprove = async () => {
     const { error } = await supabase
-      .from('email_content')
+      .from('email_details')
       .update({ status: 'approved' })
       .eq('id', emailId);
 
@@ -38,7 +39,7 @@ export const EmailApprovalActions: React.FC<EmailApprovalActionsProps> = ({
 
   const handleReject = async () => {
     const { error } = await supabase
-      .from('email_content')
+      .from('email_details')
       .update({ status: 'rejected' })
       .eq('id', emailId);
 
