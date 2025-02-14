@@ -1,10 +1,12 @@
+
 import { useQuery } from "@tanstack/react-query";
-import { format, parseISO, startOfWeek, addDays, endOfWeek, isWithinInterval } from "date-fns";
+import { format, parseISO, startOfWeek, addDays, endOfWeek, isWithinInterval, isBefore } from "date-fns";
 import { Image, Calendar, Type, CheckSquare } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface MarketingItem {
   id: number;
@@ -24,9 +26,10 @@ interface DayTask {
 
 export function WeekView() {
   const [selectedDay, setSelectedDay] = useState<DayTask | null>(null);
+  const today = new Date();
 
   const { data: marketingItems = [] } = useQuery({
-    queryKey: ['marketing_content'],
+    queryKey: ['marketing_tasks'],
     queryFn: async () => {
       const startDate = startOfWeek(new Date(), { weekStartsOn: 1 });
       const endDate = endOfWeek(startDate, { weekStartsOn: 1 });
@@ -37,11 +40,11 @@ export function WeekView() {
       });
 
       const { data, error } = await supabase
-        .from('marketing_content')
+        .from('marketing_tasks')
         .select('*')
-        .gte('scheduled_date', startDate.toISOString())
-        .lte('scheduled_date', endDate.toISOString())
-        .order('scheduled_date');
+        .gte('due_date', startDate.toISOString())
+        .lte('due_date', endDate.toISOString())
+        .order('due_date');
       
       if (error) throw error;
       return data || [];
@@ -76,15 +79,24 @@ export function WeekView() {
               <HoverCardTrigger asChild>
                 <div
                   onClick={() => setSelectedDay(day)}
-                  className="aspect-square rounded-lg transition-all duration-300 cursor-pointer 
-                           bg-primary/5 hover:bg-primary/20 group transform hover:scale-105 
-                           shadow-sm hover:shadow-md p-4"
+                  className={cn(
+                    "aspect-square rounded-lg transition-all duration-300 cursor-pointer",
+                    "bg-primary/5 hover:bg-primary/20 group transform hover:scale-105",
+                    "shadow-sm hover:shadow-md p-4",
+                    isBefore(day.date, today) && day.tasks.length > 0 && "bg-red-50 hover:bg-red-100"
+                  )}
                 >
                   <div className="h-full flex flex-col">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-primary/70" />
-                        <span className="text-primary text-lg font-medium">
+                        <Calendar className={cn(
+                          "w-4 h-4",
+                          isBefore(day.date, today) && day.tasks.length > 0 ? "text-red-500" : "text-primary/70"
+                        )} />
+                        <span className={cn(
+                          "text-lg font-medium",
+                          isBefore(day.date, today) && day.tasks.length > 0 ? "text-red-600" : "text-primary"
+                        )}>
                           {format(day.date, 'd')}
                         </span>
                       </div>
@@ -126,7 +138,10 @@ export function WeekView() {
                       {day.tasks.map((task) => (
                         <div 
                           key={task.id}
-                          className="p-3 bg-primary/5 rounded-lg space-y-1"
+                          className={cn(
+                            "p-3 rounded-lg space-y-1",
+                            isBefore(day.date, today) ? "bg-red-50" : "bg-primary/5"
+                          )}
                         >
                           <p className="font-medium text-foreground">{task.title}</p>
                           <p className="text-sm text-muted-foreground">{task.content_type}</p>
@@ -155,7 +170,12 @@ export function WeekView() {
               selectedDay.tasks.map((task) => (
                 <div 
                   key={task.id}
-                  className="p-4 bg-primary/5 rounded-lg space-y-3 hover:bg-primary/10 transition-colors"
+                  className={cn(
+                    "p-4 rounded-lg space-y-3 transition-colors",
+                    isBefore(selectedDay.date, today) 
+                      ? "bg-red-50 hover:bg-red-100"
+                      : "bg-primary/5 hover:bg-primary/10"
+                  )}
                 >
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-lg text-foreground">{task.title}</h3>

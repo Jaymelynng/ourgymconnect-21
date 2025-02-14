@@ -1,99 +1,106 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth } from "date-fns";
+import { startOfWeek, endOfWeek, subWeeks, addWeeks, isBefore } from "date-fns";
 import { MetricCard } from "@/components/MetricCard";
-import { Calendar, Mail, Image, Clock } from "lucide-react";
+import { Clock, CheckCircle2, AlertCircle, CalendarClock } from "lucide-react";
 
 export function MetricsGrid() {
   const currentDate = new Date();
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
+  const weekStart = startOfWeek(currentDate);
+  const weekEnd = endOfWeek(currentDate);
+  const lastWeekStart = subWeeks(weekStart, 1);
+  const nextWeekEnd = addWeeks(weekEnd, 1);
 
-  const { data: tasksDueSoon = 0 } = useQuery({
-    queryKey: ['tasks_due_soon'],
+  // Tasks due this week
+  const { data: currentWeekTasks = 0 } = useQuery({
+    queryKey: ['marketing_tasks', 'current_week'],
     queryFn: async () => {
-      console.log('Fetching tasks due soon...');
-      const { count, error } = await supabase
+      const { count } = await supabase
         .from('marketing_tasks')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'Pending')
-        .gte('due_date', new Date().toISOString())
-        .lte('due_date', new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString());
+        .gte('due_date', weekStart.toISOString())
+        .lte('due_date', weekEnd.toISOString())
+        .eq('status', 'Pending');
 
-      if (error) throw error;
       return count || 0;
     }
   });
 
-  const { data: pendingEmails = 0 } = useQuery({
-    queryKey: ['pending_emails'],
+  // Overdue tasks from last week
+  const { data: overdueTasks = 0 } = useQuery({
+    queryKey: ['marketing_tasks', 'overdue'],
     queryFn: async () => {
-      console.log('Fetching pending emails...');
-      const { count, error } = await supabase
-        .from('email_content')
+      const { count } = await supabase
+        .from('marketing_tasks')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'pending');
+        .gte('due_date', lastWeekStart.toISOString())
+        .lt('due_date', weekStart.toISOString())
+        .eq('status', 'Pending');
 
-      if (error) throw error;
       return count || 0;
     }
   });
 
-  const { data: scheduledPosts = 0 } = useQuery({
-    queryKey: ['scheduled_posts'],
+  // Upcoming tasks for next week
+  const { data: upcomingTasks = 0 } = useQuery({
+    queryKey: ['marketing_tasks', 'upcoming'],
     queryFn: async () => {
-      console.log('Fetching scheduled posts...');
-      const { count, error } = await supabase
-        .from('marketing_content')
+      const { count } = await supabase
+        .from('marketing_tasks')
         .select('*', { count: 'exact', head: true })
-        .not('scheduled_date', 'is', null)
-        .gte('scheduled_date', monthStart.toISOString())
-        .lte('scheduled_date', monthEnd.toISOString());
+        .gt('due_date', weekEnd.toISOString())
+        .lte('due_date', nextWeekEnd.toISOString())
+        .eq('status', 'Pending');
 
-      if (error) throw error;
       return count || 0;
     }
   });
 
-  const { data: uploadedMedia = 0 } = useQuery({
-    queryKey: ['uploaded_media'],
+  // Completed tasks this week
+  const { data: completedTasks = 0 } = useQuery({
+    queryKey: ['marketing_tasks', 'completed'],
     queryFn: async () => {
-      console.log('Fetching uploaded media...');
-      const { count, error } = await supabase
-        .from('marketing_content')
+      const { count } = await supabase
+        .from('marketing_tasks')
         .select('*', { count: 'exact', head: true })
-        .not('photo_examples', 'is', null);
+        .gte('due_date', weekStart.toISOString())
+        .lte('due_date', weekEnd.toISOString())
+        .eq('status', 'Completed');
 
-      if (error) throw error;
       return count || 0;
     }
   });
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <MetricCard
-        title="Tasks Due Soon"
-        value={tasksDueSoon}
-        description="Tasks due in the next 7 days"
-        icon={<Clock className="h-4 w-4" />}
+        title="Due This Week"
+        value={`${currentWeekTasks} Tasks`}
+        description="Tasks scheduled for this week"
+        icon={<Clock className="h-5 w-5 text-blue-500" />}
+        className="bg-blue-50 border-blue-100"
       />
       <MetricCard
-        title="Pending Emails"
-        value={pendingEmails}
-        description="Emails awaiting approval"
-        icon={<Mail className="h-4 w-4" />}
+        title="Completed"
+        value={`${completedTasks} Tasks`}
+        description="Completed tasks this week"
+        icon={<CheckCircle2 className="h-5 w-5 text-green-500" />}
+        className="bg-green-50 border-green-100"
       />
       <MetricCard
-        title="Scheduled Posts"
-        value={scheduledPosts}
-        description="Posts scheduled this month"
-        icon={<Calendar className="h-4 w-4" />}
+        title="Overdue"
+        value={`${overdueTasks} Tasks`}
+        description="Tasks overdue from last week"
+        icon={<AlertCircle className="h-5 w-5 text-red-500" />}
+        className="bg-red-50 border-red-100"
       />
       <MetricCard
-        title="Uploaded Media"
-        value={uploadedMedia}
-        description="Total media assets"
-        icon={<Image className="h-4 w-4" />}
+        title="Upcoming"
+        value={`${upcomingTasks} Tasks`}
+        description="Tasks scheduled for next week"
+        icon={<CalendarClock className="h-5 w-5 text-purple-500" />}
+        className="bg-purple-50 border-purple-100"
       />
     </div>
   );
