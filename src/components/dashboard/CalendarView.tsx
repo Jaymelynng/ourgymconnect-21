@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { WeekView } from "./WeekView";
 import { MonthView } from "./MonthView";
@@ -15,32 +16,40 @@ export function CalendarView() {
   };
 
   return (
-    <div className="bg-card rounded-lg shadow-sm p-2 md:p-4 w-full max-w-[100vw] overflow-x-auto">
-      <div className="flex justify-between items-center mb-4">
+    <div className="bg-card rounded-xl shadow-lg p-4 md:p-6 lg:p-8 w-full max-w-[95vw] md:max-w-[90vw] overflow-x-auto
+                    transform transition-all duration-300 hover:shadow-xl
+                    border border-primary/10">
+      <div className="flex justify-between items-center mb-6">
         <h3 className="font-semibold text-xl text-primary">Calendar View</h3>
         <div className="flex gap-2">
           <Button 
             variant={viewType === 'week' ? "default" : "secondary"}
             onClick={() => setViewType('week')}
+            className="transform hover:scale-105 transition-transform"
           >
             Week
           </Button>
           <Button 
             variant={viewType === 'month' ? "default" : "secondary"}
             onClick={() => setViewType('month')}
+            className="transform hover:scale-105 transition-transform"
           >
             Month
           </Button>
           <Button 
             variant={viewType === 'list' ? "default" : "secondary"}
             onClick={() => setViewType('list')}
+            className="transform hover:scale-105 transition-transform"
           >
             List
           </Button>
         </div>
       </div>
       
-      <div onClick={handleViewClick} className="cursor-pointer w-full">
+      <div 
+        onClick={handleViewClick} 
+        className="cursor-pointer w-full min-h-[70vh] transition-all duration-300"
+      >
         {viewType === 'week' && (
           <WeekView 
             currentDate={currentDate}
