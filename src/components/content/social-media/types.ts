@@ -1,3 +1,4 @@
+
 export interface FormData {
   title: string;
   series: 'single' | 'series';

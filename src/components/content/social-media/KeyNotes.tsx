@@ -1,11 +1,7 @@
+
 import { Label } from '@/components/ui/label';
 import RichTextEditor from '@/components/RichTextEditor';
-
-interface KeyNotesProps {
-  keyNotes: string;
-  onChange: (value: string) => void;
-  label?: string;
-}
+import { KeyNotesProps } from './types';
 
 export const KeyNotes = ({ keyNotes, onChange, label = "Key Notes" }: KeyNotesProps) => {
   return (

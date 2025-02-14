@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -17,13 +18,15 @@ export const FormSubmit = ({ isSubmitting, onCancel, formData }: FormSubmitProps
     try {
       // First create the content
       const { data: contentData, error: contentError } = await supabase
-        .from('social_media_content')
+        .from('marketing_content')
         .insert({
           title: formData.title,
           caption: formData.caption,
           scheduled_date: formData.contentDate,
           photo_key_points: formData.keyNotes,
-          focus_area: formData.focus,
+          content_type: 'social_media',
+          description: formData.goal,
+          theme: formData.focus,
         })
         .select()
         .single();
@@ -35,11 +38,12 @@ export const FormSubmit = ({ isSubmitting, onCancel, formData }: FormSubmitProps
         const { error: taskError } = await supabase
           .from('marketing_tasks')
           .insert({
+            task_name: task.text,
             content_id: contentData.id,
             task_type: 'visual',
-            due_date: formData.taskDueDate || formData.contentDate, // Use task due date if set, otherwise use content date
+            due_date: formData.taskDueDate || formData.contentDate,
             status: task.completed ? 'Completed' : 'Pending',
-            group_due_date: formData.taskDueDate // Add group due date
+            group_due_date: formData.taskDueDate
           });
 
         if (taskError) throw taskError;

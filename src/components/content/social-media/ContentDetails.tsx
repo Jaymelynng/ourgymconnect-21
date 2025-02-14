@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,7 +14,7 @@ export const ContentDetails: React.FC<ContentDetailsProps> = ({
   onGoalChange,
   onTypeChange,
 }) => {
-  const contentTypes = ['Post', 'Story', 'Reel'];
+  const contentTypes = ['Post', 'Story'];
 
   const toggleType = (selectedType: string) => {
     if (type.includes(selectedType)) {
