@@ -33,7 +33,7 @@ export function WeekView({ currentDate, onDateChange }: WeekViewProps) {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-6 gap-6 h-full">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="aspect-square bg-muted rounded-lg animate-pulse" />
         ))}
@@ -56,22 +56,22 @@ export function WeekView({ currentDate, onDateChange }: WeekViewProps) {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-foreground">
+        <h2 className="text-3xl font-semibold text-foreground">
           Week of {format(startDate, 'MMMM d, yyyy')}
         </h2>
-        <div className="flex gap-2">
-          <Button variant="outline" size="icon" onClick={prevWeek}>
-            <ChevronLeft className="h-4 w-4" />
+        <div className="flex gap-4">
+          <Button variant="outline" size="lg" onClick={prevWeek}>
+            <ChevronLeft className="h-5 w-5" />
           </Button>
-          <Button variant="outline" size="icon" onClick={nextWeek}>
-            <ChevronRight className="h-4 w-4" />
+          <Button variant="outline" size="lg" onClick={nextWeek}>
+            <ChevronRight className="h-5 w-5" />
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-6 gap-6 min-h-[600px]">
         {weekDays.map((day) => (
           <DayCard
             key={day.name}

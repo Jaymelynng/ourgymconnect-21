@@ -1,4 +1,3 @@
-
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { MetricsGrid } from "@/components/dashboard/MetricsGrid";
 import { CalendarView } from "@/components/dashboard/CalendarView";
@@ -41,9 +40,9 @@ const Index = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 animate-fade-in">
-        <div className="bg-gradient-to-r from-primary/20 to-secondary/20 p-6 rounded-xl shadow-sm mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 max-w-[1400px] mx-auto">
+      <div className="space-y-6 animate-fade-in">
+        <div className="bg-gradient-to-r from-primary/20 to-secondary/20 p-6 rounded-xl shadow-sm">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="space-y-3">
               <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-3 animate-scale-in flex items-center gap-2">
                 <Home className="h-8 w-8 text-primary animate-scale-in" />
@@ -63,44 +62,8 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 max-w-[1400px] mx-auto">
-          <Card className="col-span-1">
-            <CardHeader>
-              <CardTitle>Updates & Metrics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <MetricsGrid />
-                
-                {isLoadingSections ? (
-                  <div className="animate-pulse space-y-4">
-                    {[1,2].map(i => (
-                      <div key={i} className="h-20 bg-muted rounded-lg" />
-                    ))}
-                  </div>
-                ) : !dashboardSections?.length ? (
-                  <p className="text-muted-foreground">No updates available</p>
-                ) : (
-                  dashboardSections?.filter(section => section.active).map((section, index) => (
-                    <div 
-                      key={section.id} 
-                      className="bg-card rounded-lg p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:bg-primary/5"
-                      style={{ animationDelay: `${index * 150}ms` }}
-                    >
-                      <h3 className="font-semibold mb-2 text-primary">{section.section_name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {section.content}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="col-span-1">
-            <CalendarView />
-          </div>
+        <div className="grid grid-cols-1 gap-6">
+          <CalendarView />
         </div>
 
         <ContentCreator 
