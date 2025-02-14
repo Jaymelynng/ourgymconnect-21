@@ -40,8 +40,13 @@ export function GymSelector({ onGymChange, onChange }: GymSelectorProps) {
           return [];
         }
 
-        console.log('Gyms fetched successfully:', data.length, 'gyms');
-        return data;
+        // Remove duplicates based on gym_name
+        const uniqueGyms = data.filter((gym, index, self) =>
+          index === self.findIndex((g) => g.gym_name === gym.gym_name)
+        );
+
+        console.log('Gyms fetched successfully:', uniqueGyms.length, 'unique gyms');
+        return uniqueGyms;
       } catch (error) {
         console.error('Error fetching gyms:', error);
         toast({
@@ -87,12 +92,16 @@ export function GymSelector({ onGymChange, onChange }: GymSelectorProps) {
 
   return (
     <Select onValueChange={handleChange}>
-      <SelectTrigger className="w-full bg-white border-secondary/20">
+      <SelectTrigger className="w-full bg-white border-secondary/20 text-base text-foreground">
         <SelectValue placeholder="Select a gym" />
       </SelectTrigger>
       <SelectContent className="bg-white max-h-[300px]">
         {gyms.map((gym) => (
-          <SelectItem key={gym.id.toString()} value={gym.id.toString()} className="focus:bg-primary/10">
+          <SelectItem 
+            key={gym.id.toString()} 
+            value={gym.id.toString()} 
+            className="text-base font-medium text-foreground hover:bg-primary/10 focus:bg-primary/10"
+          >
             {gym.gym_name}
           </SelectItem>
         ))}
