@@ -2,8 +2,8 @@
 export interface FormData {
   title: string;
   series: 'single' | 'series';
-  contentDate: string;
-  taskDueDate: string;
+  contentDate: Date;
+  taskDueDate: Date;
   focus: string;
   goal: string;
   type: string[];
@@ -25,6 +25,7 @@ export interface SharePointSectionProps {
 export interface KeyNotesProps {
   keyNotes: string;
   onChange: (value: string) => void;
+  label?: string;
 }
 
 export interface ContentDetailsProps {

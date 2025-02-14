@@ -33,3 +33,7 @@ export interface EmailContent {
   rejection_reason?: string | null;
   created_at?: string;
 }
+
+export interface CalendarEvent extends MarketingItem {
+  type: 'marketing' | 'email';
+}

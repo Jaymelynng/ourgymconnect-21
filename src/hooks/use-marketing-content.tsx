@@ -44,19 +44,14 @@ export function useMarketingContent(startDate: Date, endDate: Date) {
         });
 
         console.groupEnd();
-        return data;
+        return data as MarketingItem[];
       } catch (error) {
         console.error('Failed to fetch marketing content:', error);
         console.groupEnd();
         throw error;
       }
-    },
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    gcTime: 30 * 24 * 60 * 60 * 1000, // Keep cache for 30 days
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
+    }
   });
 }
+
+export type { MarketingItem };
