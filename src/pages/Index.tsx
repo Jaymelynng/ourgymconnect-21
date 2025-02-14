@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ContentCreator } from "@/components/content/ContentCreator";
 import { useState } from "react";
+import { Home } from "lucide-react";
 import type { DashboardSection } from "@/types/database";
 
 const Index = () => {
@@ -44,7 +45,8 @@ const Index = () => {
         <div className="bg-gradient-to-r from-primary/20 to-secondary/20 p-4 md:p-8 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="space-y-3">
-              <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-3 animate-scale-in">
+              <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-3 animate-scale-in flex items-center gap-2">
+                <Home className="h-8 w-8 text-primary animate-scale-in" />
                 Gym Marketing Dashboard
               </h1>
               <p className="text-base md:text-lg text-muted-foreground max-w-2xl">
