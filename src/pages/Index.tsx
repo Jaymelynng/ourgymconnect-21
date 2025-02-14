@@ -1,10 +1,8 @@
+
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { MetricsGrid } from "@/components/dashboard/MetricsGrid";
 import { CalendarView } from "@/components/dashboard/CalendarView";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ContentCreator } from "@/components/content/ContentCreator";
@@ -40,15 +38,15 @@ const Index = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
-        <div className="bg-gradient-to-r from-primary/20 to-secondary/20 p-6 rounded-xl shadow-sm">
+      <div className="flex flex-col h-full">
+        <div className="bg-gradient-to-r from-primary/20 to-secondary/20 p-6 rounded-xl shadow-sm mb-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="space-y-3">
               <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-3 animate-scale-in flex items-center gap-2">
                 <Home className="h-8 w-8 text-primary animate-scale-in" />
                 Gym Marketing Dashboard
               </h1>
-              <p className="text-base md:text-lg text-muted-foreground max-w-2xl">
+              <p className="text-base md:text-lg text-muted-foreground">
                 Welcome to your all-in-one marketing toolkit. Create, manage, and schedule your content across all locations.
               </p>
             </div>
@@ -62,7 +60,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
+        <div className="flex-1">
           <CalendarView />
         </div>
 

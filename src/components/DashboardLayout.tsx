@@ -38,8 +38,8 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
   );
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <div className="flex-1 flex flex-col min-w-0">
+    <div className="flex h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-screen">
         <header 
           className={cn(
             "border-b bg-background/95 backdrop-blur-md sticky top-0 z-50 px-4",
@@ -72,7 +72,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
           )}
         </header>
         
-        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-x-hidden w-full bg-gray-50 dark:bg-gray-900/50">
+        <main className="flex-1 p-4 overflow-hidden">
           {children}
         </main>
       </div>
@@ -81,7 +81,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         <aside 
           className={cn(
             "w-[300px] transition-all duration-300 ease-in-out",
-            "sticky top-0 h-screen overflow-y-auto",
+            "h-screen overflow-y-auto",
             "border-l border-border bg-background/95 backdrop-blur-sm",
             isCollapsed ? "translate-x-[240px]" : "translate-x-0",
             "hover:translate-x-0"

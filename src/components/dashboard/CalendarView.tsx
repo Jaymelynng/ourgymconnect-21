@@ -16,7 +16,7 @@ export function CalendarView() {
   };
 
   return (
-    <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border/40 h-[calc(100vh-180px)]">
+    <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border/40 h-[calc(100vh-180px)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6 border-b bg-muted/30">
         <h3 className="font-semibold text-3xl text-primary">Calendar View</h3>
         <div className="flex flex-wrap gap-3">
@@ -49,7 +49,7 @@ export function CalendarView() {
       
       <div 
         onClick={handleViewClick} 
-        className="w-full h-[calc(100%-80px)] p-8 bg-white dark:bg-gray-950 overflow-y-auto"
+        className="flex-1 overflow-auto p-8 bg-white dark:bg-gray-950"
       >
         {viewType === 'week' && (
           <WeekView 
