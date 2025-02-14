@@ -1,31 +1,72 @@
-import { MarketingContent } from "@/types/database";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfWeek, endOfWeek } from "date-fns";
+import { format } from "date-fns";
 
-export type MarketingItem = MarketingContent;
+export interface MarketingItem {
+  id: number;
+  title: string;
+  content_type: string;
+  description: string;
+  scheduled_date: string;
+  photo_examples: string;
+  photo_key_points: string;
+  theme: string;
+  caption: string;
+}
 
-export function useMarketingContent() {
-  const startDate = startOfWeek(new Date(), { weekStartsOn: 1 });
-  const endDate = endOfWeek(startDate, { weekStartsOn: 1 });
-
-  const { data: marketingItems = [], isLoading } = useQuery({
-    queryKey: ['marketing_content'],
+export function useMarketingContent(startDate: Date, endDate: Date) {
+  return useQuery({
+    queryKey: ['marketing_content', format(startDate, 'yyyy-MM-dd'), format(endDate, 'yyyy-MM-dd')],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('marketing_content')
-        .select('*')
-        .gte('scheduled_date', startDate.toISOString())
-        .lte('scheduled_date', endDate.toISOString())
-        .order('scheduled_date');
-      
-      if (error) throw error;
-      return data as MarketingItem[];
-    }
-  });
+      console.group('=== Fetching Marketing Content ===');
+      console.log('Date Range:', {
+        start: format(startDate, 'yyyy-MM-dd'),
+        end: format(endDate, 'yyyy-MM-dd')
+      });
 
-  return {
-    marketingItems,
-    isLoading
-  };
+      try {
+        const { data, error } = await supabase
+          .from('marketing_content')
+          .select('*')
+          .gte('scheduled_date', startDate.toISOString())
+          .lte('scheduled_date', endDate.toISOString())
+          .order('scheduled_date');
+
+        if (error) {
+          console.error('Supabase Error:', error);
+          console.groupEnd();
+          throw error;
+        }
+
+        if (!data) {
+          console.log('No data returned');
+          console.groupEnd();
+          return [];
+        }
+
+        console.log('Fetched Items:', {
+          count: data.length,
+          items: data.map(item => ({
+            id: item.id,
+            title: item.title,
+            scheduled_date: item.scheduled_date
+          }))
+        });
+
+        console.groupEnd();
+        return data;
+      } catch (error) {
+        console.error('Failed to fetch marketing content:', error);
+        console.groupEnd();
+        throw error;
+      }
+    },
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    gcTime: 30 * 24 * 60 * 60 * 1000, // Keep cache for 30 days (renamed from cacheTime)
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
+  });
 }

@@ -6,7 +6,6 @@ import { EditMarketingDialog } from "../marketing/EditMarketingDialog";
 import { DayHeader } from "./day-components/DayHeader";
 import { ContentPreview } from "./day-components/ContentPreview";
 import { DayDialog } from "./day-components/DayDialog";
-import { ChevronDown } from "lucide-react";
 
 interface CalendarDayProps {
   day: Date;
@@ -29,7 +28,7 @@ export function CalendarDay({
   const { toast } = useToast();
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleDelete = async (itemId: string | number) => {
     try {
@@ -58,39 +57,41 @@ export function CalendarDay({
     }
   };
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
-
   return (
-    <div 
-      className={cn(
-        "min-h-[120px] border-b border-r border-border bg-card",
-        "transition-all duration-300 ease-in-out",
-        hasItems ? "hover:bg-primary/5" : "hover:bg-secondary/5",
-        "animate-fade-in cursor-pointer relative",
-        isExpanded ? "h-[300px]" : "h-[120px]"
-      )}
-      onClick={toggleExpand}
-    >
+    <>
       <div 
-        className="p-4 flex items-center justify-between group sticky top-0 bg-card border-b border-border"
+        onClick={() => setIsDialogOpen(true)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={cn(
+          // Base styles
+          "min-h-[120px] border-b border-r border-border bg-card",
+          // Animation and transition
+          "transition-all duration-500 ease-in-out transform",
+          // Hover states with expanded size
+          isHovered && [
+            "absolute inset-4 z-50 scale-[1.02]",
+            "shadow-2xl rounded-xl border",
+            "min-h-[80vh]",
+            "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/95"
+          ],
+          hasItems && "hover:bg-primary/5",
+          !hasItems && "hover:bg-secondary/5",
+          // Animation
+          "animate-fade-in cursor-pointer"
+        )}
+        style={{
+          transformOrigin: 'center',
+        }}
       >
         <DayHeader day={day} currentDate={currentDate} />
-        <ChevronDown className={cn(
-          "h-4 w-4 text-muted-foreground transition-transform duration-300",
-          "opacity-0 group-hover:opacity-100",
-          isExpanded && "transform rotate-180 opacity-100"
-        )} />
-      </div>
-      
-      <div 
-        className={cn(
-          "overflow-hidden transition-all duration-300 ease-in-out",
-          isExpanded ? "opacity-100 max-h-[250px]" : "opacity-0 max-h-0"
-        )}
-      >
-        <div className="p-4 space-y-4 overflow-y-auto max-h-[230px]">
+        
+        <div className={cn(
+          "px-2 pb-2 space-y-2",
+          "transition-all duration-300",
+          isHovered ? "pt-4 px-4 md:px-8" : "pt-8",
+          isHovered && "overflow-y-auto max-h-[calc(80vh-4rem)]"
+        )}>
           {marketingItems.map((item) => (
             <ContentPreview
               key={item.id}
@@ -103,14 +104,17 @@ export function CalendarDay({
               }}
             />
           ))}
-          
-          {marketingItems.length === 0 && (
-            <p className="text-center text-muted-foreground py-2">
-              No content scheduled for this day
-            </p>
-          )}
         </div>
       </div>
+
+      <DayDialog
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        day={day}
+        items={marketingItems}
+        onEdit={setEditingItem}
+        onDelete={handleDelete}
+      />
 
       {editingItem && (
         <EditMarketingDialog
@@ -120,6 +124,6 @@ export function CalendarDay({
           onUpdate={refetchItems}
         />
       )}
-    </div>
+    </>
   );
 }

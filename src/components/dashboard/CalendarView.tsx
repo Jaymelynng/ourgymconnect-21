@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { WeekView } from "./WeekView";
 import { MonthView } from "./MonthView";
@@ -16,41 +15,32 @@ export function CalendarView() {
   };
 
   return (
-    <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border/40 h-[calc(100vh-180px)] flex flex-col">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6 border-b bg-muted/30">
-        <h3 className="font-semibold text-3xl text-primary">Calendar View</h3>
-        <div className="flex flex-wrap gap-3">
+    <div className="bg-card rounded-lg shadow-sm p-2 md:p-4 w-full max-w-[100vw] overflow-x-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-semibold text-xl text-primary">Calendar View</h3>
+        <div className="flex gap-2">
           <Button 
             variant={viewType === 'week' ? "default" : "secondary"}
             onClick={() => setViewType('week')}
-            size="lg"
-            className="transform hover:scale-105 transition-transform min-w-[120px] text-lg"
           >
             Week
           </Button>
           <Button 
             variant={viewType === 'month' ? "default" : "secondary"}
             onClick={() => setViewType('month')}
-            size="lg"
-            className="transform hover:scale-105 transition-transform min-w-[120px] text-lg"
           >
             Month
           </Button>
           <Button 
             variant={viewType === 'list' ? "default" : "secondary"}
             onClick={() => setViewType('list')}
-            size="lg"
-            className="transform hover:scale-105 transition-transform min-w-[120px] text-lg"
           >
             List
           </Button>
         </div>
       </div>
       
-      <div 
-        onClick={handleViewClick} 
-        className="flex-1 overflow-auto p-8 bg-white dark:bg-gray-950"
-      >
+      <div onClick={handleViewClick} className="cursor-pointer w-full">
         {viewType === 'week' && (
           <WeekView 
             currentDate={currentDate}

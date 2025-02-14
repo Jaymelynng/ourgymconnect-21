@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { format, startOfWeek, endOfWeek, addDays, addWeeks, subWeeks } from "date-fns";
 import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
@@ -7,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useMarketingContent } from "@/hooks/use-marketing-content";
 import { DayCard } from "./week-view/DayCard";
 import { TaskDetails } from "./week-view/TaskDetails";
-import type { MarketingContent } from "@/types/database";
 
 interface WeekViewProps {
   currentDate: Date;
@@ -17,7 +15,7 @@ interface WeekViewProps {
 interface DayTask {
   name: string;
   date: Date;
-  tasks: MarketingContent[];
+  tasks: any[];
 }
 
 export function WeekView({ currentDate, onDateChange }: WeekViewProps) {
@@ -26,17 +24,18 @@ export function WeekView({ currentDate, onDateChange }: WeekViewProps) {
   const startDate = startOfWeek(currentDate, { weekStartsOn: 1 });
   const endDate = endOfWeek(startDate, { weekStartsOn: 1 });
 
-  const { marketingItems, isLoading } = useMarketingContent();
+  const { data: marketingItems = [], isError } = useMarketingContent(startDate, endDate);
 
   const nextWeek = () => onDateChange(addWeeks(currentDate, 1));
   const prevWeek = () => onDateChange(subWeeks(currentDate, 1));
 
-  if (isLoading) {
+  if (isError) {
     return (
-      <div className="grid grid-cols-6 gap-6 h-full">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="aspect-square bg-muted rounded-lg animate-pulse" />
-        ))}
+      <div className="p-4 border border-destructive/50 rounded-lg bg-destructive/10 text-destructive">
+        <div className="flex items-center gap-2">
+          <AlertCircle className="h-4 w-4" />
+          <p>Failed to load weekly content. Please try again later.</p>
+        </div>
       </div>
     );
   }
@@ -56,22 +55,22 @@ export function WeekView({ currentDate, onDateChange }: WeekViewProps) {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-semibold text-foreground">
+        <h2 className="text-2xl font-semibold text-foreground">
           Week of {format(startDate, 'MMMM d, yyyy')}
         </h2>
-        <div className="flex gap-4">
-          <Button variant="outline" size="lg" onClick={prevWeek}>
-            <ChevronLeft className="h-5 w-5" />
+        <div className="flex gap-2">
+          <Button variant="outline" size="icon" onClick={prevWeek}>
+            <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="lg" onClick={nextWeek}>
-            <ChevronRight className="h-5 w-5" />
+          <Button variant="outline" size="icon" onClick={nextWeek}>
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-6 gap-6 min-h-[600px]">
+      <div className="grid grid-cols-6 gap-4">
         {weekDays.map((day) => (
           <DayCard
             key={day.name}

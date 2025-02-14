@@ -1,8 +1,13 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Image } from "lucide-react";
-import type { MarketingContent } from "@/types/database";
+
+type MarketingItem = {
+  id: number;
+  title: string;
+  description: string | null;
+  photo_examples: string | null;
+};
 
 export function GalleryView() {
   const { data: marketingItems = [], isLoading } = useQuery({
@@ -18,7 +23,7 @@ export function GalleryView() {
         console.error('Error fetching marketing items:', error);
         return [];
       }
-      return data as MarketingContent[];
+      return data || [];
     }
   });
 
@@ -28,15 +33,11 @@ export function GalleryView() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {marketingItems.map((item: MarketingContent) => (
+      {marketingItems.map((item: MarketingItem) => (
         <div key={item.id} className="bg-card p-4 rounded-lg shadow-md">
           <h3 className="font-semibold">{item.title}</h3>
-          {item.photo_examples && item.photo_examples.length > 0 && (
-            <img 
-              src={item.photo_examples[0]} 
-              alt={item.title} 
-              className="w-full h-auto rounded-lg mt-2" 
-            />
+          {item.photo_examples && (
+            <img src={item.photo_examples} alt={item.title} className="w-full h-auto rounded-lg mt-2" />
           )}
           {item.description && (
             <p className="text-sm text-muted-foreground mt-2">{item.description}</p>

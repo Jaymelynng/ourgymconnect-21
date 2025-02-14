@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
@@ -10,31 +9,18 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import type { MarketingContent, EmailDetails } from '@/types/database';
-
-interface EmailWithDetails extends MarketingContent {
-  email_details: EmailDetails[];
-  gym_details: {
-    gym_name: string;
-  };
-}
 
 export const EmailApprovals = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [selectedGym, setSelectedGym] = React.useState<string | null>(null);
 
-  const { data: emails = [], isLoading } = useQuery({
+  const { data: emails, isLoading } = useQuery({
     queryKey: ['email_approvals', selectedGym],
     queryFn: async () => {
       const query = supabase
-        .from('marketing_content')
-        .select(`
-          *,
-          email_details (*),
-          gym_details (gym_name)
-        `)
-        .eq('content_type', 'email')
+        .from('email_content')
+        .select('*, gym_details(gym_name)')
         .eq('status', 'pending');
 
       if (selectedGym) {
@@ -43,7 +29,7 @@ export const EmailApprovals = () => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as EmailWithDetails[];
+      return data;
     }
   });
 
@@ -67,7 +53,7 @@ export const EmailApprovals = () => {
     <Card className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Email Approvals</h2>
-        <GymSelector onChange={handleGymChange} />
+        <GymSelector onGymChange={handleGymChange} />
       </div>
 
       {emails?.length === 0 ? (
@@ -108,4 +94,4 @@ export const EmailApprovals = () => {
       )}
     </Card>
   );
-}
+};

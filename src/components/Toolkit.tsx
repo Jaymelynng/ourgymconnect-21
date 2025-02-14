@@ -1,135 +1,132 @@
-
 import React, { useState } from 'react';
-import { Grid, AlertCircle } from 'lucide-react';
+import { Grid, Instagram, Facebook, Share2, Palette, Plus, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { GymSelector } from './GymSelector';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import * as Icons from 'lucide-react';
-import type { ToolkitItem } from '@/types/database';
 
 const Toolkit = () => {
   const [selectedGymId, setSelectedGymId] = useState<number | null>(null);
-  const [hoveredTool, setHoveredTool] = useState<number | null>(null);
 
-  const { data: toolkitItems, isLoading: isLoadingTools, error: toolsError } = useQuery({
-    queryKey: ['toolkit_items', selectedGymId],
+  const { data: selectedGym, isLoading: isLoadingGym, error } = useQuery({
+    queryKey: ['gym_details', selectedGymId],
     queryFn: async () => {
-      console.log('Fetching toolkit items for gym:', selectedGymId);
-      const query = supabase
-        .from('toolkit_items')
-        .select('*')
-        .order('sort_order', { ascending: true });
-
-      if (selectedGymId) {
-        query.or(`gym_id.eq.${selectedGymId},gym_id.is.null`);
-      }
-
-      const { data, error } = await query;
+      if (!selectedGymId) return null;
+      
+      console.log('Fetching gym details for ID:', selectedGymId);
+      const { data, error } = await supabase
+        .from('gym_details')
+        .select('instagram_url, facebook_url, sharepoint_url')
+        .eq('id', selectedGymId)
+        .single();
       
       if (error) {
-        console.error('Error fetching toolkit items:', error);
+        console.error('Error fetching gym details:', error);
         throw error;
       }
       
-      return data as ToolkitItem[];
+      console.log('Gym details fetched successfully:', data);
+      return data;
     },
+    enabled: !!selectedGymId,
+    retry: 2,
+    retryDelay: 1000,
   });
+
+  const tools = [
+    { 
+      name: 'Instagram', 
+      icon: Instagram, 
+      color: 'hover:text-pink-400',
+      url: selectedGym?.instagram_url || '#',
+      disabled: !selectedGym?.instagram_url
+    },
+    { 
+      name: 'Facebook', 
+      icon: Facebook, 
+      color: 'hover:text-blue-500',
+      url: selectedGym?.facebook_url || '#',
+      disabled: !selectedGym?.facebook_url
+    },
+    { 
+      name: 'SharePoint', 
+      icon: Share2, 
+      color: 'hover:text-green-400',
+      url: selectedGym?.sharepoint_url || '#',
+      disabled: !selectedGym?.sharepoint_url
+    },
+    { 
+      name: 'Canva', 
+      icon: Palette, 
+      color: 'hover:text-purple-400',
+      url: '#'
+    }
+  ];
+
+  const comingSoonTools = [
+    { title: 'Tuition Estimator', subtitle: 'Coming Soon' },
+    { title: 'Submit Tool Idea', subtitle: 'Coming Soon' }
+  ];
 
   const handleGymChange = (gymId: string) => {
     setSelectedGymId(Number(gymId));
   };
 
-  if (toolsError) {
+  if (error) {
     return (
       <Alert variant="destructive" className="m-4">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          Failed to load toolkit items. Please try again later.
+          Connection error. Please refresh the page or try again later.
         </AlertDescription>
       </Alert>
     );
   }
 
   return (
-    <div 
-      className={cn(
-        "sticky top-0 min-h-screen",
-        "bg-gradient-to-b from-primary/95 to-primary/85",
-        "backdrop-blur-sm rounded-t-[15px] p-5",
-        "text-white shadow-lg border-l border-primary/20",
-        "transition-all duration-300 ease-in-out",
-        "transform-gpu will-change-transform"
-      )}
-    >
-      <div className="mb-8 animate-fade-in space-y-6">
-        <h2 className={cn(
-          "text-2xl font-bold flex items-center gap-3 mb-6",
-          "bg-gradient-to-r from-white to-white/80",
-          "bg-clip-text text-transparent"
-        )}>
+    <div className="w-[280px] min-h-screen bg-gradient-to-b from-primary/95 to-primary/85 backdrop-blur-sm 
+                    rounded-t-[15px] p-5 text-white shadow-lg border-r border-primary/20">
+      <div className="mb-8 animate-fade-in">
+        <h2 className="text-2xl font-bold flex items-center gap-3 mb-6 bg-gradient-to-r from-white to-white/80 
+                       bg-clip-text text-transparent">
           <Grid strokeWidth={2} size={24} className="animate-pulse text-white" />
           Toolkit
         </h2>
         
-        <div className="relative">
-          <div className={cn(
-            "absolute inset-0 bg-white/5 rounded-xl",
-            "transform transition-transform duration-300",
-            "hover:scale-105"
-          )}>
-            <GymSelector onChange={handleGymChange} />
-          </div>
+        <div className="mb-6">
+          <GymSelector onChange={handleGymChange} />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-6 relative">
-        {isLoadingTools ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <div 
-              key={i}
-              className="h-24 bg-white/10 rounded-xl animate-pulse"
-            />
-          ))
-        ) : toolkitItems?.map((tool, index) => {
-          const IconComponent = (Icons as any)[tool.icon] || Icons.Link;
-          const isHovered = hoveredTool === tool.id;
-          
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        {tools.map((tool) => {
+          const IconComponent = tool.icon;
           return (
             <a
-              key={tool.id}
-              href={tool.url || '#'}
+              key={tool.name}
+              href={tool.url}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                "bg-white/95 backdrop-blur-sm rounded-xl p-4",
-                "flex flex-col items-center justify-center gap-2.5",
-                "transition-all duration-300 shadow-sm group",
-                "hover:scale-105 hover:bg-white hover:shadow-lg",
-                "transform perspective-1000",
-                !tool.url && "opacity-50 cursor-not-allowed hover:scale-100",
-                !tool.is_enabled && "hidden",
-                isHovered && "rotate-y-180"
+                "bg-white/95 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center justify-center gap-2.5",
+                "transition-all duration-300 hover:scale-105 hover:bg-white shadow-sm group",
+                "animate-scale-in",
+                tool.disabled && "opacity-50 cursor-not-allowed hover:scale-100"
               )}
-              onMouseEnter={() => setHoveredTool(tool.id)}
-              onMouseLeave={() => setHoveredTool(null)}
               onClick={(e) => {
-                if (!tool.url) {
+                if (tool.disabled) {
                   e.preventDefault();
                 }
-              }}
-              style={{
-                transform: `perspective(1000px) rotateY(${isHovered ? '10deg' : '0deg'})`,
               }}
             >
               <IconComponent 
                 strokeWidth={1.5} 
                 className={cn(
-                  "w-10 h-10 transition-all duration-300",
+                  "w-10 h-10 text-gray-500 transition-all duration-300",
                   tool.color,
-                  "group-hover:scale-110 group-hover:rotate-12"
+                  "group-hover:scale-110"
                 )} 
               />
               <span className="text-sm font-medium text-gray-500 group-hover:text-gray-700">
@@ -140,16 +137,28 @@ const Toolkit = () => {
         })}
       </div>
 
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        {comingSoonTools.map((item, index) => (
+          <div
+            key={index}
+            className="bg-white/20 rounded-xl p-4 flex flex-col items-center justify-center 
+                     text-center hover:bg-white/30 transition-all duration-300 cursor-not-allowed
+                     animate-fade-in"
+          >
+            <Plus size={20} className="mb-2 opacity-50" />
+            <span className="text-white text-sm font-medium mb-1">{item.title}</span>
+            <span className="text-white/80 text-xs">{item.subtitle}</span>
+          </div>
+        ))}
+      </div>
+
       <Button 
         variant="ghost" 
-        className={cn(
-          "w-full mt-6 bg-white/10 hover:bg-white/20 text-white",
-          "transition-all duration-300 animate-fade-in",
-          "transform hover:scale-105 active:scale-95"
-        )}
+        className="w-full mt-6 bg-white/10 hover:bg-white/20 text-white
+                   transition-all duration-300 animate-fade-in"
         onClick={() => window.open('https://github.com/your-repo/issues/new', '_blank')}
       >
-        <Icons.Plus className="w-4 h-4 mr-2" />
+        <Plus className="w-4 h-4 mr-2" />
         Suggest New Tool
       </Button>
     </div>

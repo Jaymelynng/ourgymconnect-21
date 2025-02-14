@@ -1,17 +1,25 @@
-
 import { useQuery } from "@tanstack/react-query";
-import { format, parseISO, startOfWeek, addDays, endOfWeek } from "date-fns";
+import { format, parseISO, startOfWeek, addDays, endOfWeek, isWithinInterval } from "date-fns";
 import { Image, Calendar, Type, CheckSquare } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
-import type { MarketingContent } from "@/types/database";
+
+interface MarketingItem {
+  id: number;
+  title: string;
+  content_type: string;
+  description?: string;
+  scheduled_date: string;
+  photo_examples?: string;
+  photo_key_points?: string;
+}
 
 interface DayTask {
   name: string;
   date: Date;
-  tasks: MarketingContent[];
+  tasks: MarketingItem[];
 }
 
 export function WeekView() {
@@ -23,6 +31,11 @@ export function WeekView() {
       const startDate = startOfWeek(new Date(), { weekStartsOn: 1 });
       const endDate = endOfWeek(startDate, { weekStartsOn: 1 });
       
+      console.log('Fetching marketing items for week:', {
+        start: startDate.toISOString(),
+        end: endDate.toISOString()
+      });
+
       const { data, error } = await supabase
         .from('marketing_content')
         .select('*')
@@ -31,7 +44,7 @@ export function WeekView() {
         .order('scheduled_date');
       
       if (error) throw error;
-      return data as MarketingContent[];
+      return data || [];
     }
   });
 
@@ -146,9 +159,9 @@ export function WeekView() {
                 >
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-lg text-foreground">{task.title}</h3>
-                    {task.photo_examples && task.photo_examples.length > 0 && (
+                    {task.photo_examples && (
                       <img 
-                        src={task.photo_examples[0]} 
+                        src={task.photo_examples} 
                         alt="" 
                         className="w-12 h-12 rounded-full ring-2 ring-primary/20"
                       />

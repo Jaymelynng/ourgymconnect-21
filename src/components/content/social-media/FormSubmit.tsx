@@ -17,15 +17,13 @@ export const FormSubmit = ({ isSubmitting, onCancel, formData }: FormSubmitProps
     try {
       // First create the content
       const { data: contentData, error: contentError } = await supabase
-        .from('marketing_content')
+        .from('social_media_content')
         .insert({
           title: formData.title,
           caption: formData.caption,
           scheduled_date: formData.contentDate,
           photo_key_points: formData.keyNotes,
-          content_type: 'social-media',
-          description: formData.focus,
-          theme: formData.goal,
+          focus_area: formData.focus,
         })
         .select()
         .single();
@@ -39,9 +37,9 @@ export const FormSubmit = ({ isSubmitting, onCancel, formData }: FormSubmitProps
           .insert({
             content_id: contentData.id,
             task_type: 'visual',
-            task_name: task.text,
-            due_date: formData.taskDueDate || formData.contentDate,
+            due_date: formData.taskDueDate || formData.contentDate, // Use task due date if set, otherwise use content date
             status: task.completed ? 'Completed' : 'Pending',
+            group_due_date: formData.taskDueDate // Add group due date
           });
 
         if (taskError) throw taskError;
