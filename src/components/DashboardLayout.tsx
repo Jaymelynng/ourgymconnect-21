@@ -13,14 +13,12 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
   const location = useLocation();
   const isMobile = useIsMobile();
   const [scrollY, setScrollY] = useState(0);
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const isMainRoute = location.pathname === "/";
   
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
-      setIsCollapsed(window.scrollY > 100);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -42,10 +40,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <div className={cn(
-        "flex-1 flex flex-col min-h-screen",
-        !isMainRoute && "w-full"
-      )}>
+      <div className="flex-1 flex flex-col min-h-screen w-full">
         <header 
           className={cn(
             "border-b bg-background/95 backdrop-blur-md sticky top-0 z-50 px-4",
@@ -86,11 +81,10 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
       {!isMobile && isMainRoute && (
         <aside 
           className={cn(
-            "w-[300px] transition-all duration-300 ease-in-out",
-            "h-screen overflow-y-auto",
+            "w-[300px] shrink-0",
+            "h-screen overflow-y-auto fixed top-0 right-0",
             "border-l border-border bg-background/95 backdrop-blur-sm",
-            isCollapsed ? "translate-x-[240px]" : "translate-x-0",
-            "hover:translate-x-0"
+            "z-40"
           )}
         >
           <Toolkit />
