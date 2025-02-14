@@ -30,10 +30,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         variant="ghost"
         size="icon"
         onClick={() => navigate("/")}
-        className={cn(
-          "transition-all duration-300 hover:bg-primary/20",
-          "transform hover:scale-105 active:scale-95"
-        )}
+        className="transform hover:scale-105 active:scale-95 transition-transform"
       >
         <Home className="h-5 w-5" />
       </Button>
@@ -42,11 +39,11 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
 
   return (
     <div className="flex min-h-screen bg-background">
-      <div className="flex-1 flex flex-col min-w-0"> {/* Added min-w-0 to prevent flex item from overflowing */}
+      <div className="flex-1 flex flex-col min-w-0">
         <header 
           className={cn(
-            "border-b bg-card/80 backdrop-blur-md sticky top-0 z-50",
-            "transition-all duration-300 ease-in-out",
+            "border-b bg-background/95 backdrop-blur-md sticky top-0 z-50 px-4",
+            "transition-all duration-300 ease-in-out h-14 flex items-center",
             scrollY > 50 ? "shadow-md" : "shadow-none"
           )}
         >
@@ -75,13 +72,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
           )}
         </header>
         
-        <main 
-          className="flex-1 p-6 overflow-x-hidden w-full"
-          style={{
-            perspective: "1000px",
-            transform: `translateZ(0) rotateX(${scrollY * 0.02}deg)`
-          }}
-        >
+        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-x-hidden w-full bg-gray-50 dark:bg-gray-900/50">
           {children}
         </main>
       </div>
@@ -89,10 +80,10 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
       {!isMobile && (
         <aside 
           className={cn(
-            "w-[280px] transition-all duration-300 ease-in-out",
+            "w-[300px] transition-all duration-300 ease-in-out",
             "sticky top-0 h-screen overflow-y-auto",
-            "border-l border-border",
-            isCollapsed ? "translate-x-[200px]" : "translate-x-0",
+            "border-l border-border bg-background/95 backdrop-blur-sm",
+            isCollapsed ? "translate-x-[240px]" : "translate-x-0",
             "hover:translate-x-0"
           )}
         >

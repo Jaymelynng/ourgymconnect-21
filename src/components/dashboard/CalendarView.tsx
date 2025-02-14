@@ -16,28 +16,31 @@ export function CalendarView() {
   };
 
   return (
-    <div className="bg-card rounded-lg shadow-lg w-full overflow-hidden">
-      <div className="flex justify-between items-center p-4 border-b">
-        <h3 className="font-semibold text-xl text-primary">Calendar View</h3>
-        <div className="flex gap-2">
+    <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border/40">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6 border-b bg-muted/30">
+        <h3 className="font-semibold text-2xl text-primary">Calendar View</h3>
+        <div className="flex flex-wrap gap-2">
           <Button 
             variant={viewType === 'week' ? "default" : "secondary"}
             onClick={() => setViewType('week')}
-            className="transform hover:scale-105 transition-transform"
+            size="lg"
+            className="transform hover:scale-105 transition-transform min-w-[100px]"
           >
             Week
           </Button>
           <Button 
             variant={viewType === 'month' ? "default" : "secondary"}
             onClick={() => setViewType('month')}
-            className="transform hover:scale-105 transition-transform"
+            size="lg"
+            className="transform hover:scale-105 transition-transform min-w-[100px]"
           >
             Month
           </Button>
           <Button 
             variant={viewType === 'list' ? "default" : "secondary"}
             onClick={() => setViewType('list')}
-            className="transform hover:scale-105 transition-transform"
+            size="lg"
+            className="transform hover:scale-105 transition-transform min-w-[100px]"
           >
             List
           </Button>
@@ -46,7 +49,7 @@ export function CalendarView() {
       
       <div 
         onClick={handleViewClick} 
-        className="cursor-pointer w-full min-h-[calc(100vh-200px)] p-4"
+        className="cursor-pointer w-full min-h-[700px] p-6 bg-white dark:bg-gray-950"
       >
         {viewType === 'week' && (
           <WeekView 
