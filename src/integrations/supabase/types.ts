@@ -9,77 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      calendar_events: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          end_date: string | null
-          event_type: string | null
-          gym_id: number | null
-          id: number
-          start_date: string
-          status: string | null
-          title: string
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          end_date?: string | null
-          event_type?: string | null
-          gym_id?: number | null
-          id?: number
-          start_date: string
-          status?: string | null
-          title: string
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          end_date?: string | null
-          event_type?: string | null
-          gym_id?: number | null
-          id?: number
-          start_date?: string
-          status?: string | null
-          title?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "calendar_events_gym_id_fkey"
-            columns: ["gym_id"]
-            isOneToOne: false
-            referencedRelation: "gym_details"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      dashboard_sections: {
-        Row: {
-          active: boolean | null
-          content: string | null
-          created_at: string | null
-          id: number
-          priority: number | null
-          section_name: string
-        }
-        Insert: {
-          active?: boolean | null
-          content?: string | null
-          created_at?: string | null
-          id?: number
-          priority?: number | null
-          section_name: string
-        }
-        Update: {
-          active?: boolean | null
-          content?: string | null
-          created_at?: string | null
-          id?: number
-          priority?: number | null
-          section_name?: string
-        }
-        Relationships: []
-      }
       email_details: {
         Row: {
           body_content: string
@@ -145,50 +74,14 @@ export type Database = {
         }
         Relationships: []
       }
-      in_gym_details: {
-        Row: {
-          content_id: number | null
-          created_at: string | null
-          format: string
-          id: number
-          placement_locations: string[] | null
-          print_quantity: number | null
-          size: string | null
-        }
-        Insert: {
-          content_id?: number | null
-          created_at?: string | null
-          format: string
-          id?: number
-          placement_locations?: string[] | null
-          print_quantity?: number | null
-          size?: string | null
-        }
-        Update: {
-          content_id?: number | null
-          created_at?: string | null
-          format?: string
-          id?: number
-          placement_locations?: string[] | null
-          print_quantity?: number | null
-          size?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "in_gym_details_content_id_fkey"
-            columns: ["content_id"]
-            isOneToOne: false
-            referencedRelation: "marketing_content"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       marketing_content: {
         Row: {
           caption: string | null
           content_type: string
           created_at: string | null
           description: string | null
+          end_date: string | null
+          event_type: string | null
           gym_id: number | null
           id: number
           key_notes: string | null
@@ -196,6 +89,7 @@ export type Database = {
           photo_key_points: string | null
           rejection_reason: string | null
           scheduled_date: string | null
+          start_date: string | null
           status: string | null
           theme: string | null
           title: string
@@ -207,6 +101,8 @@ export type Database = {
           content_type: string
           created_at?: string | null
           description?: string | null
+          end_date?: string | null
+          event_type?: string | null
           gym_id?: number | null
           id?: never
           key_notes?: string | null
@@ -214,6 +110,7 @@ export type Database = {
           photo_key_points?: string | null
           rejection_reason?: string | null
           scheduled_date?: string | null
+          start_date?: string | null
           status?: string | null
           theme?: string | null
           title: string
@@ -225,6 +122,8 @@ export type Database = {
           content_type?: string
           created_at?: string | null
           description?: string | null
+          end_date?: string | null
+          event_type?: string | null
           gym_id?: number | null
           id?: never
           key_notes?: string | null
@@ -232,6 +131,7 @@ export type Database = {
           photo_key_points?: string | null
           rejection_reason?: string | null
           scheduled_date?: string | null
+          start_date?: string | null
           status?: string | null
           theme?: string | null
           title?: string
@@ -298,94 +198,6 @@ export type Database = {
             columns: ["parent_task_id"]
             isOneToOne: false
             referencedRelation: "marketing_tasks"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      social_media_details: {
-        Row: {
-          caption: string | null
-          content_id: number | null
-          created_at: string | null
-          id: number
-          photo_examples: string[] | null
-          photo_key_points: string | null
-          platform: string
-        }
-        Insert: {
-          caption?: string | null
-          content_id?: number | null
-          created_at?: string | null
-          id?: number
-          photo_examples?: string[] | null
-          photo_key_points?: string | null
-          platform: string
-        }
-        Update: {
-          caption?: string | null
-          content_id?: number | null
-          created_at?: string | null
-          id?: number
-          photo_examples?: string[] | null
-          photo_key_points?: string | null
-          platform?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "social_media_details_content_id_fkey"
-            columns: ["content_id"]
-            isOneToOne: false
-            referencedRelation: "marketing_content"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      toolkit_items: {
-        Row: {
-          category: string | null
-          color: string | null
-          created_at: string | null
-          gym_id: number | null
-          icon: string
-          id: number
-          is_enabled: boolean | null
-          name: string
-          sort_order: number | null
-          type: string
-          url: string | null
-        }
-        Insert: {
-          category?: string | null
-          color?: string | null
-          created_at?: string | null
-          gym_id?: number | null
-          icon: string
-          id?: number
-          is_enabled?: boolean | null
-          name: string
-          sort_order?: number | null
-          type: string
-          url?: string | null
-        }
-        Update: {
-          category?: string | null
-          color?: string | null
-          created_at?: string | null
-          gym_id?: number | null
-          icon?: string
-          id?: number
-          is_enabled?: boolean | null
-          name?: string
-          sort_order?: number | null
-          type?: string
-          url?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "toolkit_items_gym_id_fkey"
-            columns: ["gym_id"]
-            isOneToOne: false
-            referencedRelation: "gym_details"
             referencedColumns: ["id"]
           },
         ]

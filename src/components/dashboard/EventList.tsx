@@ -1,10 +1,12 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, parseISO } from "date-fns";
 import { Image } from "lucide-react";
+import type { MarketingItem } from "@/types/marketing";
 
 export function EventList() {
-  const { data: marketingItems = [] } = useQuery({
+  const { data: marketingItems = [] } = useQuery<MarketingItem[]>({
     queryKey: ['marketing_content'],
     queryFn: async () => {
       const { data, error } = await supabase

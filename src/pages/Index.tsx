@@ -1,10 +1,10 @@
+
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { MetricsGrid } from "@/components/dashboard/MetricsGrid";
 import { CalendarView } from "@/components/dashboard/CalendarView";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ContentCreator } from "@/components/content/ContentCreator";
@@ -14,20 +14,20 @@ const Index = () => {
   const { toast } = useToast();
   const [showContentCreator, setShowContentCreator] = useState(false);
 
-  const { data: dashboardSections, isLoading: isLoadingSections } = useQuery({
-    queryKey: ['dashboard_sections'],
+  const { data: marketingContent, isLoading: isLoadingContent } = useQuery({
+    queryKey: ['marketing_content'],
     queryFn: async () => {
-      console.log('Fetching dashboard sections...');
+      console.log('Fetching marketing content...');
       const { data, error } = await supabase
-        .from('dashboard_sections')
+        .from('marketing_content')
         .select('*')
-        .order('priority', { ascending: true });
+        .order('scheduled_date', { ascending: true });
       
       if (error) {
-        console.error('Error fetching dashboard sections:', error);
+        console.error('Error fetching marketing content:', error);
         toast({
           title: "Error",
-          description: "Failed to fetch dashboard sections",
+          description: "Failed to fetch content",
           variant: "destructive",
         });
         return [];
@@ -35,14 +35,6 @@ const Index = () => {
       return data || [];
     }
   });
-
-  const renderSkeleton = () => (
-    <div className="space-y-4">
-      <Skeleton className="h-24 w-full animate-pulse" />
-      <Skeleton className="h-24 w-full animate-pulse delay-150" />
-      <Skeleton className="h-24 w-full animate-pulse delay-300" />
-    </div>
-  );
 
   return (
     <DashboardLayout>
@@ -69,26 +61,21 @@ const Index = () => {
 
         <MetricsGrid />
 
-        {/* News & Updates Section */}
         <Card className="transition-all duration-300 hover:shadow-lg animate-fade-in">
-          <CardHeader>
-            <CardTitle>News & Updates</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {isLoadingSections ? (
-              renderSkeleton()
-            ) : !dashboardSections?.length ? (
-              <p className="text-muted-foreground">No news or updates available</p>
+          <CardContent className="space-y-4 p-6">
+            {isLoadingContent ? (
+              <p className="text-muted-foreground">Loading content...</p>
+            ) : !marketingContent?.length ? (
+              <p className="text-muted-foreground">No content available</p>
             ) : (
-              dashboardSections?.filter(section => section.active).map((section, index) => (
+              marketingContent.map((content) => (
                 <div 
-                  key={section.id} 
+                  key={content.id} 
                   className="bg-card rounded-lg p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:bg-primary/5"
-                  style={{ animationDelay: `${index * 150}ms` }}
                 >
-                  <h3 className="font-semibold mb-2 text-primary">{section.section_name}</h3>
+                  <h3 className="font-semibold mb-2 text-primary">{content.title}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {section.content}
+                    {content.description}
                   </p>
                 </div>
               ))

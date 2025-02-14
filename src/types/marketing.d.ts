@@ -2,9 +2,12 @@
 export interface MarketingItem {
   id: number;
   title: string;
-  description: string;
+  description: string | null;
   content_type: string;
-  scheduled_date: string;
+  event_type?: string;
+  start_date?: string;
+  end_date?: string;
+  scheduled_date?: string;
   photo_examples: string;
   photo_key_points: string;
   rejection_reason?: string;
@@ -16,17 +19,6 @@ export interface MarketingItem {
   created_at?: string;
   gym_id?: number;
   total_posts?: number;
-}
-
-export interface CalendarEvent {
-  id: number;
-  title: string;
-  description?: string;
-  start_date: string;
-  end_date?: string;
-  event_type?: string;
-  status?: string;
-  gym_id?: number;
 }
 
 export interface EmailContent {
