@@ -21,7 +21,6 @@ export interface MarketingContent {
   gym_id?: number;
   created_at: string;
   status?: string;
-  total_posts?: number;
 }
 
 export interface EmailContent {
@@ -47,12 +46,6 @@ export interface MarketingTask {
   assigned_to?: string;
   created_at: string;
   parent_task_id?: number;
-}
-
-export interface DayTask {
-  name: string;
-  date: Date;
-  tasks: MarketingContent[];
 }
 
 export type MarketingItem = MarketingContent;
