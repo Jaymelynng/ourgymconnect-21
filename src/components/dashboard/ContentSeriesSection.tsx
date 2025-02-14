@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Eye, PenSquare, Trash2 } from "lucide-react";
@@ -39,7 +40,6 @@ export function ContentSeriesSection() {
             <tr className="bg-muted/30">
               <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Name</th>
               <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Type</th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Total Posts</th>
               <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Created</th>
               <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
             </tr>
@@ -53,7 +53,6 @@ export function ContentSeriesSection() {
                     {item.content_type || 'Standard'}
                   </span>
                 </td>
-                <td className="py-3 px-4">{item.total_posts || 0}</td>
                 <td className="py-3 px-4">{format(new Date(item.created_at), 'EEE, MMM dd, yyyy')}</td>
                 <td className="py-3 px-4">
                   <div className="flex justify-end gap-2">

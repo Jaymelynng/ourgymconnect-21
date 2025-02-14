@@ -1,3 +1,4 @@
+
 import { format } from "date-fns";
 import { Type } from "lucide-react";
 import type { MarketingItem } from "@/hooks/use-marketing-content";
@@ -13,9 +14,9 @@ export function TaskDetails({ task }: TaskDetailsProps) {
     >
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-lg text-foreground">{task.title}</h3>
-        {task.photo_examples && (
+        {task.photo_examples && task.photo_examples.length > 0 && (
           <img 
-            src={task.photo_examples} 
+            src={task.photo_examples[0]} 
             alt="" 
             className="w-12 h-12 rounded-full ring-2 ring-primary/20"
           />

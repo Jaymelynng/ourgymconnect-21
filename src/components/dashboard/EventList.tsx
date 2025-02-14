@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, parseISO } from "date-fns";
@@ -25,9 +26,9 @@ export function EventList() {
           className="p-3 rounded-lg transition-all cursor-pointer bg-card hover:shadow-md border-l-4 border-primary"
         >
           <div className="flex items-center gap-3">
-            {item.photo_examples ? (
+            {item.photo_examples && item.photo_examples.length > 0 ? (
               <img 
-                src={item.photo_examples} 
+                src={item.photo_examples[0]} 
                 alt="" 
                 className="w-10 h-10 rounded-lg object-cover"
               />

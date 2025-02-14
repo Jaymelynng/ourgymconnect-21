@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export function Index() {
+export default function Index() {
   const { data: gymDetails } = useQuery({
     queryKey: ['gym_details'],
     queryFn: async () => {
