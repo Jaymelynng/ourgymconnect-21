@@ -99,13 +99,19 @@ export type Database = {
       marketing_content: {
         Row: {
           caption: string | null
-          content_type: string
+          content_raw_notes: string | null
+          content_type: Database["public"]["Enums"]["content_category"]
           created_at: string | null
           description: string | null
+          email_body_content: string | null
+          email_preview_text: string | null
+          email_subject_line: string | null
           end_date: string | null
           event_type: string | null
           gym_id: number | null
           id: number
+          in_gym_display_type: string | null
+          in_gym_location: string | null
           item_type: string | null
           key_notes: string | null
           photo_examples: string | null
@@ -121,13 +127,19 @@ export type Database = {
         }
         Insert: {
           caption?: string | null
-          content_type: string
+          content_raw_notes?: string | null
+          content_type: Database["public"]["Enums"]["content_category"]
           created_at?: string | null
           description?: string | null
+          email_body_content?: string | null
+          email_preview_text?: string | null
+          email_subject_line?: string | null
           end_date?: string | null
           event_type?: string | null
           gym_id?: number | null
           id?: never
+          in_gym_display_type?: string | null
+          in_gym_location?: string | null
           item_type?: string | null
           key_notes?: string | null
           photo_examples?: string | null
@@ -143,13 +155,19 @@ export type Database = {
         }
         Update: {
           caption?: string | null
-          content_type?: string
+          content_raw_notes?: string | null
+          content_type?: Database["public"]["Enums"]["content_category"]
           created_at?: string | null
           description?: string | null
+          email_body_content?: string | null
+          email_preview_text?: string | null
+          email_subject_line?: string | null
           end_date?: string | null
           event_type?: string | null
           gym_id?: number | null
           id?: never
+          in_gym_display_type?: string | null
+          in_gym_location?: string | null
           item_type?: string | null
           key_notes?: string | null
           photo_examples?: string | null
@@ -236,6 +254,7 @@ export type Database = {
     }
     Enums: {
       approval_status: "Pending" | "Approved" | "Needs Revision"
+      content_category: "social_media" | "email" | "in_gym"
       content_type: "Photo" | "Video" | "Email" | "Social Media"
       email_task_status: "Pending" | "In Progress" | "Completed"
       gym_location:

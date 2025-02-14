@@ -1,4 +1,3 @@
-
 export interface MarketingTask {
   id: number;
   task_name: string;
@@ -50,4 +49,27 @@ export interface EmailContent {
 
 export interface CalendarEvent extends MarketingItem {
   type: 'marketing' | 'email';
+}
+
+export interface UnifiedContentForm {
+  title: string;
+  contentType: 'social_media' | 'email' | 'in_gym';
+  scheduledDate: Date;
+  rawNotes?: string;
+  tasks: MarketingTask[];
+  // Social Media specific
+  caption?: string;
+  visualNotes?: string;
+  photoKeyPoints?: string;
+  // Email specific
+  emailSubjectLine?: string;
+  emailPreviewText?: string;
+  emailBodyContent?: string;
+  // In-gym specific
+  inGymLocation?: string;
+  inGymDisplayType?: string;
+  // Common fields
+  description?: string;
+  keyNotes?: string;
+  gymId?: number;
 }
