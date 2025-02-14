@@ -128,7 +128,7 @@ export function WeekView() {
                     <div className="space-y-2">
                       {day.tasks.map((task) => (
                         <div 
-                          key={task.id}
+                          key={task.id || `${task.task_name}-${task.created_at}`}
                           className={cn(
                             "p-3 rounded-lg space-y-1",
                             isBefore(day.date, today) ? "bg-red-50" : "bg-primary/5"
@@ -160,7 +160,7 @@ export function WeekView() {
             {selectedDay?.tasks.length ? (
               selectedDay.tasks.map((task) => (
                 <div 
-                  key={task.id}
+                  key={task.id || `${task.task_name}-${task.created_at}`}
                   className={cn(
                     "p-4 rounded-lg space-y-3 transition-colors",
                     isBefore(selectedDay.date, today) 

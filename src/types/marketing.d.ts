@@ -1,4 +1,6 @@
+
 export interface MarketingTask {
+  id?: number;
   task_name: string;
   task_type: string;
   content_id?: number | null;
