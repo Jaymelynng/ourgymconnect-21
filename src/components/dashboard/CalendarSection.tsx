@@ -1,12 +1,13 @@
+
 import { useState, useCallback } from "react";
 import { format, addMonths, subMonths } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { WeekView } from "@/components/views/WeekView";
-import { MonthView } from "@/components/views/MonthView";
-import { ListView } from "@/components/views/ListView";
+import { WeekView } from "./WeekView";
+import { MonthView } from "./MonthView";
+import { ListView } from "./ListView";
 import { useToast } from "@/hooks/use-toast";
 import type { MarketingContent } from "@/types/database";
 
@@ -20,7 +21,7 @@ export function CalendarSection() {
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from('marketing_content')  // Changed from calendar_events to marketing_content
+          .from('marketing_content')
           .select('*')
           .order('scheduled_date');
 
@@ -71,9 +72,9 @@ export function CalendarSection() {
         </div>
       </div>
       
-      {viewType === 'week' && <WeekView events={events} />}
-      {viewType === 'month' && <MonthView events={events} />}
-      {viewType === 'list' && <ListView events={events} />}
+      {viewType === 'week' && <WeekView currentDate={currentDate} onDateChange={setCurrentDate} />}
+      {viewType === 'month' && <MonthView currentDate={currentDate} onDateChange={setCurrentDate} />}
+      {viewType === 'list' && <ListView currentDate={currentDate} onDateChange={setCurrentDate} />}
     </Card>
   );
 }
