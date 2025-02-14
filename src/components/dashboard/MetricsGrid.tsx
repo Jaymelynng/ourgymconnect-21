@@ -41,6 +41,8 @@ export function MetricsGrid() {
     }
   });
 
+  const scheduledCount = 0; // Placeholder for now
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <MetricCard
@@ -63,7 +65,7 @@ export function MetricsGrid() {
       />
       <MetricCard
         title="This Month"
-        value={0}
+        value={scheduledCount}
         description="Posts scheduled this month"
         icon={<Calendar className="h-4 w-4" />}
       />
