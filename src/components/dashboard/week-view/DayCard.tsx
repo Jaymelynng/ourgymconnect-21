@@ -1,4 +1,3 @@
-
 import { format } from "date-fns";
 import { Calendar, Type, CheckSquare } from "lucide-react";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
@@ -31,9 +30,9 @@ export function DayCard({ name, date, tasks, onClick }: DayCardProps) {
                   {format(date, 'd')}
                 </span>
               </div>
-              {tasks[0]?.photo_examples && tasks[0].photo_examples.length > 0 && (
+              {tasks[0]?.photo_examples && (
                 <img 
-                  src={tasks[0].photo_examples[0]} 
+                  src={tasks[0].photo_examples} 
                   alt={`Preview for ${tasks[0].title}`}
                   className="w-8 h-8 rounded-full ring-2 ring-primary/20 transition-all duration-300 
                            group-hover:ring-primary/40 shadow-sm"
@@ -85,7 +84,7 @@ export function DayCard({ name, date, tasks, onClick }: DayCardProps) {
               ))}
             </div>
           ) : (
-            <p className="text-center text-muted-foreground">No tasks scheduled for this day.</p>
+            <p className="text-sm text-muted-foreground">No tasks scheduled for this day.</p>
           )}
         </div>
       </HoverCardContent>

@@ -1,4 +1,3 @@
-
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from "date-fns";
 import { useMarketingContent } from "@/hooks/use-marketing-content";
 import { CalendarHeader } from "../calendar/CalendarHeader";

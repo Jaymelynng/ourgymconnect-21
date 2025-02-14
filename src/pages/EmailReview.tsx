@@ -1,11 +1,12 @@
-
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { EmailContent } from "@/components/email/EmailContent";
 import { EmailApprovalActions } from "@/components/email/EmailApprovalActions";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import type { EmailContent as EmailContentType } from "@/types/database";
+import { Tables } from "@/integrations/supabase/types";
+
+type EmailContentType = Tables<"email_content">;
 
 export default function EmailReview() {
   const { toast } = useToast();
