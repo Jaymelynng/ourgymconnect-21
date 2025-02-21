@@ -53,10 +53,13 @@ export type Database = {
           body_content: string
           content_id: number | null
           created_at: string | null
+          due_date: string | null
+          feedback: string | null
           gym_id: number | null
           id: number
           preview_text: string | null
           rejection_reason: string | null
+          reviewed_by: string | null
           scheduled_date: string | null
           status: string | null
           subject_line: string
@@ -66,10 +69,13 @@ export type Database = {
           body_content: string
           content_id?: number | null
           created_at?: string | null
+          due_date?: string | null
+          feedback?: string | null
           gym_id?: number | null
           id?: number
           preview_text?: string | null
           rejection_reason?: string | null
+          reviewed_by?: string | null
           scheduled_date?: string | null
           status?: string | null
           subject_line: string
@@ -79,10 +85,13 @@ export type Database = {
           body_content?: string
           content_id?: number | null
           created_at?: string | null
+          due_date?: string | null
+          feedback?: string | null
           gym_id?: number | null
           id?: number
           preview_text?: string | null
           rejection_reason?: string | null
+          reviewed_by?: string | null
           scheduled_date?: string | null
           status?: string | null
           subject_line?: string
